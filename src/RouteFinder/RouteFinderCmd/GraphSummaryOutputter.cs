@@ -43,11 +43,6 @@ namespace RouteFinderCmd
                 }
             }
 
-            foreach (var wayWeight in ways)
-            {
-                wayWeight.Key.Tags.Add("graphWeight", wayWeight.Value.ToString());
-            }
-
             var polygonOut = converter.Convert(ways.Keys);
             var serialized = JsonConvert.SerializeObject(polygonOut);
             File.WriteAllLines(fullPath, new[] { serialized });

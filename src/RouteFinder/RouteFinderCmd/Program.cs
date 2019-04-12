@@ -51,7 +51,6 @@ namespace RouteFinderCmd
             var lazyRouteFinder = new RouteFinder<Node>(new LazyGraphAugmenter<Node>());
             var lazyRoute = lazyRouteFinder.GetRoute(graph);
             var lazyRouteCost = lazyRoute.Select(x => x.Weight).Sum();
-            new RouteCoverageOutputter(outputLocation).OutputGraph(lazyRoute, originalEdgeWays, "lazyRouteCoverage.json");
 
             // do regular route (rebuilds graph)
             graph = new GraphBuilder().BuildGraph(ways.ToArray(), out originalEdgeWays);
@@ -59,9 +58,9 @@ namespace RouteFinderCmd
             var route = greedRouteFinder.GetRoute(graph);
 
             var routeCost = route.Select(x => x.Weight).Sum();
-            new RouteCoverageOutputter(outputLocation).OutputGraph(route, originalEdgeWays, "greedyRouteCoverage.json");
+            //new RouteCoverageOutputter(outputLocation).OutputGraph(route, originalEdgeWays, "greedyRouteCoverage.json");
 
-            new RouteDetailOutputter(ways).DescribeRoutesAsWays(lazyRoute);
+            new RouteDetailOutputter(ways, outputLocation, "lazyRouteCoverage.json").DescribeRoutesAsWays(lazyRoute);
 
             Console.WriteLine($"Required running: {requiredCost}");
             Console.WriteLine($"Lazy Route: {lazyRouteCost}");

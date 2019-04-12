@@ -51,9 +51,9 @@ namespace RouteFinder.GreedyRoute
             return graph;
         }
 
-        private SortedDictionary<double, HeapNode<T>> GetRankedVertices(HashSet<T> oddDegreeNodes, Graph<T> graph)
+        private SortedDictionary<double, HeapNode> GetRankedVertices(HashSet<T> oddDegreeNodes, Graph<T> graph)
         {
-            var heap = new SortedDictionary<double, HeapNode<T>>();
+            var heap = new SortedDictionary<double, HeapNode>();
 
             foreach (var oddDegreeNode in oddDegreeNodes)
             {
@@ -64,7 +64,7 @@ namespace RouteFinder.GreedyRoute
             return heap;
         }
 
-        private void InsertIntoSortedDictionary(SortedDictionary<double, HeapNode<T>> heap, HeapNode<T> heapNode)
+        private void InsertIntoSortedDictionary(SortedDictionary<double, HeapNode> heap, HeapNode heapNode)
         {
             while (!heap.TryAdd(heapNode.Cost, heapNode))
             {
@@ -72,7 +72,7 @@ namespace RouteFinder.GreedyRoute
             }
         }
 
-        private HeapNode<T> GetHeapNode(T oddDegreeNode, IEnumerable<T> oddDegreeNodes, Graph<T> graph)
+        private HeapNode GetHeapNode(T oddDegreeNode, IEnumerable<T> oddDegreeNodes, Graph<T> graph)
         {
             var adsp = new AllDestinationShortestPaths<T>(oddDegreeNode, oddDegreeNodes, graph);
             adsp.Run(_comparisonSetSize);
@@ -87,7 +87,7 @@ namespace RouteFinder.GreedyRoute
             var firstChoiceSavings = costs.Count > 1 ? costs[0] - costs.Skip(1).Average() : 0;
             var firstChoice = costDict.First(kvp => Math.Abs(kvp.Value - costs.First()) < 1e-12).Key;
             var path = adsp.GetPath(oddDegreeNode, firstChoice);
-            var heapNode = new LazyGraphAugmenter<T>.HeapNode<T>
+            var heapNode = new LazyGraphAugmenter<T>.HeapNode
             {
                 Cost = firstChoiceSavings,
                 End = firstChoice,
@@ -97,7 +97,7 @@ namespace RouteFinder.GreedyRoute
             return heapNode;
         }
 
-        private class HeapNode<T>
+        private class HeapNode
         {
             public T Start { get; set; }
             public T End { get; set; }

@@ -3,7 +3,7 @@ import { LinePlotter } from "./LinePlotter";
 export let dataSets = {
     labeledWays: {
         path: 'data/labeledWays.json',
-        callback: (linePlotter : LinePlotter, data: any) => linePlotter.plotGeoJson(data, 'labeledways')
+        callback: (linePlotter : LinePlotter, data: any) => linePlotter.plotGeoJsonColorByPolygon(data, 'labeledways')
     },
     cleanPolygon: {
         path: 'data/cleanpolygon.json',
@@ -11,14 +11,14 @@ export let dataSets = {
     },
     reducedGraph: {
         path: 'data/reducedGraph.json',
-        callback: (linePlotter : LinePlotter, data: any) => linePlotter.plotGeoJson(data, 'reducedGraph', 'purple', 2)
+        callback: (linePlotter : LinePlotter, data: any) => linePlotter.plotGeoJson(data, 'reducedGraph', 'purple')
     },
     lazyRoute: {
         path: 'data/lazyRouteCoverage.json',
-        callback: (linePlotter : LinePlotter, data : any) => linePlotter.plotGeoJson(data, 'lazyRouteCoverage', 'brown', 1.5)
+        callback: (linePlotter : LinePlotter, data : any) => linePlotter.plotGeoJsonColorByCoverage(data, 'lazyRouteCoverage')
     },
     triangles: {
         path: 'data/triangles.json',
-        callback: (linePlotter : LinePlotter, data : any) => linePlotter.plotGeoJson(data, 'triangles')
+        callback: (linePlotter : LinePlotter, data : any) => linePlotter.plotGeoJson(data, 'triangles', "#000000")
     }
 }

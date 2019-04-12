@@ -23,13 +23,21 @@ namespace RouteCleaner.Transformers
                 if (way.IsParkingLot())
                 {
                     ways.Add(way);
+                    continue;
                 }
-                else if (parkingLotReplacementNodes.ContainsKey(way.Nodes.First()) || parkingLotReplacementNodes.ContainsKey(way.Nodes.Last()))
+
+                var newNodes = way.Nodes;
+                var replaced = false;
+                for (int i = 0; i < newNodes.Count(); i++)
                 {
-                    var newNodes = way.Nodes;
-                    newNodes[0] = parkingLotReplacementNodes.ContainsKey(newNodes[0]) ? parkingLotReplacementNodes[newNodes[0]] : newNodes[0];
-                    var i = newNodes.Count() - 1;
-                    newNodes[i] = parkingLotReplacementNodes.ContainsKey(newNodes[i]) ? parkingLotReplacementNodes[newNodes[i]] : newNodes[i];
+                    if (parkingLotReplacementNodes.ContainsKey(newNodes[i]))
+                    {
+                        replaced = true;
+                        newNodes[i] = parkingLotReplacementNodes[newNodes[i]];
+                    }
+                }
+                if (replaced)
+                {
                     ways.Add(new Way(way.Id, newNodes, way.Tags));
                 }
                 else
