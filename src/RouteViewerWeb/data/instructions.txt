@@ -1,0 +1,342 @@
+Start at Node https://www.openstreetmap.org/node/53020758
+[Turn]  0.0324301699876074 miles on Red Town Trail to intersection of Red Town Trail, Wildside Trail
+[Stay straight]  0.243089721833737 miles on Red Town Trail to intersection of Red Town Trail, Cave Hole Trail
+[Turn]  0.177201490878191 miles on Cave Hole Trail to intersection of Red Town Creek Trail, Cave Hole Trail
+[Turn]  0.304357844949536 miles on Red Town Creek Trail to intersection of Red Town Creek Trail, Military Road Trail
+[Turn]  0.376844536185029 miles on Military Road Trail to intersection of Red Town Trailhead Access Road, Military Road Trail
+Turn around and go back to https://www.openstreetmap.org/node/523250856 on Military Road Trail (0.376844536185029 miles)
+[Stay straight]  0.152299815263326 miles on Military Road Trail to intersection of Little Creek Trail, Military Road Trail
+[Turn]  0.441341305561346 miles on Little Creek Trail to intersection of Little Creek Trail, Primrose Overlook Trail
+[Stay straight]  0.06147786243266 miles on Little Creek Trail to intersection of Little Creek Trail
+Turn around and go back to https://www.openstreetmap.org/node/3443962479 on Little Creek Trail (0.06147786243266 miles)
+[Turn]  0.127401588940198 miles on Primrose Overlook Trail to intersection of Primrose Overlook Trail
+Turn around and go back to https://www.openstreetmap.org/node/3443962479 on Primrose Overlook Trail (0.127401588940198 miles)
+[Turn]  0.441341305561346 miles on Little Creek Trail to intersection of Little Creek Trail, Military Road Trail
+[Turn]  0.231951789419185 miles on Military Road Trail to intersection of Military Road Trail, https://www.openstreetmap.org/way/498889615_containsplit_0
+[Stay straight]  0.217666471742983 miles on Military Road Trail to intersection of Sky Country Trail, Military Road Trail
+[Stay straight]  0.135384499758942 miles on Military Road Trail to intersection of Military Road Trail, https://www.openstreetmap.org/way/390860152_containsplit_0, https://www.openstreetmap.org/way/498889627_containsplit_0
+[Turn]  0.108463560015706 miles on https://www.openstreetmap.org/way/390860152_containsplit_0 to intersection of https://www.openstreetmap.org/way/390860152_containsplit_0, https://www.openstreetmap.org/way/390860152_1
+Turn around and go back to https://www.openstreetmap.org/node/3752272156 on https://www.openstreetmap.org/way/390860152_containsplit_0 (0.108463560015706 miles)
+[Turn]  0.0129960897528455 miles on https://www.openstreetmap.org/way/498889627_containsplit_0 to intersection of https://www.openstreetmap.org/way/390860156_2_bisect_0, https://www.openstreetmap.org/way/390860156_2_bisect_1, https://www.openstreetmap.org/way/498889627_containsplit_0, https://www.openstreetmap.org/way/498889628_bisect_1
+Turn around and go back to https://www.openstreetmap.org/node/3752272156 on https://www.openstreetmap.org/way/498889627_containsplit_0 (0.0129960897528455 miles)
+[Turn]  0.135384499758942 miles on Military Road Trail to intersection of Sky Country Trail, Military Road Trail
+[Turn]  0.498572261012278 miles on Sky Country Trail to intersection of Nike Horse Trail, Sky Country Trail
+[Turn]  0.199140988016735 miles on Nike Horse Trail to intersection of Nike Horse Trail, https://www.openstreetmap.org/way/498889630
+[Stay straight]  0.0956508191570487 miles on Nike Horse Trail to intersection of Nike Horse Trail, https://www.openstreetmap.org/way/498889629
+[Stay straight]  0.17436356615639 miles on Nike Horse Trail to intersection of Cave Hole Trail, Nike Horse Trail
+[Turn]  0.385912658772705 miles on Cave Hole Trail to intersection of Cave Hole Trail, Coal Creek Falls Trail
+[Turn]  1.10509345232711 miles on Coal Creek Falls Trail to intersection of Coal Creek Falls Trail, Quarry Trail
+[Turn]  0.737875482551753 miles on Quarry Trail to intersection of Indian Trail, Quarry Trail
+[Turn]  0.138119596197918 miles on Indian Trail to intersection of Indian Trail, Marshall's Hill Trail
+[Stay straight]  0.0360393678392648 miles on Indian Trail to intersection of Indian Trail, https://www.openstreetmap.org/way/41704468_bisect_0
+[Stay straight]  0.115293439425391 miles on Indian Trail to intersection of Red Town Trail, Indian Trail
+[Turn]  0.00339175982043551 miles on Red Town Trail to intersection of Red Town Trail, https://www.openstreetmap.org/way/41704468_bisect_2
+[Turn]  0.084883235768371 miles on https://www.openstreetmap.org/way/41704468_bisect_2 to intersection of https://www.openstreetmap.org/way/41704468_bisect_1, https://www.openstreetmap.org/way/41704468_bisect_2, https://www.openstreetmap.org/way/43181378
+[Turn]  0.0236540686535231 miles on https://www.openstreetmap.org/way/41704468_bisect_1 to intersection of https://www.openstreetmap.org/way/41704468_bisect_0, https://www.openstreetmap.org/way/41704468_bisect_1, https://www.openstreetmap.org/way/43181378
+[Turn]  0.0160890198607247 miles on https://www.openstreetmap.org/way/41704468_bisect_0 to intersection of Indian Trail, https://www.openstreetmap.org/way/41704468_bisect_0
+[Turn]  0.115293439425391 miles on Indian Trail to intersection of Red Town Trail, Indian Trail
+[Turn]  0.00339175982043551 miles on Red Town Trail to intersection of Red Town Trail, https://www.openstreetmap.org/way/41704468_bisect_2
+[Stay straight]  0.675821258444901 miles on Red Town Trail to intersection of Red Town Trail, Rainbow Town Trail
+[Turn]  0.207229706141677 miles on Rainbow Town Trail to intersection of Steam Hoist Trail, Rainbow Town Trail
+[Stay straight]  0.0985823889209533 miles on Rainbow Town Trail to intersection of Wildside Trail, Rainbow Town Trail
+[Stay straight]  0.0232944927082491 miles on Rainbow Town Trail to intersection of Wildside Trail, Rainbow Town Trail
+Turn around and go back to https://www.openstreetmap.org/node/513202328 on Rainbow Town Trail (0.0232944927082491 miles)
+Turn around and go back to https://www.openstreetmap.org/node/513202324 on Rainbow Town Trail (0.0232944927082491 miles)
+Turn around and go back to https://www.openstreetmap.org/node/513202328 on Rainbow Town Trail (0.0232944927082491 miles)
+[Stay straight]  0.0985823889209533 miles on Rainbow Town Trail to intersection of Steam Hoist Trail, Rainbow Town Trail
+[Turn]  0.312321429102782 miles on Steam Hoist Trail to intersection of Wildside Trail, Steam Hoist Trail
+[Turn]  0.058837993399773 miles on Wildside Trail to intersection of Wildside Trail, https://www.openstreetmap.org/way/42108708_containsplit_0
+[Turn]  0.1069484715172 miles on https://www.openstreetmap.org/way/42108708_containsplit_0 to intersection of https://www.openstreetmap.org/way/42108708_containsplit_0
+Turn around and go back to https://www.openstreetmap.org/node/523298198 on https://www.openstreetmap.org/way/42108708_containsplit_0 (0.1069484715172 miles)
+[Turn]  0.0429251518882025 miles on Wildside Trail to intersection of Wildside Trail, Rainbow Town Trail
+Turn around and go back to https://www.openstreetmap.org/node/523298198 on Wildside Trail (0.0429251518882025 miles)
+[Stay straight]  0.058837993399773 miles on Wildside Trail to intersection of Wildside Trail, Steam Hoist Trail
+[Stay straight]  0.600345255136268 miles on Wildside Trail to intersection of Wildside Trail, Marshall's Hill Trail
+[Turn]  0.0760419290645918 miles on Marshall's Hill Trail to intersection of Wildside Trail, Marshall's Hill Trail
+[Turn]  0.451868839404507 miles on Wildside Trail to intersection of Wildside Trail
+[Stay straight]  0.00829034880681712 miles on Wildside Trail to intersection of Wildside Trail
+[Stay straight]  0.332376271140299 miles on Wildside Trail to intersection of De Leo Wall Trail, Wildside Trail
+[Turn]  0.0610352048507506 miles on De Leo Wall Trail to intersection of De Leo Wall Trail, Indian Trail
+Turn around and go back to https://www.openstreetmap.org/node/513201803 on De Leo Wall Trail (0.0610352048507506 miles)
+[Stay straight]  0.380800104203441 miles on De Leo Wall Trail to intersection of De Leo Wall Trail
+[Stay straight]  0.0242211097497588 miles on De Leo Wall Trail to intersection of De Leo Wall Trail
+[Stay straight]  0.330613535870709 miles on De Leo Wall Trail to intersection of De Leo Wall Trail, Viewpoint #2 Trail
+[Turn]  0.0614321089959628 miles on Viewpoint #2 Trail to intersection of Viewpoint #2 Trail, https://www.openstreetmap.org/way/263148114_1
+[Stay straight]  0.138238324297934 miles on Viewpoint #2 Trail to intersection of Viewpoint #2 Trail
+Turn around and go back to https://www.openstreetmap.org/node/2687744842 on Viewpoint #2 Trail (0.138238324297934 miles)
+[Turn]  0.131069391167703 miles on https://www.openstreetmap.org/way/263148114_1 to intersection of https://www.openstreetmap.org/way/263148114_1, https://www.openstreetmap.org/way/263148114_containsplit_0_bisect_2
+Turn around and go back to https://www.openstreetmap.org/node/2687744842 on https://www.openstreetmap.org/way/263148114_1 (0.131069391167703 miles)
+[Turn]  0.0614321089959628 miles on Viewpoint #2 Trail to intersection of De Leo Wall Trail, Viewpoint #2 Trail
+[Turn]  0.659842643154994 miles on De Leo Wall Trail to intersection of De Leo Wall Trail
+[Stay straight]  0.00677821639826217 miles on De Leo Wall Trail to intersection of Viewpoint #2 Trail, De Leo Wall Trail
+[Stay straight]  0.238899192566116 miles on De Leo Wall Trail to intersection of De Leo Wall Trail, https://www.openstreetmap.org/way/337284478_containsplit_0
+[Turn]  0.13136801157372 miles on https://www.openstreetmap.org/way/337284478_containsplit_0 to intersection of https://www.openstreetmap.org/way/337284478_containsplit_0, https://www.openstreetmap.org/way/337284478_1
+Turn around and go back to https://www.openstreetmap.org/node/513201635 on https://www.openstreetmap.org/way/337284478_containsplit_0 (0.13136801157372 miles)
+[Turn]  0.037132485204559 miles on De Leo Wall Trail to intersection of De Leo Wall Trail, https://www.openstreetmap.org/way/371663479_bisect_0, https://www.openstreetmap.org/way/371663479_bisect_1
+[Turn]  0.0146131475731735 miles on https://www.openstreetmap.org/way/371663479_bisect_0 to intersection of https://www.openstreetmap.org/way/41706270_1, Marshall's Hill Trail, https://www.openstreetmap.org/way/371663479_bisect_0
+Turn around and go back to https://www.openstreetmap.org/node/513201642 on https://www.openstreetmap.org/way/371663479_bisect_0 (0.0146131475731735 miles)
+[Turn]  0.193786564210175 miles on https://www.openstreetmap.org/way/371663479_bisect_1 to intersection of https://www.openstreetmap.org/way/371663479_bisect_1
+Turn around and go back to https://www.openstreetmap.org/node/513201642 on https://www.openstreetmap.org/way/371663479_bisect_1 (0.193786564210175 miles)
+[Turn]  0.037132485204559 miles on De Leo Wall Trail to intersection of De Leo Wall Trail, https://www.openstreetmap.org/way/337284478_containsplit_0
+Turn around and go back to https://www.openstreetmap.org/node/513201642 on De Leo Wall Trail (0.037132485204559 miles)
+[Turn]  0.0146131475731735 miles on https://www.openstreetmap.org/way/371663479_bisect_0 to intersection of https://www.openstreetmap.org/way/41706270_1, Marshall's Hill Trail, https://www.openstreetmap.org/way/371663479_bisect_0
+[Turn]  0.105077847919637 miles on https://www.openstreetmap.org/way/41706270_1 to intersection of https://www.openstreetmap.org/way/41706270_1, https://www.openstreetmap.org/way/41706270_containsplit_0
+Turn around and go back to https://www.openstreetmap.org/node/3809475396 on https://www.openstreetmap.org/way/41706270_1 (0.105077847919637 miles)
+[Turn]  0.323836185538715 miles on Marshall's Hill Trail to intersection of https://www.openstreetmap.org/way/42108705_containsplit_0, Marshall's Hill Trail
+[Turn]  0.0155072218039817 miles on https://www.openstreetmap.org/way/42108705_containsplit_0 to intersection of https://www.openstreetmap.org/way/42108705_containsplit_0, https://www.openstreetmap.org/way/42108705_1
+Turn around and go back to https://www.openstreetmap.org/node/513202050 on https://www.openstreetmap.org/way/42108705_containsplit_0 (0.0155072218039817 miles)
+[Turn]  0.0102070178750607 miles on Marshall's Hill Trail to intersection of Marshall's Hill Trail
+[Stay straight]  0.0246016863965153 miles on Marshall's Hill Trail to intersection of Marshall's Hill Trail, https://www.openstreetmap.org/way/623741919_containsplit_0
+[Turn]  0.00891654716130113 miles on https://www.openstreetmap.org/way/623741919_containsplit_0 to intersection of https://www.openstreetmap.org/way/623741919_containsplit_0, https://www.openstreetmap.org/way/623741919_1
+Turn around and go back to https://www.openstreetmap.org/node/513202058 on https://www.openstreetmap.org/way/623741919_containsplit_0 (0.00891654716130113 miles)
+[Turn]  0.0102070186906572 miles on Marshall's Hill Trail to intersection of Marshall's Hill Trail
+[Stay straight]  0.0104185215820451 miles on Marshall's Hill Trail to intersection of Marshall's Hill Trail
+[Stay straight]  0.0293031545113958 miles on Marshall's Hill Trail to intersection of Marshall's Hill Trail, Ballybunion Trail
+[Turn]  0.00426786824310196 miles on Ballybunion Trail to intersection of Ballybunion Trail
+Turn around and go back to https://www.openstreetmap.org/node/513202064 on Ballybunion Trail (0.00426786824310196 miles)
+[Turn]  0.321324220902579 miles on Marshall's Hill Trail to intersection of https://www.openstreetmap.org/way/42108706_containsplit_0, Marshall's Hill Trail
+[Turn]  0.123380458485215 miles on https://www.openstreetmap.org/way/42108706_containsplit_0 to intersection of https://www.openstreetmap.org/way/42108706_containsplit_0, https://www.openstreetmap.org/way/263148121_bisect_2
+Turn around and go back to https://www.openstreetmap.org/node/523298156 on https://www.openstreetmap.org/way/42108706_containsplit_0 (0.123380458485215 miles)
+[Turn]  0.302986648606627 miles on Marshall's Hill Trail to intersection of https://www.openstreetmap.org/way/42108707_containsplit_0, Marshall's Hill Trail
+[Turn]  0.0321005744857514 miles on https://www.openstreetmap.org/way/42108707_containsplit_0 to intersection of https://www.openstreetmap.org/way/42108707_containsplit_0, https://www.openstreetmap.org/way/42108707_1
+Turn around and go back to https://www.openstreetmap.org/node/523298162 on https://www.openstreetmap.org/way/42108707_containsplit_0 (0.0321005744857514 miles)
+[Turn]  0.35939662081108 miles on Marshall's Hill Trail to intersection of https://www.openstreetmap.org/way/41704467, Marshall's Hill Trail
+[Turn]  0.0458823285090182 miles on https://www.openstreetmap.org/way/41704467 to intersection of https://www.openstreetmap.org/way/41704467
+Turn around and go back to https://www.openstreetmap.org/node/513201964 on https://www.openstreetmap.org/way/41704467 (0.0458823285090182 miles)
+[Turn]  0.308007529983855 miles on Marshall's Hill Trail to intersection of Wildside Trail, Marshall's Hill Trail
+[Stay straight]  0.0760419290645918 miles on Marshall's Hill Trail to intersection of Wildside Trail, Marshall's Hill Trail
+[Stay straight]  0.157163576966626 miles on Marshall's Hill Trail to intersection of Indian Trail, Marshall's Hill Trail
+[Turn]  0.138119596197918 miles on Indian Trail to intersection of Indian Trail, Quarry Trail
+[Stay straight]  0.623171303849024 miles on Indian Trail to intersection of De Leo Wall Trail, Indian Trail
+[Stay straight]  0.145907472572501 miles on Indian Trail to intersection of Indian Trail, Far Country Falls Trail
+[Turn]  0.0562711780634354 miles on Far Country Falls Trail to intersection of Far Country Falls Trail
+Turn around and go back to https://www.openstreetmap.org/node/5551815360 on Far Country Falls Trail (0.0562711780634354 miles)
+[Turn]  0.151716065928022 miles on Indian Trail to intersection of Indian Trail, Far Country Trail
+[Stay straight]  0.663351638899435 miles on Indian Trail to intersection of Indian Trail, Licorice Fern Trail
+[Stay straight]  0.11953318645696 miles on Indian Trail to intersection of Indian Trail
+Turn around and go back to https://www.openstreetmap.org/node/523268458 on Indian Trail (0.11953318645696 miles)
+[Turn]  0.223390496250672 miles on Licorice Fern Trail to intersection of Licorice Fern Trail
+[Stay straight]  0.0246508746307384 miles on Licorice Fern Trail to intersection of Licorice Fern Trail
+[Stay straight]  0.251173367717532 miles on Licorice Fern Trail to intersection of Southeast Licorice Way, Licorice Fern Trail
+Turn around and go back to https://www.openstreetmap.org/node/5292515678 on Licorice Fern Trail (0.251173367717532 miles)
+[Stay straight]  0.0246508746307384 miles on Licorice Fern Trail to intersection of Licorice Fern Trail
+[Stay straight]  0.223390496250672 miles on Licorice Fern Trail to intersection of Indian Trail, Licorice Fern Trail
+[Turn]  0.663351638899435 miles on Indian Trail to intersection of Indian Trail, Far Country Trail
+[Turn]  0.312255205339756 miles on Far Country Trail to intersection of Far Country Trail, Far Country Lookout
+[Stay straight]  0.131307764093462 miles on Far Country Trail to intersection of Far Country Trail, Shy Bear Trail
+Turn around and go back to https://www.openstreetmap.org/node/523268320 on Far Country Trail (0.131307764093462 miles)
+[Turn]  0.106586598929161 miles on Far Country Lookout to intersection of Far Country Lookout, Shy Bear Trail
+[Turn]  0.140117061192864 miles on Shy Bear Trail to intersection of Far Country Trail, Shy Bear Trail
+[Stay straight]  0.855640995506335 miles on Shy Bear Trail to intersection of Deceiver Trail, Shy Bear Trail
+[Stay straight]  1.01911847109068 miles on Shy Bear Trail to intersection of Shy Bear Trail
+Turn around and go back to https://www.openstreetmap.org/node/523268610 on Shy Bear Trail (1.01911847109068 miles)
+[Turn]  0.732520825183283 miles on Deceiver Trail to intersection of Deceiver Trail, Doughty Falls Trail
+[Turn]  0.0683404809776863 miles on Doughty Falls Trail to intersection of Doughty Falls Trail
+Turn around and go back to https://www.openstreetmap.org/node/5551815366 on Doughty Falls Trail (0.0683404809776863 miles)
+[Turn]  0.76426622361644 miles on Deceiver Trail to intersection of Deceiver Trail, Long View Peak Trail
+[Turn]  0.0586220978173563 miles on Long View Peak Trail to intersection of Long View Peak Trail
+Turn around and go back to https://www.openstreetmap.org/node/523298584 on Long View Peak Trail (0.0586220978173563 miles)
+[Stay straight]  0.312654048084595 miles on Long View Peak Trail to intersection of Ring Road Trail, Long View Peak Trail
+[Turn]  0.71514285166882 miles on Ring Road Trail to intersection of Ring Road Trail
+Turn around and go back to https://www.openstreetmap.org/node/523299067 on Ring Road Trail (0.71514285166882 miles)
+[Turn]  0.190954162557735 miles on Long View Peak Trail to intersection of Long View Peak Trail, Wilderness Creek Trail
+[Stay straight]  0.0189367059323886 miles on Long View Peak Trail to intersection of Shy Bear Trail, Long View Peak Trail
+[Turn]  0.0116940607860204 miles on Shy Bear Trail to intersection of Shy Bear Trail, Wilderness Peak Trail
+[Turn]  0.562212594083074 miles on Wilderness Peak Trail to intersection of Wilderness Peak Trail, Wilderness Cliffs Trail
+[Stay straight]  0.0979337387295265 miles on Wilderness Peak Trail to intersection of Wilderness Peak Trail
+Turn around and go back to https://www.openstreetmap.org/node/523332007 on Wilderness Peak Trail (0.0979337387295265 miles)
+[Turn]  1.84425833441573 miles on Wilderness Cliffs Trail to intersection of Wilderness Cliffs Trail, Squak Mountain Connector Trail
+[Stay straight]  0.124000475108701 miles on Wilderness Cliffs Trail to intersection of Wilderness Cliffs Trail, Wilderness Creek Trail
+Turn around and go back to https://www.openstreetmap.org/node/523331308 on Wilderness Cliffs Trail (0.124000475108701 miles)
+[Turn]  1.00392248510526 miles on Squak Mountain Connector Trail to intersection of Renton Issaquah Road Southeast, Squak Mountain Connector Trail
+[Turn]  0.0102382861676734 miles on Renton Issaquah Road Southeast to intersection of Renton Issaquah Road Southeast, https://www.openstreetmap.org/way/465669298
+[Stay straight]  0.284127927549464 miles on Renton Issaquah Road Southeast to intersection of https://www.openstreetmap.org/way/6326291, Renton Issaquah Road Southeast
+[Stay straight]  0.418243657791522 miles on Renton Issaquah Road Southeast to intersection of Renton Issaquah Road Southeast
+[Stay straight]  0.0174553413360191 miles on Renton Issaquah Road Southeast to intersection of Renton Issaquah Road Southeast, https://www.openstreetmap.org/way/42108700_containsplit_0_bisect_0
+[Turn]  0.0472251238088944 miles on https://www.openstreetmap.org/way/42108700_containsplit_0_bisect_0 to intersection of https://www.openstreetmap.org/way/42108700_containsplit_0_bisect_0, https://www.openstreetmap.org/way/42108700_containsplit_0_bisect_1, https://www.openstreetmap.org/way/42108700_containsplit_0_bisect_2, https://www.openstreetmap.org/way/42108700_containsplit_0_bisect_3, https://www.openstreetmap.org/way/42108700_containsplit_0_bisect_4, https://www.openstreetmap.org/way/42108700_containsplit_0_bisect_5, https://www.openstreetmap.org/way/42108700_containsplit_0_bisect_6, Wilderness Creek Trail
+[Turn]  0.211104523977731 miles on Wilderness Creek Trail to intersection of Wilderness Creek Trail
+[Stay straight]  0.00291756629307909 miles on Wilderness Creek Trail to intersection of Wilderness Creek Trail
+[Stay straight]  0.564037298955132 miles on Wilderness Creek Trail to intersection of Wilderness Cliffs Trail, Wilderness Creek Trail
+[Stay straight]  1.49012793889606 miles on Wilderness Creek Trail to intersection of Long View Peak Trail, Wilderness Creek Trail
+[Turn]  0.0189367059323886 miles on Long View Peak Trail to intersection of Shy Bear Trail, Long View Peak Trail
+[Turn]  0.0116940607860204 miles on Shy Bear Trail to intersection of Shy Bear Trail, Wilderness Peak Trail
+[Stay straight]  0.600520152683116 miles on Shy Bear Trail to intersection of Shy Bear Trail, Fred's Railroad Trail
+[Turn]  0.149340431269417 miles on Fred's Railroad Trail to intersection of Quarry Trail, Fred's Railroad Trail
+Turn around and go back to https://www.openstreetmap.org/node/523269040 on Fred's Railroad Trail (0.149340431269417 miles)
+[Turn]  0.0103661678806435 miles on Shy Bear Trail to intersection of Shy Bear Trail
+Turn around and go back to https://www.openstreetmap.org/node/523269040 on Shy Bear Trail (0.0103661678806435 miles)
+[Turn]  0.149340431269417 miles on Fred's Railroad Trail to intersection of Quarry Trail, Fred's Railroad Trail
+[Turn]  0.850326556143422 miles on Quarry Trail to intersection of Coal Creek Falls Trail, Quarry Trail
+Turn around and go back to https://www.openstreetmap.org/node/523298760 on Quarry Trail (0.850326556143422 miles)
+[Turn]  0.0450467148801775 miles on Fred's Railroad Trail to intersection of Fred's Railroad Trail
+[Stay straight]  0.0127663433883071 miles on Fred's Railroad Trail to intersection of Fred's Railroad Trail
+[Stay straight]  0.214084641768063 miles on Fred's Railroad Trail to intersection of Fred's Railroad Trail, East Fork Trail
+[Stay straight]  0.511268242037446 miles on Fred's Railroad Trail to intersection of Fred's Railroad Trail, Bypass Trail
+[Stay straight]  0.0406189399135392 miles on Fred's Railroad Trail to intersection of Fred's Railroad Trail, Clay Pit Road, Klondike Swamp Trail
+[Turn]  0.38853393550727 miles on Klondike Swamp Trail to intersection of Cougar Pass Trail, Klondike Swamp Trail
+[Turn]  0.201349076222365 miles on Cougar Pass Trail to intersection of Cougar Pass Trail, Harvey Manning Trail
+Turn around and go back to https://www.openstreetmap.org/node/541028990 on Cougar Pass Trail (0.201349076222365 miles)
+[Turn]  0.91069143622837 miles on Klondike Swamp Trail to intersection of Lost Beagle Trail, Klondike Swamp Trail
+[Stay straight]  0.00842293814003605 miles on Klondike Swamp Trail to intersection of Klondike Swamp Trail
+Turn around and go back to https://www.openstreetmap.org/node/541028922 on Klondike Swamp Trail (0.00842293814003605 miles)
+[Turn]  0.697771868127871 miles on Lost Beagle Trail to intersection of Lost Beagle Trail, https://www.openstreetmap.org/way/369616853
+[Turn]  0.249677896496301 miles on https://www.openstreetmap.org/way/369616853 to intersection of https://www.openstreetmap.org/way/369616853, https://www.openstreetmap.org/way/369616864_bisect_0, https://www.openstreetmap.org/way/369616864_bisect_1
+[Turn]  0.063339181721519 miles on https://www.openstreetmap.org/way/369616864_bisect_0 to intersection of https://www.openstreetmap.org/way/369616860_bisect_0, https://www.openstreetmap.org/way/369616860_bisect_1, https://www.openstreetmap.org/way/369616864_bisect_0
+Turn around and go back to https://www.openstreetmap.org/node/3733946122 on https://www.openstreetmap.org/way/369616864_bisect_0 (0.063339181721519 miles)
+[Turn]  0.0187579848834139 miles on https://www.openstreetmap.org/way/369616864_bisect_1 to intersection of https://www.openstreetmap.org/way/369616864_bisect_1
+Turn around and go back to https://www.openstreetmap.org/node/3733946122 on https://www.openstreetmap.org/way/369616864_bisect_1 (0.0187579848834139 miles)
+[Turn]  0.249677896496301 miles on https://www.openstreetmap.org/way/369616853 to intersection of Lost Beagle Trail, https://www.openstreetmap.org/way/369616853
+[Turn]  0.697771868127871 miles on Lost Beagle Trail to intersection of Lost Beagle Trail, Klondike Swamp Trail
+[Turn]  0.00842293814003605 miles on Klondike Swamp Trail to intersection of Klondike Swamp Trail
+[Stay straight]  0.0795437079564163 miles on Klondike Swamp Trail to intersection of Klondike Swamp Trail, Coyote Creek Trail
+Turn around and go back to https://www.openstreetmap.org/node/539187296 on Klondike Swamp Trail (0.0795437079564163 miles)
+Turn around and go back to https://www.openstreetmap.org/node/539187286 on Klondike Swamp Trail (0.0795437079564163 miles)
+[Turn]  0.507176660026117 miles on Coyote Creek Trail to intersection of Radio Peak Trail, Coyote Creek Trail
+[Turn]  0.401296179507665 miles on Radio Peak Trail to intersection of Radio Peak Trail, https://www.openstreetmap.org/way/498884992_1
+[Turn]  0.0814388607267679 miles on https://www.openstreetmap.org/way/498884992_1 to intersection of https://www.openstreetmap.org/way/498884992_1, https://www.openstreetmap.org/way/498884992_containsplit_0_bisect_1
+Turn around and go back to https://www.openstreetmap.org/node/541028865 on https://www.openstreetmap.org/way/498884992_1 (0.0814388607267679 miles)
+[Turn]  0.0774906021615106 miles on Radio Peak Trail to intersection of Radio Peak Trail
+Turn around and go back to https://www.openstreetmap.org/node/541028865 on Radio Peak Trail (0.0774906021615106 miles)
+[Stay straight]  0.401296179507665 miles on Radio Peak Trail to intersection of Radio Peak Trail, Coyote Creek Trail
+[Turn]  0.115583032065406 miles on Coyote Creek Trail to intersection of Coyote Creek Trail
+[Stay straight]  0.0113973381409599 miles on Coyote Creek Trail to intersection of Coyote Creek Trail
+[Stay straight]  0.584844515459646 miles on Coyote Creek Trail to intersection of Cave Hole Trail, Coyote Creek Trail, Clay Pit Road
+Turn around and go back to https://www.openstreetmap.org/node/539187228 on Coyote Creek Trail (0.584844515459646 miles)
+[Stay straight]  0.0113973381409599 miles on Coyote Creek Trail to intersection of Coyote Creek Trail
+[Stay straight]  0.115583032065406 miles on Coyote Creek Trail to intersection of Radio Peak Trail, Coyote Creek Trail
+[Stay straight]  0.507176660026117 miles on Coyote Creek Trail to intersection of Klondike Swamp Trail, Coyote Creek Trail
+[Stay straight]  0.490731990188967 miles on Coyote Creek Trail to intersection of Shangri La Trail, Coyote Creek Trail
+[Stay straight]  0.0691893397540987 miles on Coyote Creek Trail to intersection of Southeast Cougar Mountain Drive, Coyote Creek Trail
+Turn around and go back to https://www.openstreetmap.org/node/539187335 on Coyote Creek Trail (0.0691893397540987 miles)
+[Turn]  0.842289626611715 miles on Shangri La Trail to intersection of Shangri La Trail
+[Stay straight]  0.0246591722445576 miles on Shangri La Trail to intersection of Shangri La Trail, Viewpoint Trail
+[Stay straight]  0.0633112382416986 miles on Shangri La Trail to intersection of Shangri La Trail, https://www.openstreetmap.org/way/591881422
+[Stay straight]  0.0522244279953652 miles on Shangri La Trail to intersection of Shangri La Trail
+[Stay straight]  0.00904743424553038 miles on Shangri La Trail to intersection of Shangri La Trail
+[Stay straight]  0.0186503551670398 miles on Shangri La Trail to intersection of Tibbetts Marsh Trail, Shangri La Trail
+[Stay straight]  0.541472856298959 miles on Shangri La Trail to intersection of Surprise Creek Trail, Shangri La Trail
+[Stay straight]  0.0859175785566338 miles on Shangri La Trail to intersection of Protector Trail, Shangri La Trail
+Turn around and go back to https://www.openstreetmap.org/node/539187629 on Shangri La Trail (0.0859175785566338 miles)
+[Turn]  0.138103441747068 miles on Surprise Creek Trail to intersection of Surprise Creek Trail, Goode's Corner Trail
+[Stay straight]  0.54246986042691 miles on Surprise Creek Trail to intersection of No Name Trail, Surprise Creek Trail
+[Stay straight]  0.092458513171067 miles on Surprise Creek Trail to intersection of Surprise Creek Trail, Red Cedars Trail
+[Stay straight]  0.160897251881184 miles on Surprise Creek Trail to intersection of Surprise Creek Trail, Precipice Top Trail
+[Stay straight]  0.0464042330332631 miles on Surprise Creek Trail to intersection of Surprise Creek Trail
+Turn around and go back to https://www.openstreetmap.org/node/539187827 on Surprise Creek Trail (0.0464042330332631 miles)
+[Turn]  0.28695991651525 miles on Precipice Top Trail to intersection of https://www.openstreetmap.org/way/318112264_containsplit_0, Precipice Top Trail
+[Stay straight]  0.218398390181644 miles on Precipice Top Trail to intersection of Military Ridge Trail, Precipice Top Trail
+[Turn]  0.0590068337938155 miles on Military Ridge Trail to intersection of Big Tree Ridge Trail, Red Cedars Trail, Military Ridge Trail
+Turn around and go back to https://www.openstreetmap.org/node/3222758310 on Military Ridge Trail (0.0590068337938155 miles)
+[Stay straight]  0.129599979192915 miles on Military Ridge Trail to intersection of Military Ridge Trail
+Turn around and go back to https://www.openstreetmap.org/node/3222758310 on Military Ridge Trail (0.129599979192915 miles)
+Turn around and go back to https://www.openstreetmap.org/node/3427926293 on Military Ridge Trail (0.129599979192915 miles)
+[Stay straight]  0.490306985815804 miles on Military Ridge Trail to intersection of Military Ridge Trail, https://www.openstreetmap.org/way/401874793
+[Stay straight]  0.0991874906854941 miles on Military Ridge Trail to intersection of Harvey Manning Trail, Military Ridge Trail, https://www.openstreetmap.org/way/335691387, https://www.openstreetmap.org/way/335691501
+[Turn]  0.0902582871129156 miles on https://www.openstreetmap.org/way/335691387 to intersection of https://www.openstreetmap.org/way/335689749, https://www.openstreetmap.org/way/335691387, https://www.openstreetmap.org/way/335691388_1_bisect_1, https://www.openstreetmap.org/way/335691388_1_bisect_2
+[Turn]  0.161063232138125 miles on https://www.openstreetmap.org/way/335691388_1_bisect_1 to intersection of https://www.openstreetmap.org/way/335691385_bisect_0, https://www.openstreetmap.org/way/335691388_1_bisect_0, https://www.openstreetmap.org/way/335691388_1_bisect_1
+[Turn]  0.150256417048179 miles on https://www.openstreetmap.org/way/335691388_1_bisect_0 to intersection of https://www.openstreetmap.org/way/335691388_containsplit_0, https://www.openstreetmap.org/way/335691388_1_bisect_0
+[Turn]  0.28244672117233 miles on https://www.openstreetmap.org/way/335691388_containsplit_0 to intersection of Newport Way Northwest, https://www.openstreetmap.org/way/335691388_containsplit_0
+[Turn]  0.113520634121829 miles on Newport Way Northwest to intersection of Newport Way Northwest, Big Tree Ridge Trail
+[Turn]  0.668977637051883 miles on Big Tree Ridge Trail to intersection of Big Tree Ridge Trail, Harvey Manning Trail
+[Turn]  0.0989248679897775 miles on Harvey Manning Trail to intersection of Harvey Manning Trail
+Turn around and go back to https://www.openstreetmap.org/node/2383841692 on Harvey Manning Trail (0.0989248679897775 miles)
+[Turn]  0.711553961406879 miles on Big Tree Ridge Trail to intersection of Big Tree Ridge Trail, Red Cedars Trail, Military Ridge Trail
+[Turn]  0.482581505689366 miles on Red Cedars Trail to intersection of Surprise Creek Trail, Red Cedars Trail
+[Turn]  0.092458513171067 miles on Surprise Creek Trail to intersection of No Name Trail, Surprise Creek Trail
+[Stay straight]  0.54246986042691 miles on Surprise Creek Trail to intersection of Surprise Creek Trail, Goode's Corner Trail
+[Turn]  0.272833427645135 miles on Goode's Corner Trail to intersection of Goode's Corner Trail
+[Stay straight]  0.00679401001757917 miles on Goode's Corner Trail to intersection of Goode's Corner Trail, https://www.openstreetmap.org/way/591881428_1
+[Stay straight]  0.00754918153515327 miles on Goode's Corner Trail to intersection of Goode's Corner Trail, https://www.openstreetmap.org/way/555800695_containsplit_0
+Turn around and go back to https://www.openstreetmap.org/node/5280584979 on Goode's Corner Trail (0.00754918153515327 miles)
+[Turn]  0.0531339066422737 miles on https://www.openstreetmap.org/way/591881428_1 to intersection of https://www.openstreetmap.org/way/591881428_1, https://www.openstreetmap.org/way/591881428_containsplit_0
+Turn around and go back to https://www.openstreetmap.org/node/5280584979 on https://www.openstreetmap.org/way/591881428_1 (0.0531339066422737 miles)
+[Turn]  0.00679401001757917 miles on Goode's Corner Trail to intersection of Goode's Corner Trail
+[Stay straight]  0.272833427645135 miles on Goode's Corner Trail to intersection of Surprise Creek Trail, Goode's Corner Trail
+[Turn]  0.138103441747068 miles on Surprise Creek Trail to intersection of Surprise Creek Trail, Shangri La Trail
+[Turn]  0.541472856298959 miles on Shangri La Trail to intersection of Tibbetts Marsh Trail, Shangri La Trail
+[Turn]  0.0728527902138442 miles on Tibbetts Marsh Trail to intersection of Harvey Manning Trail, Tibbetts Marsh Trail
+[Turn]  0.0733436670955589 miles on Harvey Manning Trail to intersection of Lost Beagle Trail, Harvey Manning Trail
+Turn around and go back to https://www.openstreetmap.org/node/541030114 on Harvey Manning Trail (0.0733436670955589 miles)
+[Turn]  0.664917840932127 miles on Tibbetts Marsh Trail to intersection of Tibbetts Marsh Trail, Protector Trail
+[Stay straight]  0.120610414954201 miles on Tibbetts Marsh Trail to intersection of Tibbetts Marsh Trail, West Tibbetts Creek Trail
+[Stay straight]  0.384532299212406 miles on Tibbetts Marsh Trail to intersection of Cougar Pass Trail, Tibbetts Marsh Trail
+Turn around and go back to https://www.openstreetmap.org/node/541029332 on Tibbetts Marsh Trail (0.384532299212406 miles)
+[Stay straight]  0.120610414954201 miles on Tibbetts Marsh Trail to intersection of Tibbetts Marsh Trail, Protector Trail
+Turn around and go back to https://www.openstreetmap.org/node/541029332 on Tibbetts Marsh Trail (0.120610414954201 miles)
+[Turn]  0.696598878589097 miles on West Tibbetts Creek Trail to intersection of West Tibbetts Creek Trail, Bear Ridge Trail
+[Turn]  0.683720440347768 miles on Bear Ridge Trail to intersection of Bear Ridge Trail
+Turn around and go back to https://www.openstreetmap.org/node/541029726 on Bear Ridge Trail (0.683720440347768 miles)
+[Stay straight]  0.429904424635846 miles on Bear Ridge Trail to intersection of Bear Ridge Trail, Shangri La Trail
+[Turn]  0.44685934110913 miles on Shangri La Trail to intersection of Shangri La Trail
+Turn around and go back to https://www.openstreetmap.org/node/541029811 on Shangri La Trail (0.44685934110913 miles)
+[Stay straight]  0.179463154699676 miles on Shangri La Trail to intersection of No Name Trail, Shangri La Trail
+[Turn]  0.303476643291597 miles on No Name Trail to intersection of No Name Trail, Surprise Creek Trail
+Turn around and go back to https://www.openstreetmap.org/node/539187416 on No Name Trail (0.303476643291597 miles)
+[Turn]  0.500933735828907 miles on Shangri La Trail to intersection of Protector Trail, Shangri La Trail
+[Turn]  0.553106871332146 miles on Protector Trail to intersection of Tibbetts Marsh Trail, Protector Trail
+[Turn]  0.664917840932127 miles on Tibbetts Marsh Trail to intersection of Harvey Manning Trail, Tibbetts Marsh Trail
+[Stay straight]  0.0728527902138442 miles on Tibbetts Marsh Trail to intersection of Tibbetts Marsh Trail, Shangri La Trail
+[Turn]  0.0186503551670398 miles on Shangri La Trail to intersection of Shangri La Trail
+[Stay straight]  0.00904743424553038 miles on Shangri La Trail to intersection of Shangri La Trail
+[Stay straight]  0.0522244279953652 miles on Shangri La Trail to intersection of Shangri La Trail, https://www.openstreetmap.org/way/591881422
+[Turn]  0.126726890447951 miles on https://www.openstreetmap.org/way/591881422 to intersection of Viewpoint Trail, https://www.openstreetmap.org/way/591881422
+[Turn]  0.0861525612898301 miles on Viewpoint Trail to intersection of Shangri La Trail, Viewpoint Trail
+[Turn]  0.0246591722445576 miles on Shangri La Trail to intersection of Shangri La Trail
+[Stay straight]  0.0430483446491685 miles on Shangri La Trail to intersection of Southeast Cougar Mountain Drive, Shangri La Trail
+[Turn]  0.0100818514585291 miles on Southeast Cougar Mountain Drive to intersection of Southeast Cougar Mountain Drive, https://www.openstreetmap.org/way/369616860_bisect_0
+[Turn]  0.0826281764248558 miles on https://www.openstreetmap.org/way/369616860_bisect_0 to intersection of https://www.openstreetmap.org/way/369616860_bisect_0, https://www.openstreetmap.org/way/369616860_bisect_1, https://www.openstreetmap.org/way/369616864_bisect_0
+[Turn]  0.063339181721519 miles on https://www.openstreetmap.org/way/369616864_bisect_0 to intersection of https://www.openstreetmap.org/way/369616853, https://www.openstreetmap.org/way/369616864_bisect_0, https://www.openstreetmap.org/way/369616864_bisect_1
+[Turn]  0.249677896496301 miles on https://www.openstreetmap.org/way/369616853 to intersection of Lost Beagle Trail, https://www.openstreetmap.org/way/369616853
+[Turn]  0.348114302628501 miles on Lost Beagle Trail to intersection of Lost Beagle Trail, Harvey Manning Trail
+[Turn]  1.04867749405902 miles on Harvey Manning Trail to intersection of Cougar Pass Trail, Harvey Manning Trail
+[Turn]  0.251702536215124 miles on Cougar Pass Trail to intersection of Cougar Pass Trail, Tibbetts Marsh Trail
+[Turn]  0.284701034937716 miles on Tibbetts Marsh Trail to intersection of Tibbetts Marsh Trail, Clay Pit Road
+[Turn]  0.0982762565467334 miles on Clay Pit Road to intersection of Mine Shaft Trail, Clay Pit Road
+[Turn]  0.501904091056558 miles on Mine Shaft Trail to intersection of East Fork Trail, Mine Shaft Trail
+[Turn]  0.093600433473867 miles on East Fork Trail to intersection of East Fork Trail, https://www.openstreetmap.org/way/369617358_bisect_0, https://www.openstreetmap.org/way/369617358_bisect_1
+Turn around and go back to https://www.openstreetmap.org/node/523332147 on East Fork Trail (0.093600433473867 miles)
+[Stay straight]  1.08285485668297 miles on East Fork Trail to intersection of Fred's Railroad Trail, East Fork Trail
+[Turn]  0.511268242037446 miles on Fred's Railroad Trail to intersection of Fred's Railroad Trail, Bypass Trail
+[Turn]  0.213291689225925 miles on Bypass Trail to intersection of Bypass Trail
+[Stay straight]  0.00547839006042497 miles on Bypass Trail to intersection of Bypass Trail
+[Stay straight]  0.0749739494991075 miles on Bypass Trail to intersection of Cave Hole Trail, Bypass Trail
+[Turn]  0.0954313809153778 miles on Cave Hole Trail to intersection of Cave Hole Trail, Old Man's Trail
+[Turn]  0.277364541666781 miles on Old Man's Trail to intersection of Old Man's Trail, https://www.openstreetmap.org/way/369617357
+[Stay straight]  0.0897733709593958 miles on Old Man's Trail to intersection of Old Man's Trail, https://www.openstreetmap.org/way/369617357
+[Stay straight]  0.0125887066730805 miles on Old Man's Trail to intersection of https://www.openstreetmap.org/way/42106340_bisect_2, https://www.openstreetmap.org/way/42106340_bisect_3, Old Man's Trail
+[Turn]  0.0194806719514089 miles on https://www.openstreetmap.org/way/42106340_bisect_2 to intersection of https://www.openstreetmap.org/way/42106340_bisect_1, https://www.openstreetmap.org/way/42106340_bisect_2, https://www.openstreetmap.org/way/43188531_bisect_0
+[Turn]  0.01700831014159 miles on https://www.openstreetmap.org/way/43188531_bisect_0 to intersection of https://www.openstreetmap.org/way/43188531_bisect_0, https://www.openstreetmap.org/way/43188531_bisect_1, https://www.openstreetmap.org/way/498889629
+[Turn]  0.146304166739636 miles on https://www.openstreetmap.org/way/498889629 to intersection of Nike Horse Trail, https://www.openstreetmap.org/way/498889629
+[Turn]  0.0956508191570487 miles on Nike Horse Trail to intersection of Nike Horse Trail, https://www.openstreetmap.org/way/498889630
+[Turn]  0.0655591008895402 miles on https://www.openstreetmap.org/way/498889630 to intersection of https://www.openstreetmap.org/way/43188531_bisect_1, https://www.openstreetmap.org/way/43188531_bisect_2, https://www.openstreetmap.org/way/498889630
+Turn around and go back to https://www.openstreetmap.org/node/4902302622 on https://www.openstreetmap.org/way/498889630 (0.0655591008895402 miles)
+[Turn]  0.199140988016735 miles on Nike Horse Trail to intersection of Nike Horse Trail, Sky Country Trail
+[Stay straight]  0.0425333338883194 miles on Nike Horse Trail to intersection of Nike Horse Trail, https://www.openstreetmap.org/way/369617359
+[Turn]  0.0349417028233569 miles on https://www.openstreetmap.org/way/369617359 to intersection of https://www.openstreetmap.org/way/92969023_bisect_1, https://www.openstreetmap.org/way/92969023_bisect_2, https://www.openstreetmap.org/way/369617359
+[Turn]  0.0329165707856868 miles on https://www.openstreetmap.org/way/92969023_bisect_1 to intersection of https://www.openstreetmap.org/way/92969014_bisect_2, https://www.openstreetmap.org/way/92969019_bisect_0, https://www.openstreetmap.org/way/92969023_bisect_0, https://www.openstreetmap.org/way/92969023_bisect_1
+[Turn]  0.0406375079247324 miles on https://www.openstreetmap.org/way/92969023_bisect_0 to intersection of https://www.openstreetmap.org/way/92969023_bisect_0
+Turn around and go back to https://www.openstreetmap.org/node/1077748348 on https://www.openstreetmap.org/way/92969023_bisect_0 (0.0406375079247324 miles)
+[Turn]  0.0329165707856868 miles on https://www.openstreetmap.org/way/92969023_bisect_1 to intersection of https://www.openstreetmap.org/way/92969023_bisect_1, https://www.openstreetmap.org/way/92969023_bisect_2, https://www.openstreetmap.org/way/369617359
+[Turn]  0.120264287497049 miles on https://www.openstreetmap.org/way/92969023_bisect_2 to intersection of https://www.openstreetmap.org/way/42106340_bisect_0, https://www.openstreetmap.org/way/42106340_bisect_1, https://www.openstreetmap.org/way/92969023_bisect_2
+[Turn]  0.0519826582647728 miles on https://www.openstreetmap.org/way/42106340_bisect_0 to intersection of https://www.openstreetmap.org/way/42106340_bisect_0, Clay Pit Road
+[Turn]  0.0778317146210058 miles on Clay Pit Road to intersection of https://www.openstreetmap.org/way/42106340_bisect_3, Clay Pit Road
+[Stay straight]  0.104999575082576 miles on Clay Pit Road to intersection of Cave Hole Trail, Coyote Creek Trail, Clay Pit Road
+[Turn]  0.144625812878418 miles on Cave Hole Trail to intersection of Cave Hole Trail, Old Man's Trail
+[Stay straight]  0.0954313809153778 miles on Cave Hole Trail to intersection of Cave Hole Trail, Bypass Trail
+[Stay straight]  0.590847172097226 miles on Cave Hole Trail to intersection of Cave Hole Trail, Nike Horse Trail
+[Stay straight]  0.385912658772705 miles on Cave Hole Trail to intersection of Cave Hole Trail, Coal Creek Falls Trail
+[Stay straight]  0.579511505193172 miles on Cave Hole Trail to intersection of Red Town Creek Trail, Cave Hole Trail
+[Stay straight]  0.177201490878191 miles on Cave Hole Trail to intersection of Red Town Trail, Cave Hole Trail
+[Turn]  0.144304838379335 miles on Red Town Trail to intersection of Red Town Trail, Bagley Seam Trail
+[Stay straight]  0.0773305326141459 miles on Red Town Trail to intersection of Red Town Trail, Rainbow Town Trail
+Turn around and go back to https://www.openstreetmap.org/node/53020767 on Red Town Trail (0.0773305326141459 miles)
+[Turn]  0.247428788080047 miles on Bagley Seam Trail to intersection of Wildside Trail, Bagley Seam Trail
+[Turn]  0.13071007017758 miles on Wildside Trail to intersection of Red Town Trail, Wildside Trail
+Turn around and go back to https://www.openstreetmap.org/node/513202399 on Wildside Trail (0.13071007017758 miles)
+[Stay straight]  0.0703899613819463 miles on Wildside Trail to intersection of Wildside Trail, Rainbow Town Trail
+Turn around and go back to https://www.openstreetmap.org/node/513202399 on Wildside Trail (0.0703899613819463 miles)
+Turn around and go back to https://www.openstreetmap.org/node/513202324 on Wildside Trail (0.0703899613819463 miles)
+[Turn]  0.1761353852932 miles on Rainbow Town Trail to intersection of China Creek Trail, Rainbow Town Trail
+[Turn]  0.143864446831134 miles on China Creek Trail to intersection of China Creek Trail
+Turn around and go back to https://www.openstreetmap.org/node/513202289 on China Creek Trail (0.143864446831134 miles)
+[Stay straight]  0.245278232514184 miles on China Creek Trail to intersection of Red Town Trail, Red Town Trailhead Access Road, China Creek Trail

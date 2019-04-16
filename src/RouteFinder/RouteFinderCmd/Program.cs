@@ -60,7 +60,7 @@ namespace RouteFinderCmd
             var routeCost = route.Select(x => x.Weight).Sum();
             //new RouteCoverageOutputter(outputLocation).OutputGraph(route, originalEdgeWays, "greedyRouteCoverage.json");
 
-            new RouteDetailOutputter(ways, outputLocation, "lazyRouteCoverage.json").DescribeRoutesAsWays(lazyRoute);
+            new RouteDetailOutputter(ways, outputLocation, "lazyRouteCoverage.json", "instructions.txt").DescribeRoutesAsWays(lazyRoute);
 
             Console.WriteLine($"Required running: {requiredCost}");
             Console.WriteLine($"Lazy Route: {lazyRouteCost}");

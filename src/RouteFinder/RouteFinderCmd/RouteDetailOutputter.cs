@@ -16,12 +16,14 @@ namespace RouteFinderCmd
 
         private readonly string _outputLocation;
 
-        private readonly string _filename;
+        private readonly string _graphFilename;
+        private readonly string _instructionsFilename;
 
-        public RouteDetailOutputter(List<Way> ways, string outputLocation, string graphOutputFilename)
+        public RouteDetailOutputter(List<Way> ways, string outputLocation, string graphOutputFilename, string instructionsFilename)
         {
             _outputLocation = outputLocation;
-            _filename = graphOutputFilename;
+            _graphFilename = graphOutputFilename;
+            _instructionsFilename = instructionsFilename;
             _nodeMap = new Dictionary<Node, HashSet<Way>>();
             foreach (var way in ways)
             {
@@ -49,12 +51,11 @@ namespace RouteFinderCmd
             // make text output
             var textOutput = BuildTextDirections(waySteps);
             Console.Write(textOutput);
-
         }
 
         private void BuildGraph(LinkedList<WayStep> waySteps)
         {
-            var fullPath = Path.Combine(_outputLocation, _filename);
+            var fullPath = Path.Combine(_outputLocation, _graphFilename);
             var converter = new GeoJsonConverter();
 
             var ways = waySteps.GroupBy(x => x.Path).ToDictionary(x => x.Key, x => x.Count());
@@ -94,6 +95,8 @@ namespace RouteFinderCmd
                 previousStep = step;
             }
 
+            var fullPath = Path.Combine(_outputLocation, _instructionsFilename);
+            File.WriteAllText(fullPath, sb.ToString());
             return sb.ToString();
         }
 
