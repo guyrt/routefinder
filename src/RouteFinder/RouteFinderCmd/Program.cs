@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using OpenStreetMapEtl;
 using RouteCleaner;
 using RouteCleaner.Model;
 using RouteCleaner.Transformers;
@@ -17,8 +18,22 @@ namespace RouteFinderCmd
 
         public static void Main()
         {
-            var deserializer = new OsmDeserializer();
-            var geometry = deserializer.ReadFile(File.OpenText(@"C:\Users\riguy\Documents\GitHub\routefinder\data\cougar.osm"));
+            RunDownloader();
+            //var deserializer = new OsmDeserializer();
+            //var geometry = deserializer.ReadFile(File.OpenText(@"C:\Users\riguy\Documents\GitHub\routefinder\data\cougar.osm"));
+            //SummarizeTags.Summarize(geometry.Nodes.Select(n => n.Tags));
+            // geometry = new DropParkingAisle().Transform(geometry);
+            // TagReuse.Summarize(geometry);
+        }
+
+        private static void RunDownloader()
+        {
+            var general = new DownloaderGeneral(new CachedFileDownloader("C:/users/riguy/Documents/GitHub/routefinder/data/sample.xml"));
+            //var general = new DownloaderGeneral(new OsmDownloader());
+            general.Run(-122.25, -122, 47.75, 48);
+        }
+
+        private static void RunCougarFinder(Geometry geometry) {
             geometry = new DropBuildings().Transform(geometry);
             geometry = new DropWater().Transform(geometry);
 

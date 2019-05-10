@@ -30,10 +30,9 @@ namespace RouteFinderCmd
         {
             var nodes = way.Nodes;
             var totalCost = 0.0;
-            var costFunction = new SimpleDistanceCost();
             for (var i = 0; i < nodes.Count() - 1; i++)
             {
-                totalCost += costFunction.Compute(nodes[i], nodes[i + 1]);
+                totalCost += SimpleDistanceCost.Compute(nodes[i], nodes[i + 1]);
             }
 
             var id1 = nodes.First();

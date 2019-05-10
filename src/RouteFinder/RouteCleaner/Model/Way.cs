@@ -22,6 +22,11 @@ namespace RouteCleaner.Model
             return Tags.ContainsKey("amenity") && Tags["amenity"] == "parking";
         }
 
+        public bool IsParkingAisle()
+        {
+            return Tags.ContainsKey("service") && Tags["service"] == "parking_aisle";
+        }
+
         public bool MustHit => Tags.ContainsKey("rfInPolygon") && Tags["rfInPolygon"] == "in";
 
         public string Name => Tags.ContainsKey("name") ? Tags["name"] : ToString();
