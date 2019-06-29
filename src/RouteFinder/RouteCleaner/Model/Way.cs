@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace RouteCleaner.Model
 {
@@ -14,7 +15,7 @@ namespace RouteCleaner.Model
         public bool FootTraffic()
         {
             return (Tags.ContainsKey("foot") && Tags["foot"] == "designated") ||
-                   (Tags.ContainsKey("highway") && (Tags["highway"].Contains("foot") || Tags["highway"].Contains("path")));
+                   (Tags.ContainsKey("highway") && (Tags["highway"].Contains("foot") || Tags["highway"].Contains("path") || Tags["highway"].Contains("track")));
         }
 
         public bool IsParkingLot()
@@ -34,6 +35,16 @@ namespace RouteCleaner.Model
         public override string ToString()
         {
             return $"https://www.openstreetmap.org/way/{Id}";
+        }
+
+        public ThinWay ToThin()
+        {
+            return new ThinWay
+            {
+                Id = Id,
+                Nodes = Nodes.Select(n => n.Id).ToArray(),
+                Tags = Tags.Count == 0 ? null : Tags
+            };
         }
     }
 }

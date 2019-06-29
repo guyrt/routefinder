@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RouteCleaner;
 using RouteCleaner.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -21,6 +22,12 @@ namespace OpenStreetMapEtl.Utils
             var converter = new GeoJsonConverter();
             var polygonOut = converter.Convert(ways);
             var serialized = JsonConvert.SerializeObject(polygonOut);
+            File.WriteAllLines(fullPath, new[] { serialized });
+        }
+
+        internal void DumpString(string serialized, string filename)
+        {
+            var fullPath = Path.Combine(_path, filename);
             File.WriteAllLines(fullPath, new[] { serialized });
         }
     }

@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using OpenStreetMapEtl;
+using OpenStreetMapEtl.Azure;
+using OpenStreetMapEtl.Storage;
+using OpenStreetMapEtl.Utils;
 using RouteCleaner;
 using RouteCleaner.Model;
 using RouteCleaner.Transformers;
@@ -18,19 +21,15 @@ namespace RouteFinderCmd
 
         public static void Main()
         {
-            RunDownloader();
-            //var deserializer = new OsmDeserializer();
-            //var geometry = deserializer.ReadFile(File.OpenText(@"C:\Users\riguy\Documents\GitHub\routefinder\data\cougar.osm"));
-            //SummarizeTags.Summarize(geometry.Nodes.Select(n => n.Tags));
-            // geometry = new DropParkingAisle().Transform(geometry);
-            // TagReuse.Summarize(geometry);
-        }
-
-        private static void RunDownloader()
-        {
-            var general = new DownloaderGeneral(new CachedFileDownloader("C:/users/riguy/Documents/GitHub/routefinder/data/sample.xml"));
-            //var general = new DownloaderGeneral(new OsmDownloader());
-            general.Run(-122.25, -122, 47.75, 48);
+            var acd = AreaCacheDownload.Create(new AzureFileCache());
+            var region = acd.GetRegion(47.627773, -122.208002, 5);
+            region = new OnlyTraversable().Transform(region);
+            region = new CollapseParkingLots().Transform(region);
+            var ways = new SplitBisectedWays().Transform(region.Ways);
+            var graph = new GraphBuilder(new NoopGraphFilter()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
+            var routes = new PotentialRoutes<Node>(graph, SimpleDistanceCost.Compute);
+            var routeList = routes.GetRoutes(region.Nodes.First(x => x.Id == "4521863210"), 12).ToList();
+            var a = 1;
         }
 
         private static void RunCougarFinder(Geometry geometry) {
@@ -56,7 +55,7 @@ namespace RouteFinderCmd
                 }
             }
 
-            var graph = new GraphBuilder().BuildGraph(ways.ToArray(), out var originalEdgeWays);
+            var graph = new GraphBuilder(new RequiredEdgeGraphFilter()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
 
             new GraphSummaryOutputter(outputLocation).OutputGraph(graph, originalEdgeWays, "reducedGraph.json");
 
@@ -68,7 +67,7 @@ namespace RouteFinderCmd
             var lazyRouteCost = lazyRoute.Select(x => x.Weight).Sum();
 
             // do regular route (rebuilds graph)
-            graph = new GraphBuilder().BuildGraph(ways.ToArray(), out originalEdgeWays);
+            graph = new GraphBuilder(new RequiredEdgeGraphFilter()).BuildGraph(ways.ToArray(), out originalEdgeWays);
             var greedRouteFinder = new RouteFinder<Node>(new GreedyGraphAugmenter<Node>());
             var route = greedRouteFinder.GetRoute(graph);
 

@@ -19,7 +19,7 @@
 
         public bool MustHit { get; }
 
-        public WeightedAdjacencyNode(T vertex, double weight, bool mustHit, bool primaryCopy = true)
+        public WeightedAdjacencyNode(T vertex, double weight, bool mustHit = true, bool primaryCopy = true)
         {
             Vertex = vertex;
             Weight = weight;

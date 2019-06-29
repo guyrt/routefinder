@@ -13,13 +13,13 @@ namespace OpenStreetMapEtl.Utils
         {
             TmpFile = Path.GetTempFileName();
             Console.WriteLine(TmpFile);
-            _deleteOnDispose = false;
+            _deleteOnDispose = true;
         }
 
         public TmpFileWrapper(string debugPath)
         {
             TmpFile = debugPath;
-            _deleteOnDispose = true;
+            _deleteOnDispose = false;
         }
 
         public void Dispose()

@@ -32,6 +32,9 @@ namespace OpenStreetMapEtl
             // strip tiger
             geometry = new DropTigerTags().Transform(geometry);
             LogSize(geometry, "tiger");
+            // strip tiger
+            geometry = new DropNodeTags().Transform(geometry);
+            LogSize(geometry, "nodetags");
             // strip driveways
             geometry = new DropDriveways().Transform(geometry);
             LogSize(geometry, "driveways");

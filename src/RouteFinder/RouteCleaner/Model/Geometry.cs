@@ -1,4 +1,6 @@
-﻿namespace RouteCleaner.Model
+﻿using System.Linq;
+
+namespace RouteCleaner.Model
 {
     public class Geometry
     {
@@ -16,5 +18,14 @@
 
         public Relation[] Relations { get; }
 
+        public ThinGeometry ToThin()
+        {
+            return new ThinGeometry
+            {
+                Nodes = Nodes.Select(n => n.ToThin()).ToArray(),
+                Ways = Ways.Select(w => w.ToThin()).ToArray(),
+                Relations = Relations.Select(r => r.ToThin()).ToArray()
+            };
+        }
     }
 }

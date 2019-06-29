@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RouteCleaner.Model
 {
@@ -38,6 +39,16 @@ namespace RouteCleaner.Model
             {
                 return new Polygon[0];
             }
+        }
+
+        public ThinRelation ToThin()
+        {
+            return new ThinRelation
+            {
+                Id = Id,
+                Ways = Ways.Select(w => w.Id).ToArray(),
+                Tags = Tags.Count == 0 ? null : Tags
+            };
         }
     }
 }

@@ -1,7 +1,11 @@
-﻿using OpenStreetMapEtl.Utils;
+﻿using OpenStreetMapEtl.Azure;
+using OpenStreetMapEtl.Utils;
 using RouteCleaner;
+using RouteCleaner.Filters;
 using RouteCleaner.Model;
 using System;
+using System.Linq;
+using System.Threading;
 
 namespace OpenStreetMapEtl
 {
@@ -14,59 +18,49 @@ namespace OpenStreetMapEtl
 
         private readonly IRangeDownloader _downloader = new OsmDownloader();
 
-        private readonly DetailedDebugOutputter _debugger = new DetailedDebugOutputter("C:/tmp");
+        private readonly DetailedDebugOutputter _debugger = new DetailedDebugOutputter(@"\Users\riguy\Documents\Github\routefinder\src\RouteViewerWeb\data");
 
         public DownloaderGeneral(IRangeDownloader downloader)
         {
             _downloader = downloader;
         }
 
-        public void Run(double westLng, double eastLng, double southLat, double northLat)
+        public void Run(BoundingBox bbox)
         {
-            GetRange(westLng, eastLng, southLat, northLat, out var latDelta, out var lonDelta);
-            LogRanges(latDelta, lonDelta);
-
-            var localSouthLat = southLat;
-            while (localSouthLat < northLat)
+            var boxes = new BuildBoundingBoxes(16).GetBoundingBoxes(bbox).ToList();
+            var first = true;
+            foreach (var box in boxes)
             {
-                var localNorthLat = Math.Min(localSouthLat + latDelta, northLat);
-                if (northLat - localNorthLat < 0.05)
+                if (!first)
                 {
-                    localNorthLat = northLat;
+                    // do one pull every four minutes.
+                    Thread.Sleep(1000 * 60 * 4);
                 }
-                var localWestLng = westLng;
-                while (localWestLng < eastLng)
-                {
-                    var localEastLng = Math.Min(localWestLng + lonDelta, eastLng);
-                    localEastLng = localEastLng - eastLng < 0.05 ? eastLng : localEastLng;
-                    RunSingleSquare(localWestLng, localEastLng, localSouthLat, localNorthLat);
-                    localWestLng = localEastLng;
-                }
-                localSouthLat = localNorthLat;
+                first = false;
+                var geometry = RunSingleSquare(box);
+                SaveGeometry(geometry, box);
             }
         }
 
-        private Geometry RunSingleSquare(double westLng, double eastLng, double southLat, double northLat)
+        public void SaveGeometry(Geometry geometry, BoundingBox box)
         {
-            using (var downloadedFile = _downloader.GetRange(westLng, eastLng, southLat, northLat))
+            var uploader = new BlobUpload();
+            var serialized = JsonSerDe.Serialize(geometry);
+            uploader.Upload(serialized, box);
+           // _debugger.DumpString(serialized, "fullOutput.json");
+        }
+
+        public Geometry RunSingleSquare(BoundingBox box)
+        {
+            using (var downloadedFile = _downloader.GetRange(box))
             {
                 var cleaner = new ParseAndCleanOsm();
                 var geometry = cleaner.ReadAndClean(downloadedFile.TmpFile);
-                var parkingLots = new PathParkingLotIntersection().FindParkingLotsWithIntersections(geometry);
-                _debugger.OutputWays(parkingLots.Keys, "parkingLots.json");
+                //var parkingLots = new PathParkingLotIntersection().FindParkingLotsWithIntersections(geometry);
+                
+                //_debugger.OutputWays(parkingLots.Keys, "parkingLots.json");
                 return geometry;
             }
-        }
-
-        private void GetRange(double westLng, double eastLng, double southLat, double northLat, out double latDelta, out double lonDelta)
-        {
-            latDelta = (northLat - southLat) / SimpleDistanceCost.Compute(northLat, southLat, westLng, westLng) * _kmSize;
-            lonDelta = (eastLng - westLng) / SimpleDistanceCost.Compute(northLat, northLat, eastLng, westLng) * _kmSize;
-        }
-
-        private void LogRanges(double latDelta, double lngDelta)
-        {
-            Console.WriteLine($"Deltas: {latDelta},{lngDelta}");
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using OpenStreetMapEtl.Utils;
+﻿using OpenStreetMapEtl.Utils;
 
 namespace OpenStreetMapEtl
 {
@@ -15,7 +12,7 @@ namespace OpenStreetMapEtl
         }
 
 
-        public TmpFileWrapper GetRange(double westLng, double eastLng, double southLat, double northLat)
+        public TmpFileWrapper GetRange(BoundingBox box)
         {
             return new TmpFileWrapper(_filePath);
         }

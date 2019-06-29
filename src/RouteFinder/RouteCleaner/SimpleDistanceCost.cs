@@ -35,6 +35,18 @@ namespace RouteCleaner
             return d;
         }
 
+        public static void ComputeDeltas(double centerLat, double sizeMeters, out double deltaLat, out double deltaLng)
+        {
+            // https://stackoverflow.com/questions/7477003/calculating-new-longitude-latitude-from-old-n-meters
+            // number of km per degree = ~111km (111.32 in google maps, but range varies
+            // between 110.567km at the equator and 111.699km at the poles)
+            // 1km in degree = 1 / 111.32km = 0.0089
+            // 1m in degree = 0.0089 / 1000 = 0.0000089
+            deltaLat = sizeMeters * 0.0000089;
+            deltaLng = deltaLat / Math.Cos(Deg2Rad(centerLat));
+        }
+
         private static double Deg2Rad(double deg) => deg * (Math.PI / 180);
+
     }
 }

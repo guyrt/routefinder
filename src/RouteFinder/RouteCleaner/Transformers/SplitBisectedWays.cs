@@ -11,7 +11,7 @@ namespace RouteCleaner.Transformers
     /// </summary>
     public class SplitBisectedWays
     {
-        public List<Way> Transform(List<Way> ways)
+        public List<Way> Transform(IEnumerable<Way> ways)
         {
             var endNodes = new HashSet<Node>();
             foreach (var way in ways)

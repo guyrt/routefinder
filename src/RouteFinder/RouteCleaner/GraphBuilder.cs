@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RouteCleaner;
 using RouteCleaner.Model;
 using RouteFinder;
 
-namespace RouteFinderCmd
+namespace RouteCleaner
 {
     public class GraphBuilder
     {
+
+        private readonly IGraphFilter _filter;
+
+        public GraphBuilder(IGraphFilter graphFilter)
+        {
+            _filter = graphFilter;
+        }
+
         public Graph<Node> BuildGraph(Way[] ways, out DirectedEdgeMetadata<Node, Way> originalEdgeWays)
         {
             originalEdgeWays = new DirectedEdgeMetadata<Node, Way>(Node.NodeComparer);
@@ -22,7 +29,7 @@ namespace RouteFinderCmd
                 AddWay(g, way, way.MustHit, originalEdgeWays);
             }
 
-            var reducedGraph = ReduceToRequiredNodes(g);
+            var reducedGraph = _filter.Filter(g);
             return reducedGraph;
         }
 
@@ -49,40 +56,7 @@ namespace RouteFinderCmd
             }
         }
 
-        private static Graph<Node> ReduceToRequiredNodes(Graph<Node> g)
-        {
-            var reducedNodes = GetPathsBetweenRequiredNodes(g);
-            var reducedGraph = g.ReduceToVertexSet(reducedNodes);
-            return reducedGraph;
-        }
-
-        /// <summary>
-        /// Construct a set of vertices that are on the shortest path between any two nodes in the required node set.
-        /// These may include non-required nodes.
-        /// </summary>
-        /// <param name="g"></param>
-        /// <returns></returns>
-        private static HashSet<Node> GetPathsBetweenRequiredNodes(Graph<Node> g)
-        {
-            var fullVertexSet = new HashSet<Node>(g.MustHitVertices);
-            foreach (var node in g.MustHitVertices)
-            {
-                var adsp = new AllDestinationShortestPaths<Node>(node, g.MustHitVertices, g);
-                adsp.Run();
-                var traversalPaths = adsp.TraversalPath;
-                foreach (var endNode in g.MustHitVertices)
-                {
-                    var localNode = endNode;
-                    while (traversalPaths.ContainsKey(localNode) && localNode != node)
-                    {
-                        fullVertexSet.Add(localNode);
-                        localNode = traversalPaths[localNode];
-                    }
-                }
-            }
-
-            return fullVertexSet;
-        }
+        
 
         private static List<Way> CreateExtraEdges(IEnumerable<Way> ways)
         {
