@@ -11,7 +11,7 @@ namespace OpenStreetMapEtl
 {
     public class AreaCacheDownload
     {
-        private static AreaCacheDownload _instance;
+        private readonly static AreaCacheDownload _instance;
 
         private readonly CacheFileLookup _cacheFileLookup;
 

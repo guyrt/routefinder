@@ -28,7 +28,7 @@ namespace RouteFinderCmd
             var ways = new SplitBisectedWays().Transform(region.Ways);
             var graph = new GraphBuilder(new NoopGraphFilter()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
             var routes = new PotentialRoutes<Node>(graph, SimpleDistanceCost.Compute);
-            var routeList = routes.GetRoutes(region.Nodes.First(x => x.Id == "4521863210"), 12).ToList();
+            var routeList = routes.GetRouteGreedy(region.Nodes.First(x => x.Id == "4521863210"), 5).ToList();
             var a = 1;
         }
 
