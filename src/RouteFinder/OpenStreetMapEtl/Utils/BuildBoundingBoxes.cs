@@ -46,8 +46,8 @@ namespace OpenStreetMapEtl.Utils
 
         private void GetRange(double westLng, double eastLng, double southLat, double northLat, out double latDelta, out double lonDelta)
         {
-            latDelta = (northLat - southLat) / SimpleDistanceCost.Compute(northLat, southLat, westLng, westLng) * _kmSize;
-            lonDelta = (eastLng - westLng) / SimpleDistanceCost.Compute(northLat, northLat, eastLng, westLng) * _kmSize;
+            latDelta = (northLat - southLat) / SimpleDistance.Compute(northLat, southLat, westLng, westLng) * _kmSize;
+            lonDelta = (eastLng - westLng) / SimpleDistance.Compute(northLat, northLat, eastLng, westLng) * _kmSize;
         }
 
         private void LogRanges(double latDelta, double lngDelta)

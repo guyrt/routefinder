@@ -23,7 +23,7 @@ namespace RouteFinder
 
             TryGetStartingPoint(graph, out var startingPoint);
             var path = MakePath(graph, startingPoint);
-            var rawPathLengths = path.Select(x => x.Weight).Sum();
+            var rawPathLengths = path.Select(x => x.Distance).Sum();
 
             while (TryGetStartingPoint(graph, path, out var startPointNode))
             {
@@ -31,7 +31,7 @@ namespace RouteFinder
                 var localPath = MakePath(graph, startingPointEdge);
                 var insertionPoint = startPointNode.Next ?? startPointNode;
                 localPath.RemoveFirst();
-                rawPathLengths += localPath.Select(x => x.Weight).Sum();
+                rawPathLengths += localPath.Select(x => x.Distance).Sum();
                 foreach (var node in localPath)
                 {
                     path.AddBefore(insertionPoint, node);
@@ -89,7 +89,7 @@ namespace RouteFinder
         /// <returns></returns>
         private LinkedList<WeightedAdjacencyNode<T>> MakePath(Graph<T> graph, T startingPoint)
         {
-            var wan = new WeightedAdjacencyNode<T>(startingPoint, 0, true);
+            var wan = new WeightedAdjacencyNode<T>(startingPoint, 0, 0, true);
             return MakePath(graph, wan);
         }
 
@@ -105,7 +105,7 @@ namespace RouteFinder
                     break;
                 }
 
-                path.AddLast(new WeightedAdjacencyNode<T>(nextVertexAdjancencyNode.Vertex, nextVertexAdjancencyNode.Weight, nextVertexAdjancencyNode.MustHit));
+                path.AddLast(new WeightedAdjacencyNode<T>(nextVertexAdjancencyNode.Vertex, nextVertexAdjancencyNode.Distance, 0, nextVertexAdjancencyNode.MustHit));
                 graph.ReduceEdgeCardinality(nextVertexAdjancencyNode.Vertex, currentNode);
                 currentNode = nextVertexAdjancencyNode.Vertex;
             }

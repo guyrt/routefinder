@@ -27,7 +27,7 @@ namespace OpenStreetMapEtl
 
         public void Run(BoundingBox bbox)
         {
-            var boxes = new BuildBoundingBoxes(16).GetBoundingBoxes(bbox).ToList();
+            var boxes = new BuildBoundingBoxes(_kmSize).GetBoundingBoxes(bbox).ToList();
             var first = true;
             foreach (var box in boxes)
             {

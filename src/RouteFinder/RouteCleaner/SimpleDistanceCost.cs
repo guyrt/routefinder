@@ -3,7 +3,7 @@ using RouteCleaner.Model;
 
 namespace RouteCleaner
 {
-    public static class SimpleDistanceCost
+    public static class SimpleDistance
     {
         /// <summary>
         /// Computes Distance in kilometers.

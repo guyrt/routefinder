@@ -27,7 +27,7 @@ namespace OpenStreetMapEtl.Azure
 
         public Geometry GetBox(BoundingBox box)
         {
-            var filename = BoundingBoxFilenameConverter.CreateFileName(box, "json");  // todo
+            var filename = BoundingBoxFilenameConverter.CreateFileName(box, "json");
             var blobReference = _container.GetBlobReference(filename);
             string text;
             using (var memoryStream = new MemoryStream())

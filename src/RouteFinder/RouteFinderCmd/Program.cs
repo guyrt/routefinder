@@ -26,9 +26,9 @@ namespace RouteFinderCmd
             region = new OnlyTraversable().Transform(region);
             region = new CollapseParkingLots().Transform(region);
             var ways = new SplitBisectedWays().Transform(region.Ways);
-            var graph = new GraphBuilder(new NoopGraphFilter()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
-            var routes = new PotentialRoutes<Node>(graph, SimpleDistanceCost.Compute);
-            var routeList = routes.GetRouteGreedy(region.Nodes.First(x => x.Id == "4521863210"), 5).ToList();
+            var graph = new GraphBuilder(new NoopGraphFilter(), new ReasonablyEnjoyableRunningCost()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
+            var routes = new PotentialRoutes<Node>(graph, SimpleDistance.Compute);
+            var routeList = routes.GetRouteGreedy(region.Nodes.First(x => x.Id == "4521863210"), 20).ToList();
             var a = 1;
         }
 
@@ -55,7 +55,7 @@ namespace RouteFinderCmd
                 }
             }
 
-            var graph = new GraphBuilder(new RequiredEdgeGraphFilter()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
+            var graph = new GraphBuilder(new RequiredEdgeGraphFilter(), new ReasonablyEnjoyableRunningCost()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
 
             new GraphSummaryOutputter(outputLocation).OutputGraph(graph, originalEdgeWays, "reducedGraph.json");
 
@@ -64,14 +64,14 @@ namespace RouteFinderCmd
             // lazy route
             var lazyRouteFinder = new RouteFinder<Node>(new LazyGraphAugmenter<Node>());
             var lazyRoute = lazyRouteFinder.GetRoute(graph);
-            var lazyRouteCost = lazyRoute.Select(x => x.Weight).Sum();
+            var lazyRouteCost = lazyRoute.Select(x => x.Distance).Sum();
 
             // do regular route (rebuilds graph)
-            graph = new GraphBuilder(new RequiredEdgeGraphFilter()).BuildGraph(ways.ToArray(), out originalEdgeWays);
+            graph = new GraphBuilder(new RequiredEdgeGraphFilter(), new ReasonablyEnjoyableRunningCost()).BuildGraph(ways.ToArray(), out originalEdgeWays);
             var greedRouteFinder = new RouteFinder<Node>(new GreedyGraphAugmenter<Node>());
             var route = greedRouteFinder.GetRoute(graph);
 
-            var routeCost = route.Select(x => x.Weight).Sum();
+            var routeCost = route.Select(x => x.Distance).Sum();
             //new RouteCoverageOutputter(outputLocation).OutputGraph(route, originalEdgeWays, "greedyRouteCoverage.json");
 
             new RouteDetailOutputter(ways, outputLocation, "lazyRouteCoverage.json", "instructions.txt").DescribeRoutesAsWays(lazyRoute);

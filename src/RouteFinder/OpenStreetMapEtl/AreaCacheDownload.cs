@@ -11,7 +11,7 @@ namespace OpenStreetMapEtl
 {
     public class AreaCacheDownload
     {
-        private readonly static AreaCacheDownload _instance;
+        private static AreaCacheDownload _instance;
 
         private readonly CacheFileLookup _cacheFileLookup;
 
@@ -19,7 +19,7 @@ namespace OpenStreetMapEtl
 
         public Geometry GetRegion(double latitude, double longitude, double sizeMeters = 16 * 1000)
         {
-            SimpleDistanceCost.ComputeDeltas(latitude, sizeMeters / 2, out var deltaLat, out var deltaLng);
+            SimpleDistance.ComputeDeltas(latitude, sizeMeters / 2, out var deltaLat, out var deltaLng);
             var box = new BoundingBox
             {
                 NorthLatitude = latitude + deltaLat,
@@ -63,8 +63,9 @@ namespace OpenStreetMapEtl
                 return _instance;
             }
             var cacheLookup = CacheFileLookup.Create(new AzureFileCache().ListBoxes());
-
-            return new AreaCacheDownload(cacheLookup, fileCache);
+            var t = new AreaCacheDownload(cacheLookup, fileCache);
+            _instance = t;
+            return t;
         }
     }
 }

@@ -25,10 +25,10 @@ namespace RouteFinder
         private Stack<WeightedAdjacencyNode<T>> _currentStack;
         private Dictionary<WeightedAdjacencyNode<T>, int> _nodeCount; // prevents pathological paths.
         private Dictionary<T, int> _vertextCounts; 
-        private int MaxTripsForSegment = 3;
-        private int MaxTripsForVertex = 4;
-        private int MaxTurnsPerKilometer = 4;
-        private double MaxDuplicatedDistance = .55; // > .5 is meaningless.
+        private int MaxTripsForSegment = 1;
+        private int MaxTripsForVertex = 1;
+        private int MaxTurnsPerKilometer = 5;
+        private double MaxDuplicatedDistance = .2; // > .5 is meaningless.
 
         public List<WeightedAdjacencyNode<T>[]> GetRouteGreedy(T startingPlace, double maxDistance)
         {
@@ -49,6 +49,7 @@ namespace RouteFinder
         private int Recurse(T startingPlace, WeightedAdjacencyNode<T> currentNode, double maxDistance, double currentDistance)
         {
             // Console.WriteLine($"{new string(' ', _currentStack.Count)}{currentNode.Vertex}");
+            var previousVertex = _currentStack.Peek().Vertex;
             var rejectDepth = 0;
             if (currentDistance > maxDistance)
             {
@@ -56,14 +57,16 @@ namespace RouteFinder
             }
             if (_simpleDistanceCostCompute(startingPlace, currentNode.Vertex) + currentDistance > maxDistance)
             {
-                _paths.Add(CreateOutAndBack(currentNode)); // one day, need to force in a node to a random turnaround.
-                return rejectDepth;
+                // return a path that represents an out and back.
+                AddPath(CreateOutAndBack(currentNode));
+                return 1;
             }
             if (maxDistance * MaxTurnsPerKilometer < _currentStack.Count())
             {
                 return rejectDepth;
             }
-            if (_nodeCount.Where(kvp => kvp.Value > 2).Select(kvp => kvp.Key.Weight * kvp.Value).Sum() > maxDistance * MaxDuplicatedDistance) {
+            if (_nodeCount.Where(kvp => kvp.Value > 2).Select(kvp => kvp.Key.Distance * kvp.Value).Sum() > maxDistance * MaxDuplicatedDistance) 
+            {
                 return rejectDepth;
             }
 
@@ -76,9 +79,9 @@ namespace RouteFinder
                 } 
                 else
                 {
-                    if (!TightLoop(node))
+                    if (!TightLoop(node) && !node.Vertex.Equals(previousVertex))
                     {
-                        rejectDepth = Recurse(startingPlace, node, maxDistance, currentDistance + node.Weight);
+                        rejectDepth = Recurse(startingPlace, node, maxDistance, currentDistance + node.Distance);
                     }
                 }
                 if (rejectDepth > 0)
@@ -87,7 +90,7 @@ namespace RouteFinder
                 }
             }
             PopNode(currentNode);
-            return rejectDepth--;
+            return --rejectDepth;
         }
 
         // decide if this is a good path. If not, send back a >1.
@@ -98,13 +101,17 @@ namespace RouteFinder
             {
                 var i = 0;
             }
+            if (_paths.Count() % 20 == 0)
+            {
+                Console.WriteLine($"{_paths.Count()} paths");
+            }
             return 0;
         }
 
         private bool TightLoop(WeightedAdjacencyNode<T> node)
         {
-            return _nodeCount.ContainsKey(node) && _nodeCount[node] + 1 > MaxTripsForSegment
-                && _vertextCounts.ContainsKey(node.Vertex) && _vertextCounts[node.Vertex] + 1 > MaxTripsForVertex ;
+            return (_nodeCount.ContainsKey(node) && _nodeCount[node] + 1 > MaxTripsForSegment)
+                || (_vertextCounts.ContainsKey(node.Vertex) && _vertextCounts[node.Vertex] + 1 > MaxTripsForVertex) ;
         }
 
         private void PushNode(WeightedAdjacencyNode<T> currentNode)
@@ -181,12 +188,12 @@ namespace RouteFinder
                     {
                         path.AddLast(n);
                     }
-                    currentPath[node.Vertex] = new WeightedAdjacencyNode<T>(currentNode, node.Weight);
+                    currentPath[node.Vertex] = new WeightedAdjacencyNode<T>(currentNode, node.Distance);
                     yield return path.ToArray();
                 }
                 else
                 {
-                    currentPath.Add(node.Vertex, new WeightedAdjacencyNode<T>(currentNode, node.Weight));
+                    currentPath.Add(node.Vertex, new WeightedAdjacencyNode<T>(currentNode, node.Distance));
 
                     foreach (var nextNode in _graph.Neighbors[node.Vertex])
                     {

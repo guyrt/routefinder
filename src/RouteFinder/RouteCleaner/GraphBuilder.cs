@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using RouteCleaner.Model;
 using RouteFinder;
 
@@ -11,9 +12,12 @@ namespace RouteCleaner
 
         private readonly IGraphFilter _filter;
 
-        public GraphBuilder(IGraphFilter graphFilter)
+        private readonly IGraphCoster _graphCoster;
+
+        public GraphBuilder(IGraphFilter graphFilter, IGraphCoster graphCoster)
         {
             _filter = graphFilter;
+            _graphCoster = graphCoster;
         }
 
         public Graph<Node> BuildGraph(Way[] ways, out DirectedEdgeMetadata<Node, Way> originalEdgeWays)
@@ -33,18 +37,19 @@ namespace RouteCleaner
             return reducedGraph;
         }
 
-        private static void AddWay(Graph<Node> graph, Way way, bool mustHit, DirectedEdgeMetadata<Node, Way> originalEdgeWays)
+        private void AddWay(Graph<Node> graph, Way way, bool mustHit, DirectedEdgeMetadata<Node, Way> originalEdgeWays)
         {
             var nodes = way.Nodes;
-            var totalCost = 0.0;
+            var totalDistance = 0.0;
             for (var i = 0; i < nodes.Count() - 1; i++)
             {
-                totalCost += SimpleDistanceCost.Compute(nodes[i], nodes[i + 1]);
+                totalDistance += SimpleDistance.Compute(nodes[i], nodes[i + 1]);
             }
 
             var id1 = nodes.First();
             var id2 = nodes.Last();
-            if (graph.AddEdge(id1, id2, totalCost, mustHit))
+            var weight = _graphCoster.Cost(way, totalDistance);
+            if (graph.AddEdge(id1, id2, totalDistance, weight, mustHit))
             {
                 originalEdgeWays.Add(id1, id2, way);
             }

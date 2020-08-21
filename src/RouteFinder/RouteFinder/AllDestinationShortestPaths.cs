@@ -33,7 +33,7 @@ namespace RouteFinder
             _nextToVisit = new PriorityQueue<(T from, T to)>();
             foreach (var adjancencyNode in graph.Neighbors[start])
             {
-                _nextToVisit.Add((start, adjancencyNode.Vertex), adjancencyNode.Weight);
+                _nextToVisit.Add((start, adjancencyNode.Vertex), adjancencyNode.Distance);
             }
             _lowestCost = new Dictionary<T, double>();
             TraversalPath = new Dictionary<T, T>();
@@ -75,7 +75,7 @@ namespace RouteFinder
                 {
                     if (!_visited.Contains(adjancencyNode.Vertex))
                     {
-                        var newWeight = weight + adjancencyNode.Weight;
+                        var newWeight = weight + adjancencyNode.Distance;
                         _nextToVisit.Add((toT, adjancencyNode.Vertex), newWeight);
                     }
                 }

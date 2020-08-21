@@ -14,7 +14,7 @@ namespace RouteCleaner
         {
             var localGeometry = new OnlyTraversable().Transform(geometry);
             var newWays = new SplitBisectedWays().Transform(geometry.Ways);
-            var gb = new GraphBuilder(new NoopGraphFilter());
+            var gb = new GraphBuilder(new NoopGraphFilter(), new ReasonablyEnjoyableRunningCost());
             _graph = gb.BuildGraph(newWays.ToArray(), out var originalEdgeWays);
             _originalEdgeWays = originalEdgeWays;
         }

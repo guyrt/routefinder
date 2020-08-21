@@ -60,15 +60,15 @@ namespace RouteFinder
         public double EdgeWeights(T n1, T n2)
         {
             var weightList = Neighbors[n1];
-            return weightList.First(x => x.Vertex.Equals(n2)).Weight;
+            return weightList.First(x => x.Vertex.Equals(n2)).Distance;
         }
 
-        public bool AddEdge(T n1, T n2, double totalCost, bool mustHit)
+        public bool AddEdge(T n1, T n2, double distance, double weight, bool mustHit)
         {
             if (!EdgeExists(n1, n2))
             {
-                Neighbors[n1].AddLast(new WeightedAdjacencyNode<T>(n2, totalCost, mustHit));
-                Neighbors[n2].AddLast(new WeightedAdjacencyNode<T>(n1, totalCost, mustHit, false));
+                Neighbors[n1].AddLast(new WeightedAdjacencyNode<T>(n2, distance, weight, mustHit));
+                Neighbors[n2].AddLast(new WeightedAdjacencyNode<T>(n1, distance, weight, mustHit, false));
                 return true;
             }
 
@@ -82,7 +82,7 @@ namespace RouteFinder
 
         public double RequiredEdgeCost()
         {
-            return Neighbors.Sum(kvp => kvp.Value.Where(x => x.MustHit && x.PrimaryCopy).Select(x => x.Weight).Sum());
+            return Neighbors.Sum(kvp => kvp.Value.Where(x => x.MustHit && x.PrimaryCopy).Select(x => x.Distance).Sum());
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace RouteFinder
             {
                 Neighbors[end].Remove(n2);
             }
-            return n2.Weight;
+            return n2.Distance;
 
         }
 

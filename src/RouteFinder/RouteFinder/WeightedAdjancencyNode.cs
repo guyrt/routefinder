@@ -7,6 +7,8 @@
     {
         public T Vertex { get; }
 
+        public double Distance { get; }
+
         public double Weight { get; }
 
         public int Count { get; set; }
@@ -19,9 +21,10 @@
 
         public bool MustHit { get; }
 
-        public WeightedAdjacencyNode(T vertex, double weight, bool mustHit = true, bool primaryCopy = true)
+        public WeightedAdjacencyNode(T vertex, double distance, double weight = 0, bool mustHit = true, bool primaryCopy = true)
         {
             Vertex = vertex;
+            Distance = distance;
             Weight = weight;
             PrimaryCopy = primaryCopy;
             MustHit = mustHit;
@@ -30,7 +33,7 @@
 
         public override string ToString()
         {
-            return $"WeightedAdjNode: {Vertex} - {Weight} - {Count}";
+            return $"WeightedAdjNode: {Vertex} - {Distance} - {Count}";
         }
     }
 }

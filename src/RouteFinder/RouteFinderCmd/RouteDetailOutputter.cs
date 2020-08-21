@@ -123,7 +123,7 @@ namespace RouteFinderCmd
                         End = nextNode.Vertex,
                         Path = way,
                         IntersectionPoints = nextNodeWays.ToArray(),
-                        Weight = nextNode.Weight
+                        Weight = nextNode.Distance
                     });
                 }
 
