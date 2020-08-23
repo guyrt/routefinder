@@ -65,6 +65,7 @@ namespace RouteFinderCmd
             Console.WriteLine($"Required running: {requiredCost}");
             Console.WriteLine($"Lazy Route: {lazyRouteCost}");
             Console.WriteLine($"Greedy Route: {routeCost}");
+            Console.Read();
         }
 
         private static void OutputPolygons(string polygonId, Geometry geometry)
