@@ -26,7 +26,7 @@ namespace RouteFinder.GreedyRoute
                 }
                 var oddDegreeNodes = graph.OddDegreeNodes();
                 var startingNode = oddDegreeNodes.First();
-                var adsp = new AllDestinationShortestPaths<T>(startingNode, graph.OddDegreeNodes().Intersect(graph.MustHitVertices), graph);
+                var adsp = new AllDestinationShortestPaths<T>(startingNode, graph.OddDegreeNodes().Intersect(graph.MustHitVertices), graph, (_, x) => x.Distance);
                 adsp.Run();
                 var paths = adsp.TraversalPath;
                 var nodeOrder = adsp.LowestCost.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key);

@@ -25,7 +25,7 @@ namespace RouteCleaner
             var fullVertexSet = new HashSet<Node>(g.MustHitVertices);
             foreach (var node in g.MustHitVertices)
             {
-                var adsp = new AllDestinationShortestPaths<Node>(node, g.MustHitVertices, g);
+                var adsp = new AllDestinationShortestPaths<Node>(node, g.MustHitVertices, g, (_, x) => x.Distance);
                 adsp.Run();
                 var traversalPaths = adsp.TraversalPath;
                 foreach (var endNode in g.MustHitVertices)

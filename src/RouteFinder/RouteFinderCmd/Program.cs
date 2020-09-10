@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Newtonsoft.Json;
-using OpenStreetMapEtl;
-using OpenStreetMapEtl.Azure;
-using OpenStreetMapEtl.Storage;
-using OpenStreetMapEtl.Utils;
-using RouteCleaner;
-using RouteCleaner.Model;
-using RouteCleaner.Transformers;
-using RouteFinder;
-using RouteFinder.GreedyRoute;
-
-namespace RouteFinderCmd
+﻿namespace RouteFinderCmd
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using Newtonsoft.Json;
+    using OpenStreetMapEtl;
+    using OpenStreetMapEtl.Azure;
+    using OpenStreetMapEtl.Storage;
+    using OpenStreetMapEtl.Utils;
+    using RouteCleaner;
+    using RouteCleaner.Model;
+    using RouteCleaner.Transformers;
+    using RouteFinder;
+    using RouteFinder.GreedyRoute;
+    using RouteFinder.OptimalRunningRoutes;
+
     public class Program
     {
         private static readonly string outputLocation = @"C:\Users\riguy\Documents\GitHub\routefinder\src\RouteViewerWeb\data\";
@@ -27,11 +28,24 @@ namespace RouteFinderCmd
             region = new CollapseParkingLots().Transform(region);
             var ways = new SplitBisectedWays().Transform(region.Ways);
             var graph = new GraphBuilder(new NoopGraphFilter(), new ReasonablyEnjoyableRunningCost()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
-            var routes = new PotentialRoutes<Node>(graph, SimpleDistance.Compute);
-            var routeList = routes.GetRouteGreedy(region.Nodes.First(x => x.Id == "4521863210"), 20).ToList();
-            var a = 1;
+            //var routes = new PotentialRoutes<Node>(graph, SimpleDistance.Compute);
+            //var routeList = routes.GetRouteGreedy(region.Nodes.First(x => x.Id == "4521863210"), 20).ToList();
+            var routes = new AllPairsShortestWithReturns<Node>(graph);
+            var routeList = routes.GetRoutes(region.Nodes.First(x => x.Id == "29937652"), 20);
+            for (var i = 0; i < routeList.Count - 1; i++)
+            {
+                if (!routeList[i].Equals(routeList[i + 1]))
+                {
+                    var way = originalEdgeWays[routeList[i], routeList[i + 1]];
+                    Console.WriteLine(way);
+                }
+            }
         }
 
+        /// <summary>
+        /// Find optimal running route through cougar
+        /// </summary>
+        /// <param name="geometry"></param>
         private static void RunCougarFinder(Geometry geometry) {
             geometry = new DropBuildings().Transform(geometry);
             geometry = new DropWater().Transform(geometry);
@@ -79,6 +93,7 @@ namespace RouteFinderCmd
             Console.WriteLine($"Required running: {requiredCost}");
             Console.WriteLine($"Lazy Route: {lazyRouteCost}");
             Console.WriteLine($"Greedy Route: {routeCost}");
+            Console.Read();
         }
 
         private static void OutputPolygons(string polygonId, Geometry geometry)

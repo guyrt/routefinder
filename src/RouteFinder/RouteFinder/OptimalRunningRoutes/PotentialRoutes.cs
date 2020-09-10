@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-namespace RouteFinder
+﻿namespace RouteFinder.OptimalRunningRoutes
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     /// <summary>
     /// FIFO space explorer that will produce routes.
     /// 

@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace RouteFinder
 {
+    /// <summary>
+    /// A graph contains a Node -> LinkedList of neighbors. All graphs are weighted, and 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class Graph<T>
     {
         private readonly IComparer<T> _comparer;
@@ -57,10 +61,10 @@ namespace RouteFinder
         /// <param name="n1"></param>
         /// <param name="n2"></param>
         /// <returns></returns>
-        public double EdgeWeights(T n1, T n2)
+        public WeightedAdjacencyNode<T> GetEdge(T n1, T n2)
         {
             var weightList = Neighbors[n1];
-            return weightList.First(x => x.Vertex.Equals(n2)).Distance;
+            return weightList.First(x => x.Vertex.Equals(n2));
         }
 
         public bool AddEdge(T n1, T n2, double distance, double weight, bool mustHit)

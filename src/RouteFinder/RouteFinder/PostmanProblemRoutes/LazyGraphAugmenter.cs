@@ -74,8 +74,8 @@ namespace RouteFinder.GreedyRoute
 
         private HeapNode GetHeapNode(T oddDegreeNode, IEnumerable<T> oddDegreeNodes, Graph<T> graph)
         {
-            var adsp = new AllDestinationShortestPaths<T>(oddDegreeNode, oddDegreeNodes, graph);
-            adsp.Run(_comparisonSetSize);
+            var adsp = new AllDestinationShortestPaths<T>(oddDegreeNode, oddDegreeNodes, graph, (_, x) => x.Distance);
+            adsp.RunWithNumTargets(_comparisonSetSize);
             var costDict = adsp.LowestCost;
             if (costDict.ContainsKey(oddDegreeNode))
             {
