@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OsmDataLoader\OsmDataLoader.csproj" />
     <ProjectReference Include="..\RouteCleaner\RouteCleaner.csproj" />
-    <ProjectReference Include="..\RouteFinder\RouteFinder.csproj" />
   </ItemGroup>
 
 </Project>

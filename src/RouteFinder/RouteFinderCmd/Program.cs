@@ -5,10 +5,6 @@
     using System.IO;
     using System.Linq;
     using Newtonsoft.Json;
-    using OpenStreetMapEtl;
-    using OpenStreetMapEtl.Azure;
-    using OpenStreetMapEtl.Storage;
-    using OpenStreetMapEtl.Utils;
     using RouteCleaner;
     using RouteCleaner.Model;
     using RouteCleaner.Transformers;
@@ -22,7 +18,7 @@
 
         public static void Main()
         {
-            var acd = AreaCacheDownload.Create(new AzureFileCache());
+            /*var acd = AreaCacheDownload.Create(new AzureFileCache());
             var region = acd.GetRegion(47.627773, -122.208002, 5);
             region = new OnlyTraversable().Transform(region);
             region = new CollapseParkingLots().Transform(region);
@@ -39,7 +35,7 @@
                     var way = originalEdgeWays[routeList[i], routeList[i + 1]];
                     Console.WriteLine(way);
                 }
-            }
+            }*/
         }
 
         /// <summary>

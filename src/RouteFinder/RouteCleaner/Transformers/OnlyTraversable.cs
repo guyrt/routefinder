@@ -14,8 +14,8 @@ namespace RouteCleaner.Transformers
 
         public Geometry Transform(Geometry geometry)
         {
-            Func<Way, bool> f = w => (w.FootTraffic() || w.Tags.ContainsKey("highway") || w.IsParkingLot()) && !(w.Tags.ContainsKey("service") && w.Tags["service"] == "parking_aisle") || w.Id == "42108700";
-            var g = _reverse ? w => !f(w) : f;
+            bool f(Way w) => (w.FootTraffic() || w.Tags.ContainsKey("highway") || w.IsParkingLot()) && !(w.Tags.ContainsKey("service") && w.Tags["service"] == "parking_aisle") || w.Id == "42108700";
+            var g = _reverse ? w => !f(w) : (Func<Way, bool>)f;
             return WayFilterWithNodeCleanup.Transform(geometry, g);
         }
     }
