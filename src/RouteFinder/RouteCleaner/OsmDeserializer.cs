@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Security;
 using System.Xml;
 using System.Xml.Linq;
 using RouteCleaner.Model;
@@ -37,30 +36,27 @@ namespace RouteCleaner
                         {
                             throw new InvalidDataException("Found way after relation. This isn't allowed");
                         }
+                        if (!hitWay)
+                        {
+                            Console.WriteLine($"Found {nodes.Count} nodes.");
+                        }
                         hitWay = true;
                         var way = ReadWay(childElt, nodes);
-                        if (!RemoveWay(way))
-                        {
-                            ways.Add(way.Id, way);
-                        }
+                        ways.Add(way.Id, way);
                         break;
                     case "relation":
+                        if (!hitRelation)
+                        {
+                            Console.WriteLine($"Found {ways.Count} ways.");
+                        }
                         hitRelation = true;
                         var relation = ReadRelation(childElt, ways);
                         relations.Add(relation);
                         break;
                 }
             }
+            Console.WriteLine($"Found {relations.Count} relations.");
             return new Geometry(nodes.Values.ToArray(), ways.Values.ToArray(), relations.ToArray());
-        }
-
-        private bool RemoveWay(Way w)
-        {
-            return (w.Tags.ContainsKey("building") || (w.Tags.ContainsKey("amenity") && w.Tags["amenity"] == "school"))
-                || (w.Tags.ContainsKey("service") && w.Tags["service"] == "driveway" && w.Tags.ContainsKey("access") && w.Tags["access"] == "private")
-                || w.IsParkingAisle()
-                || (w.Tags.ContainsKey("location") && w.Tags["location"] == "underground")
-                || w.Tags.ContainsKey("waterway");
         }
 
         private IEnumerable<XElement> StreamRootChildDoc(StreamReader stream)

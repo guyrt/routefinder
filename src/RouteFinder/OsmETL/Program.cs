@@ -5,6 +5,7 @@ namespace OsmETL
     using OsmDataLoader;
     using RouteCleaner;
     using RouteCleaner.Model;
+    using RouteCleaner.Transformers;
 
     public class Program
     {
@@ -22,15 +23,15 @@ namespace OsmETL
 
             // build the classifier
             var osmDeserializer = new OsmDeserializer();
-            Geometry originalGeometry;
+            Geometry region;
             using (var fs = File.OpenRead(localFile))
             {
                 using (var sr = new StreamReader(fs))
                 {
-                    originalGeometry = osmDeserializer.ReadFile(sr);
+                    region = osmDeserializer.ReadFile(sr);
                 }
             }
-            var numnodes = originalGeometry.Nodes.Length;
+
         }
     }
 }
