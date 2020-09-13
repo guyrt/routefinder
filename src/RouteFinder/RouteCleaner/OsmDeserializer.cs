@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Security;
 using System.Xml;
 using System.Xml.Linq;
-using RouteCleaner.Model;
+using RouteFinderDataModel;
 
 namespace RouteCleaner
 {

@@ -1,9 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-
-namespace RouteCleaner.Model
+﻿namespace RouteCleaner.PolygonUtils
 {
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
+
+    using RouteFinderDataModel;
+
     [DebuggerDisplay("Triangle {Nodes[0].Id} {Nodes[1].Id} {Nodes[2].Id}")]
     public class Triangle
     {
@@ -20,9 +22,9 @@ namespace RouteCleaner.Model
             {
                 var lengths = new[]
                 {
-                    PolygonUtils.PolygonUtils.LineLength(Nodes[0], Nodes[1]),
-                    PolygonUtils.PolygonUtils.LineLength(Nodes[1], Nodes[2]),
-                    PolygonUtils.PolygonUtils.LineLength(Nodes[2], Nodes[0])
+                    PolygonUtils.LineLength(Nodes[0], Nodes[1]),
+                    PolygonUtils.LineLength(Nodes[1], Nodes[2]),
+                    PolygonUtils.LineLength(Nodes[2], Nodes[0])
                 };
                 var s = lengths.Sum() / 2;
                 return Math.Sqrt(s * (s - lengths[0]) * (s - lengths[1]) * (s - lengths[2]));
@@ -37,13 +39,13 @@ namespace RouteCleaner.Model
         public bool Contains(Node n)
         {
             LastHitWasOnLine = false;
-            var cp1Raw = PolygonUtils.PolygonUtils.CrossProduct(Nodes[1], Nodes[0], n);
+            var cp1Raw = PolygonUtils.CrossProduct(Nodes[1], Nodes[0], n);
             if (Math.Abs(cp1Raw) < 1e-12)
             {
                 LastHitWasOnLine = true;
                 return true;
             }
-            var cp2Raw = PolygonUtils.PolygonUtils.CrossProduct(Nodes[2], Nodes[1], n);
+            var cp2Raw = PolygonUtils.CrossProduct(Nodes[2], Nodes[1], n);
             if (Math.Abs(cp2Raw) < 1e-12)
             {
                 LastHitWasOnLine = true;
@@ -55,7 +57,7 @@ namespace RouteCleaner.Model
             {
                 return false;
             }
-            var cp3Raw = PolygonUtils.PolygonUtils.CrossProduct(Nodes[0], Nodes[2], n);
+            var cp3Raw = PolygonUtils.CrossProduct(Nodes[0], Nodes[2], n);
             if (Math.Abs(cp3Raw) < 1e-12)
             {
                 LastHitWasOnLine = true;

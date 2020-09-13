@@ -4,7 +4,7 @@ namespace OsmETL
     using System.IO;
     using OsmDataLoader;
     using RouteCleaner;
-    using RouteCleaner.Model;
+    using RouteFinderDataModel;
 
     public class Program
     {

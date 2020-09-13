@@ -6,8 +6,9 @@
     using System.Linq;
     using Newtonsoft.Json;
     using RouteCleaner;
-    using RouteCleaner.Model;
+    using RouteFinderDataModel;
     using RouteCleaner.Transformers;
+    using RouteCleaner.PolygonUtils;
     using RouteFinder;
     using RouteFinder.GreedyRoute;
     using RouteFinder.OptimalRunningRoutes;
@@ -95,7 +96,7 @@
         private static void OutputPolygons(string polygonId, Geometry geometry)
         {
             var cougar = geometry.Relations.First(x => x.Id == polygonId);
-            var polygons = cougar.Polygons;
+            var polygons = RelationPolygonMemoizer.Instance.GetPolygons(cougar);
             DebugOut(polygons.First(), "cleanpolygon.json");
         }
 

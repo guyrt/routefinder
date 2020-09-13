@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace RouteCleaner.Model
+namespace RouteFinderDataModel
 {
-    static class GeometryExtensions
+    public static class GeometryExtensions
     {
         public static Dictionary<Node, Way> GetParkingLotNodes(this Geometry geometry)
         {
@@ -14,7 +13,7 @@ namespace RouteCleaner.Model
             {
                 foreach (var node in plot.Nodes)
                 {
-                    parkingLotNodes.TryAdd(node, plot);
+                    parkingLotNodes.Add(node, plot);
                 }
             }
             return parkingLotNodes;

@@ -1,8 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace RouteCleaner.Model
+﻿namespace RouteFinderDataModel
 {
+    using System;
+    using System.Collections.Generic;
+    using Microsoft.Azure.Cosmos.Spatial;
+    using Newtonsoft.Json;
+    using RouteFinderDataModel.Thin;
+
     /// <summary>
     /// A single point in space.
     /// </summary>
@@ -10,13 +13,25 @@ namespace RouteCleaner.Model
     {
         public Node(string id, double latitude, double longitude, Dictionary<string, string> tags = null) : base(id, tags)
         {
-            Latitude = latitude;
-            Longitude = longitude;
+            Location = new Point(longitude, latitude);
         }
 
-        public double Latitude { get; }
+        [JsonProperty("location")]
+        public Point Location { get; }
 
-        public double Longitude { get; }
+        [JsonIgnore]
+        public double Latitude { get
+            {
+                return Location.Position.Latitude;
+            }
+        }
+
+        [JsonIgnore]
+        public double Longitude { get
+            {
+                return Location.Position.Longitude;
+            }
+        }
 
         public static Comparer<Node> NodeComparer = Comparer<Node>.Create((n1, n2) => string.Compare(n1.Id, n2.Id, StringComparison.Ordinal));
 

@@ -1,8 +1,8 @@
-﻿using RouteCleaner.Model;
-using RouteFinder;
-
-namespace RouteCleaner
+﻿namespace RouteCleaner
 {
+    using RouteFinderDataModel;
+    using RouteFinder;
+
     public class NoopGraphFilter : IGraphFilter
     {
         public Graph<Node> Filter(Graph<Node> graph)

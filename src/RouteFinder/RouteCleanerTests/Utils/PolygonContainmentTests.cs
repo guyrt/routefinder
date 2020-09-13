@@ -1,4 +1,4 @@
-﻿using RouteCleaner.Model;
+﻿using RouteFinderDataModel;
 using RouteCleaner.PolygonUtils;
 using Xunit;
 
@@ -9,7 +9,7 @@ namespace RouteCleanerTests.Utils
         private Polygon GetSquare(double edgeLength, double center)
         {
             var n = new Node("2", center, center);
-            return Polygon.BuildPolygons(new[]
+            return PolygonFactory.BuildPolygons(new[]
             {
                 new Way("1", new[]
                 {

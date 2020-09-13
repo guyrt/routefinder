@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using RouteCleaner.Model;
+using RouteFinderDataModel;
 using RouteFinder;
 
 namespace RouteCleaner
@@ -30,7 +29,7 @@ namespace RouteCleaner
             var g = new Graph<Node>(nodes, Node.NodeComparer);
             foreach (var way in finalWays)
             {
-                AddWay(g, way, way.MustHit, originalEdgeWays);
+                AddWay(g, way, way.MustHit(), originalEdgeWays);
             }
 
             var reducedGraph = _filter.Filter(g);

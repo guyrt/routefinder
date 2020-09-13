@@ -1,5 +1,5 @@
 ﻿using System;
-using RouteCleaner.Model;
+using RouteFinderDataModel;
 using RouteCleaner.PolygonUtils;
 using Xunit;
 
@@ -21,7 +21,7 @@ namespace RouteCleanerTests.Utils
                 new Way("7", new[] {n3, n4}),
                 new Way("8", new[] {n4, n1})
             };
-            var poly = Polygon.BuildPolygons(ll)[0];
+            var poly = PolygonFactory.BuildPolygons(ll)[0];
             var triangulator = new PolygonTriangulation(poly);
             var triangles = triangulator.Triangulate();
             Assert.Equal(2, triangles.Count);
@@ -53,7 +53,7 @@ namespace RouteCleanerTests.Utils
             {
                 way
             };
-            var poly = Polygon.BuildPolygons(ll)[0];
+            var poly = PolygonFactory.BuildPolygons(ll)[0];
             var triangulator = new PolygonTriangulation(poly);
             var triangles = triangulator.Triangulate();
             Assert.Equal(4, triangles.Count);

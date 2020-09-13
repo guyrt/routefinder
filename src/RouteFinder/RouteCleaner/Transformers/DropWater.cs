@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using RouteCleaner.Model;
+using RouteFinderDataModel;
 
 namespace RouteCleaner.Transformers
 {

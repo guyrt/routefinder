@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RouteCleaner.Model;
-using System.Collections.Generic;
+using RouteFinderDataModel;
+using RouteFinderDataModel.Thin;
 
 namespace RouteCleaner
 {

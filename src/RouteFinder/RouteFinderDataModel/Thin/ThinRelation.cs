@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace RouteCleaner.Model
+namespace RouteFinderDataModel.Thin
 {
     public class ThinRelation
     {

@@ -1,4 +1,4 @@
-﻿using RouteCleaner.Model;
+﻿using RouteFinderDataModel;
 using RouteFinder;
 
 namespace RouteCleaner

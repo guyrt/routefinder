@@ -1,8 +1,8 @@
-﻿using RouteCleaner.Model;
-using System.Linq;
-
-namespace RouteCleaner.Transformers
+﻿namespace RouteCleaner.Transformers
 {
+    using RouteFinderDataModel;
+    using System.Linq;
+
     public class DropMunicipalBoundaries 
     {
         public Geometry Transform(Geometry geometry)

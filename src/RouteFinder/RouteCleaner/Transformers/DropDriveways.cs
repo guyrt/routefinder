@@ -1,4 +1,4 @@
-﻿using RouteCleaner.Model;
+﻿using RouteFinderDataModel;
 using System;
 
 namespace RouteCleaner.Transformers
