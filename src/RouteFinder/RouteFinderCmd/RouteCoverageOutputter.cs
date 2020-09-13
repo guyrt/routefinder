@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using RouteCleaner;
-using RouteCleaner.Model;
+using RouteFinderDataModel;
 using RouteFinder;
 
 namespace RouteFinderCmd

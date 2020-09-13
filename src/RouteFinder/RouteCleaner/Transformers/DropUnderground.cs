@@ -1,7 +1,6 @@
-﻿using RouteCleaner.Model;
-
-namespace RouteCleaner.Transformers
+﻿namespace RouteCleaner.Transformers
 {
+    using RouteFinderDataModel;
     public class DropUnderground
     {
         public Geometry Transform(Geometry geometry)

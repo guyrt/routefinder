@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace RouteCleaner.Model
+﻿namespace RouteFinderDataModel
 {
+    using System.Collections.Generic;
+    using Newtonsoft.Json;
+
     public abstract class TaggableIdentifiableElement
     {
         protected TaggableIdentifiableElement(string id, Dictionary<string, string> tags = null)
@@ -14,6 +15,7 @@ namespace RouteCleaner.Model
             Id = id;
         }
 
+        [JsonProperty("id")]
         public string Id { get; }
 
         public Dictionary<string, string> Tags { get; }

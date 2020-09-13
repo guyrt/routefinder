@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Newtonsoft.Json;
-using RouteCleaner;
-using RouteCleaner.Model;
-using RouteFinder;
-
-namespace RouteFinderCmd
+﻿namespace RouteFinderCmd
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using Newtonsoft.Json;
+    using RouteCleaner;
+    using RouteFinderDataModel;
+    using RouteFinder;
+
     public class GraphSummaryOutputter
     {
         private readonly string _outputLocation;

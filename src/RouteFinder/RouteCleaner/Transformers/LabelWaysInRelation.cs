@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using RouteCleaner.Model;
+using RouteFinderDataModel;
 using RouteCleaner.PolygonUtils;
 
 namespace RouteCleaner.Transformers
@@ -15,7 +15,7 @@ namespace RouteCleaner.Transformers
 
         public List<Way> Transform(Relation target, Geometry geometry)
         {
-            var polygons = target.Polygons;
+            var polygons = RelationPolygonMemoizer.Instance.GetPolygons(target);
             var p = new PolygonTriangulation(polygons.First());
             var triangles = p.Triangulate();
             DebugOut(triangles, "triangles.json");

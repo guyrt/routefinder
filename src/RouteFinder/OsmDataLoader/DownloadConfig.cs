@@ -4,7 +4,7 @@
     {
         public string RemoteFile { get; set; }
 
-        public string RemoveMd5File { get; set; }
+        public string RemoteMd5File { get; set; }
 
         public string LocalBz2FilePattern { get; set; }
 

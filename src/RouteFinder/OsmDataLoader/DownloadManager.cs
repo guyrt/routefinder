@@ -22,7 +22,7 @@
         /// <returns></returns>
         public string DownloadAndUnzip()
         {
-            var remoteHash = GetRemoteHash(_config.RemoveMd5File);
+            var remoteHash = GetRemoteHash(_config.RemoteMd5File);
             var localFile = string.Format(_config.LocalFilePattern, remoteHash);
             var localTmpFile = string.Format(_config.LocalFilePattern, "tmp");
             var localBz2File = string.Format(_config.LocalBz2FilePattern, remoteHash);

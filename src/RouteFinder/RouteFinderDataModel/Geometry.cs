@@ -1,7 +1,8 @@
-﻿using System.Linq;
-
-namespace RouteCleaner.Model
+﻿namespace RouteFinderDataModel
 {
+    using RouteFinderDataModel.Thin;
+    using System.Linq;
+
     public class Geometry
     {
 

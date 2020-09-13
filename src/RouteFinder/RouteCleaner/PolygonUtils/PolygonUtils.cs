@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using RouteCleaner.Model;
-
-namespace RouteCleaner.PolygonUtils
+﻿namespace RouteCleaner.PolygonUtils
 {
+
+    using System;
+    using System.Collections.Generic;
+    using RouteFinderDataModel;
+
     public static class PolygonUtils
     {
         public static double ComputeDotProduct(List<Node> nodes, int centerIndex, bool normalize = false)

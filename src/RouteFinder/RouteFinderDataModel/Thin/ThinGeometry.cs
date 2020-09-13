@@ -1,7 +1,7 @@
-﻿using System.Linq;
-
-namespace RouteCleaner.Model
+﻿namespace RouteFinderDataModel.Thin
 {
+    using System.Linq;
+
     public class ThinGeometry
     {
         public ThinWay[] Ways { get; set; }

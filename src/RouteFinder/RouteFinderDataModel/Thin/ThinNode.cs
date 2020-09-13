@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RouteCleaner.Model
+namespace RouteFinderDataModel.Thin
 {
     public class ThinNode
     {

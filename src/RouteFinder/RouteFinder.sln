@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmDataLoader", "OsmDataLoa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmETL", "OsmETL\OsmETL.csproj", "{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmosDBLayer", "CosmosDBLayer\CosmosDBLayer.csproj", "{C4CADAFF-2102-4860-8C2F-C80F789F94BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteFinderDataModel", "RouteFinderDataModel\RouteFinderDataModel.csproj", "{86E17CC5-D2F1-471D-A26D-F42B994185F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4CADAFF-2102-4860-8C2F-C80F789F94BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4CADAFF-2102-4860-8C2F-C80F789F94BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4CADAFF-2102-4860-8C2F-C80F789F94BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4CADAFF-2102-4860-8C2F-C80F789F94BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86E17CC5-D2F1-471D-A26D-F42B994185F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86E17CC5-D2F1-471D-A26D-F42B994185F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86E17CC5-D2F1-471D-A26D-F42B994185F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86E17CC5-D2F1-471D-A26D-F42B994185F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

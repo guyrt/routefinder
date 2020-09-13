@@ -1,9 +1,9 @@
-﻿using RouteCleaner.Model;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace RouteCleaner.Filters
+﻿namespace RouteCleaner.Filters
 {
+    using RouteFinderDataModel;
+    using System.Collections.Generic;
+    using System.Linq;
+
     /// <summary>
     /// Identify any trails that intersection parking lots.
     /// </summary>

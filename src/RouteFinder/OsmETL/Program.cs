@@ -3,21 +3,24 @@ namespace OsmETL
 {
     using System;
     using System.IO;
+    using CosmosDBLayer;
     using OsmDataLoader;
     using RouteCleaner;
-    using RouteCleaner.Model;
     using RouteCleaner.Transformers;
+    using RouteFinderDataModel;
 
     public class Program
     {
         static void Main(string[] args)
         {
+            var config = SettingsManager.GetCredentials();
+
             var configObj = new DownloadConfig()
             {
-                LocalFilePattern = "C:/tmp/washington.{0}.osm",
-                LocalBz2FilePattern = "C:/tmp/washington.{0}.osm.bz2",
-                RemoteFile = "http://download.geofabrik.de/north-america/us/washington-latest.osm.bz2",
-                RemoveMd5File = "http://download.geofabrik.de/north-america/us/washington-latest.osm.bz2.md5"
+                LocalFilePattern = config.LocalFilePattern,
+                LocalBz2FilePattern = config.LocalBz2FilePattern,
+                RemoteFile = config.RemoteFile,
+                RemoteMd5File = config.RemoteMd5File
             };
             var downloader = new DownloadManager(configObj);
             var localFile = downloader.DownloadAndUnzip();
