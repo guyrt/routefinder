@@ -16,8 +16,13 @@
             Location = new Point(longitude, latitude);
         }
 
+        /// <summary>
+        /// We store lat/long in a CosmosDB point to avoid copying objects on read. However,
+        /// users of the class should refer only to Latitude and Longitude.
+        /// most 
+        /// </summary>
         [JsonProperty("location")]
-        public Point Location { get; }
+        private Point Location { get; }
 
         [JsonIgnore]
         public double Latitude { get
