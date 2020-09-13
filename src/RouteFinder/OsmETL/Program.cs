@@ -1,6 +1,7 @@
 ﻿
 namespace OsmETL
 {
+    using System;
     using System.IO;
     using OsmDataLoader;
     using RouteCleaner;
@@ -21,7 +22,7 @@ namespace OsmETL
             var downloader = new DownloadManager(configObj);
             var localFile = downloader.DownloadAndUnzip();
 
-            // build the classifier
+            // build the dataset
             var osmDeserializer = new OsmDeserializer();
             Geometry region;
             using (var fs = File.OpenRead(localFile))
@@ -32,6 +33,15 @@ namespace OsmETL
                 }
             }
 
+            // clean data
+            region = new CollapseParkingLots().Transform(region);
+
+            // todo get interesting sets of ways and nodes that we might augment to later.
+
+            // Get final set of ways
+            region = new OnlyTraversable().Transform(region);
+            var ways = new SplitBisectedWays().Transform(region.Ways);
+            var way = ways[0];
         }
     }
 }
