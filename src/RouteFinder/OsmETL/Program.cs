@@ -1,7 +1,6 @@
 ﻿
 namespace OsmETL
 {
-    using System;
     using System.IO;
     using CosmosDBLayer;
     using OsmDataLoader;
@@ -44,7 +43,9 @@ namespace OsmETL
             // Get final set of ways
             region = new OnlyTraversable().Transform(region);
             var ways = new SplitBisectedWays().Transform(region.Ways);
-            var way = ways[0];
+
+            var uploadHandler = new UploadHandler(config.EndPoint, config.AuthKey);
+            uploadHandler.Upload(ways);
         }
     }
 }

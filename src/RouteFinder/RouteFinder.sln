@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinderDataModel", "Rou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmosDBLayerTests", "CosmosDBLayerTests\CosmosDBLayerTests.csproj", "{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinderTests", "RouteFinderTests\RouteFinderTests.csproj", "{FCAF87F6-17FE-4885-AA69-585F9FB917EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,7 +10,10 @@
         public static CosmosCredentials GetCredentials()
         {
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            var configuration = configurationBuilder.AddJsonFile("appsettings.json").Build();
+            var configuration = configurationBuilder
+                                    .AddJsonFile("appsettings.json")
+                                    .AddJsonFile("credentials.json")   // store credentials. See credentials.sample.json for structure
+                                    .Build();
 
             string endpoint = configuration["EndPointUrl"];
             string authKey = configuration["AuthorizationKey"];
