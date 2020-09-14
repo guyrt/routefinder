@@ -1,6 +1,8 @@
 ﻿namespace CosmosDBLayer
 {
+    using CosmosDBLayer.Serializers;
     using Microsoft.Azure.Cosmos;
+    using Newtonsoft.Json;
     using RouteFinderDataModel;
     using System.Collections.Generic;
 
@@ -18,7 +20,19 @@
 
         public async void Upload(IEnumerable<Way> ways)
         {
-            using (var client = new CosmosClient(_endpoint, _authKey))
+            var serializerSettings = new JsonSerializerSettings
+            {
+                Converters =
+                {
+                    new StoredWaySerDe()
+                }
+            };
+            var clientOptions = new CosmosClientOptions
+            {
+                Serializer = new CustomOsmSerializer(serializerSettings)
+            };
+
+            using (var client = new CosmosClient(_endpoint, _authKey, clientOptions))
             {
                 var uploader = new Uploader(client);
                 await uploader.Initialize();
