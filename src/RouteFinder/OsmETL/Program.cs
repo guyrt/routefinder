@@ -13,6 +13,7 @@ namespace OsmETL
         static void Main(string[] args)
         {
             var config = SettingsManager.GetCredentials();
+            var uploadHandler = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
 
             var configObj = new DownloadConfig()
             {
@@ -44,7 +45,6 @@ namespace OsmETL
             region = new OnlyTraversable().Transform(region);
             var ways = new SplitBisectedWays().Transform(region.Ways);
 
-            var uploadHandler = new UploadHandler(config.EndPoint, config.AuthKey);
             uploadHandler.Upload(ways);
         }
     }

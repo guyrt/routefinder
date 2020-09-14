@@ -25,7 +25,9 @@
                 LocalFilePattern = configuration["LocalFilePattern"],
                 LocalBz2FilePattern = configuration["LocalBz2FilePattern"],
                 RemoteFile = configuration["RemoteFile"],
-                RemoteMd5File = configuration["RemoteMd5File"]
+                RemoteMd5File = configuration["RemoteMd5File"],
+                CosmosDatabase = configuration["CosmosDatabase"],
+                CosmosContainer = configuration["CosmosConfiguration"]
             };
         }
 
@@ -42,6 +44,10 @@
             public string RemoteFile { get; set; }
 
             public string RemoteMd5File { get; set; }
+
+            public string CosmosDatabase { get; set; }
+
+            public string CosmosContainer { get; set; }
         }
     }
 }
