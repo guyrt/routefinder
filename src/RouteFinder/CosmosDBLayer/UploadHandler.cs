@@ -4,7 +4,10 @@
     using Microsoft.Azure.Cosmos;
     using Newtonsoft.Json;
     using RouteFinderDataModel;
+    using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     public class UploadHandler
     {
@@ -27,7 +30,7 @@
             using (var client = new CosmosClient(_endpoint, _authKey)) { }
         }
 
-        public async void Upload(IEnumerable<Way> ways)
+        public async Task Upload(IEnumerable<Way> ways)
         {
             var serializerSettings = new JsonSerializerSettings
             {
@@ -46,9 +49,16 @@
                 var uploader = new Uploader(client, _databaseName, _containerName);
                 await uploader.Initialize();
 
+                long i = 0;
                 foreach (var way in ways)
                 {
                     await uploader.Upload(way);
+                    i++;
+                    if (i % 10000 == 0)
+                    {
+                        Console.WriteLine($"Wrote {i}");
+                        Thread.Sleep(1000);
+                    }
                 }
             }
         }

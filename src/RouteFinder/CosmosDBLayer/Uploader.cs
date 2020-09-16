@@ -22,7 +22,7 @@
 
         public async Task Upload(Way way)
         {
-            await _container.CreateItemAsync(way);
+            await _container.UpsertItemAsync(way);
         }
 
         public async Task Initialize()

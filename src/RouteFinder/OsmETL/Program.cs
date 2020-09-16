@@ -1,7 +1,7 @@
-﻿
-namespace OsmETL
+﻿namespace OsmETL
 {
     using System.IO;
+    using System.Threading.Tasks;
     using CosmosDBLayer;
     using OsmDataLoader;
     using RouteCleaner;
@@ -10,7 +10,7 @@ namespace OsmETL
 
     public class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var config = SettingsManager.GetCredentials();
             var uploadHandler = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
@@ -45,7 +45,7 @@ namespace OsmETL
             region = new OnlyTraversable().Transform(region);
             var ways = new SplitBisectedWays().Transform(region.Ways);
 
-            uploadHandler.Upload(ways);
+            await uploadHandler.Upload(ways);
         }
     }
 }

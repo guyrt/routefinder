@@ -27,7 +27,7 @@
                 RemoteFile = configuration["RemoteFile"],
                 RemoteMd5File = configuration["RemoteMd5File"],
                 CosmosDatabase = configuration["CosmosDatabase"],
-                CosmosContainer = configuration["CosmosConfiguration"]
+                CosmosContainer = configuration["CosmosContainer"]
             };
         }
 
