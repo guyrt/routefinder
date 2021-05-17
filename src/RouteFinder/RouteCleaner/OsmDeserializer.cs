@@ -10,6 +10,13 @@ namespace RouteCleaner
 {
     public class OsmDeserializer
     {
+        private readonly bool discardPartials;
+
+        public OsmDeserializer(bool discardPartials = false)
+        {
+            this.discardPartials = discardPartials;
+        }
+
         public Geometry ReadFile(StreamReader stream)
         {
             var nodes = new Dictionary<string, Node>();
@@ -42,7 +49,10 @@ namespace RouteCleaner
                         }
                         hitWay = true;
                         var way = ReadWay(childElt, nodes);
-                        ways.Add(way.Id, way);
+                        if (way != default)
+                        {
+                            ways.Add(way.Id, way);
+                        }
                         break;
                     case "relation":
                         if (!hitRelation)
@@ -51,7 +61,10 @@ namespace RouteCleaner
                         }
                         hitRelation = true;
                         var relation = ReadRelation(childElt, ways);
-                        relations.Add(relation);
+                        if (relation != default)
+                        {
+                            relations.Add(relation);
+                        }
                         break;
                 }
             }
@@ -113,6 +126,11 @@ namespace RouteCleaner
             {
                 if (!ways.ContainsKey(memberRef))
                 {
+                    if (this.discardPartials)
+                    {
+                        return default;
+                    }
+
                     incomplete = true;
                 }
                 else
@@ -154,7 +172,11 @@ namespace RouteCleaner
             }
             catch (KeyNotFoundException k)
             {
-                throw new KeyNotFoundException($"Key {k} not found in node list.");
+                if (this.discardPartials)
+                {
+                    return default;
+                }
+                throw new KeyNotFoundException($"Key {k} not found in node list.", k);
             }
 
             var tags = GetTags(way);

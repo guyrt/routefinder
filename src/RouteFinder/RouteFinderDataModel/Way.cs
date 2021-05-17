@@ -2,6 +2,7 @@
 {
     using Microsoft.Azure.Cosmos.Spatial;
     using Newtonsoft.Json;
+    using RouteFinderDataModel.Tools;
     using System.Collections.Generic;
 
     public class Way : TaggableIdentifiableElement
@@ -12,10 +13,15 @@
             _avgPointSet = false;
             _avgLatitude = 0;
             _avgLongitude = 0;
+
+            nodeArrayBounds = new NodeArrayBounds(nodes);
         }
 
         public Node[] Nodes { get; }
 
+        private readonly NodeArrayBounds nodeArrayBounds;
+
+        // Memoized variables.
         private bool _avgPointSet;
         private double _avgLatitude;
         private double _avgLongitude;
@@ -32,6 +38,8 @@
                 return new Point(_avgLongitude, _avgLatitude);
             }
         }
+
+        public (Point, Point) Bounds => this.nodeArrayBounds.Bounds;
 
         private void SetAverages()
         {

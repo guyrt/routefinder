@@ -11,13 +11,71 @@
     using RouteCleaner.PolygonUtils;
     using RouteFinder;
     using RouteFinder.GreedyRoute;
-    using RouteFinder.OptimalRunningRoutes;
 
     public class Program
     {
-        private static readonly string outputLocation = @"C:\Users\riguy\Documents\GitHub\routefinder\src\RouteViewerWeb\data\";
+        private static readonly string outputLocation = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle_containment.xml";
+        private static readonly string localFile = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle.xml";
 
         public static void Main()
+        {
+            RouteContainment();
+        }
+
+        private static void RouteContainment()
+        {
+            var osmDeserializer = new OsmDeserializer(true);
+            Geometry region;
+            using (var fs = File.OpenRead(localFile))
+            {
+                using (var sr = new StreamReader(fs))
+                {
+                    region = osmDeserializer.ReadFile(sr);
+                }
+            }
+
+            var relations = region.Relations;
+            for (var i = 0; i < relations.Length; i++)
+            {
+                var target = relations[i];
+                var polygon = RelationPolygonMemoizer.Instance.GetPolygons(target).First();  // todo first is a problem. some relations have more than one! 
+                var p = new PolygonTriangulation(polygon);
+                var triangles = p.Triangulate();
+                var containment = new PolygonContainment(polygon, triangles);
+
+                for (var j = i + 2; j < relations.Length; j++)
+                {
+                    var candidate = relations[j];
+                    var candidatePolygon = RelationPolygonMemoizer.Instance.GetPolygons(candidate).First();
+                    
+                    var relationship = containment.ComputePolygonRelation(candidatePolygon);
+                    switch (relationship)
+                    {
+                        case PolygonContainmentRelation.Contains:
+                            target.InternalRelations.Add(candidate);
+                            break;
+                        case PolygonContainmentRelation.Overlap: // see if reversed contains!
+                            var candidateTriangulation = new PolygonTriangulation(polygon);
+                            var candidateTriangles = candidateTriangulation.Triangulate();
+                            var candidateContainment = new PolygonContainment(candidatePolygon, candidateTriangles);
+                            if (candidateContainment.ComputePolygonRelation(polygon) == PolygonContainmentRelation.Contains)
+                            {
+                                candidate.InternalRelations.Add(target);
+                            } 
+                            else
+                            {
+                                target.OverlappingRelations.Add(candidate);
+                                candidate.OverlappingRelations.Add(target);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            var a = 1;
+        }
+
+        private static void Dunno()
         {
             /*var acd = AreaCacheDownload.Create(new AzureFileCache());
             var region = acd.GetRegion(47.627773, -122.208002, 5);

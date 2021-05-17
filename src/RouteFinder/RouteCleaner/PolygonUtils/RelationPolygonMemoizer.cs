@@ -33,13 +33,13 @@
 
         private Polygon[] BuildPolygons(Relation relation)
         {
-            if (!relation.Tags.TryGetValue("type", out var foo) || foo != "multipolygon")
+            if (!relation.Tags.TryGetValue("type", out var foo) || (foo != "multipolygon" && foo != "boundary")) // multipolygon is deprecated in favor of boundary
             {
                 return new Polygon[0];
             }
             try
             {
-                return PolygonFactory.BuildPolygons(relation.Ways).ToArray();
+                return PolygonFactory.BuildPolygons(relation).ToArray();
             }
             catch (InvalidOperationException)
             {

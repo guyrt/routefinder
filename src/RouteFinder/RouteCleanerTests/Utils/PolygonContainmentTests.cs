@@ -35,7 +35,7 @@ namespace RouteCleanerTests.Utils
                 new Node("22", center + edgeLength, center + edgeLength)
             });
             var polygonContainment = new PolygonContainment(polygon);
-            var (contained, uncontained) = polygonContainment.Containment(way);
+            var (contained, uncontained) = polygonContainment.SplitWayByContainment(way);
             Assert.Contains(way, contained);
             Assert.Empty(uncontained);
         }
@@ -56,7 +56,7 @@ namespace RouteCleanerTests.Utils
                 new Node("2", center + edgeLength + moveOut, center + edgeLength + moveOut)
             });
             var polygonContainment = new PolygonContainment(polygon);
-            var (contained, uncontained) = polygonContainment.Containment(way);
+            var (contained, uncontained) = polygonContainment.SplitWayByContainment(way);
             Assert.Contains(way, uncontained);
             Assert.Empty(contained);
         }
@@ -76,7 +76,7 @@ namespace RouteCleanerTests.Utils
                 new Node("25", 0.5, -0.5)
             });
             var polygonContainment = new PolygonContainment(polygon);
-            var (contained, uncontained) = polygonContainment.Containment(way);
+            var (contained, uncontained) = polygonContainment.SplitWayByContainment(way);
             Assert.Contains(way.Nodes[0], uncontained[0].Nodes);
             Assert.Contains(way.Nodes[1], contained[0].Nodes);
             Assert.Contains(way.Nodes[2], contained[0].Nodes);

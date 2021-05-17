@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using RouteFinderDataModel;
-
-namespace RouteCleaner.PolygonUtils
+﻿namespace RouteCleaner.PolygonUtils
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.Azure.Cosmos.Spatial;
+    using RouteFinderDataModel;
+    using RouteFinderDataModel.Tools;
+
     /// <summary>
     /// A polygon is a series of nodes that form 1 or more ways that connect into a circuit.
     /// </summary>
@@ -13,10 +15,14 @@ namespace RouteCleaner.PolygonUtils
         public const double FlattenThreshold = -1 + 1e-2;
         public List<Node> EliminatedNodes;
 
+        private readonly NodeArrayBounds nodeArrayBounds;
+
         internal Polygon(LinkedList<Way> ways)
         {
             Ways = ways;
             Nodes = BuildNodes(ways);
+
+            nodeArrayBounds = new NodeArrayBounds(Nodes);
         }
 
         private List<Node> BuildNodes(LinkedList<Way> ways)
@@ -65,6 +71,8 @@ namespace RouteCleaner.PolygonUtils
         public LinkedList<Way> Ways { get; }
 
         public List<Node> Nodes { get; }
+
+        public (Point, Point) Bounds => this.nodeArrayBounds.Bounds;
 
         private bool? _isConvex;
 
