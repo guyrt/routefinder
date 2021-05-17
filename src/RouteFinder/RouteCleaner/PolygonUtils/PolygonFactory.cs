@@ -67,28 +67,27 @@
                 ValidateNodeToWayMap(nodeToWayMap);
 
                 // Step 2 - build a list of Node to Node links + associated Ways + associated directions.
-                var nodes = new LinkedList<Node>();
-                var ways = new LinkedList<Way>();  // Way at position i has start (or end if reversed) of nodes[i].
-                var reversedWay = new LinkedList<bool>();
+                var nodes = new List<Node>();
+                var ways = new List<Way>();  // Way at position i has start (or end if reversed) of nodes[i].
+                var reversedWay = new List<bool>();
 
                 var node = nodeToWayMap.First().Key; // in non-reversed order, starting node is the start of first Way and end of last.
-                nodes.AddLast(node);
+                nodes.Add(node);
                 while (nodeToWayMap.Count > 0) // can't be infinite b/c we remove something from a value in every iteration.
                 {
                     nodeToWayMap = DropWayFromMap(nodeToWayMap, node, out Way localWay);
 
-                    ways.AddLast(localWay);
+                    ways.Add(localWay);
                     var reversed = localWay.Nodes[0] != node; // if start is node then this is a non-reversed node.
-                    reversedWay.AddLast(reversed);
+                    reversedWay.Add(reversed);
                     node = reversed ? localWay.Nodes[0] : localWay.Nodes.Last();
-                    nodes.AddLast(node);
+                    nodes.Add(node);
                     nodeToWayMap = DropWayFromMap(nodeToWayMap, node, localWay); // drop return connection.
                     remainingWays.Remove(localWay);
                 }
 
                 // Step 3 - find/cull sets of nodes into polygons
-
-
+                polygons.AddRange(FindPolygons(nodes, ways, reversedWay));
             }
 
             // old
@@ -188,5 +187,28 @@
                 }
             }
         }
+
+        private static List<Polygon> FindPolygons(List<Node> nodes, List<Way> ways, List<bool> reversed)
+        {
+            var polygons = new List<Polygon>();
+            var firstSeenIndex = new Dictionary<Node, int>();
+            var idx = 0;
+            foreach (var node in nodes)
+            {
+                if (firstSeenIndex.ContainsKey(node))
+                {
+                    // found a polygon from range firstSeenIndex to idx. Use a mask.
+
+                } 
+                else
+                {
+                    firstSeenIndex.Add(node, idx);
+                }
+                idx++;
+            }
+            return polygons;
+        }
+
+
     }
 }
