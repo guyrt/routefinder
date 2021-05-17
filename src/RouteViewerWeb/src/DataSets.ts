@@ -20,5 +20,9 @@ export let dataSets = {
     triangles: {
         path: 'data/triangles.json',
         callback: (linePlotter : LinePlotter, data : any) => linePlotter.plotGeoJson(data, 'triangles', "#000000")
+    },
+    parking: {
+        path: 'data/parkingLots.json',
+        callback: (linePlotter : LinePlotter, data : any) => linePlotter.plotGeoJson(data, 'plots', 'red')
     }
 }

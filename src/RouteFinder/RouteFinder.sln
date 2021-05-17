@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.136
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteCleaner", "RouteCleaner\RouteCleaner.csproj", "{7BA51210-CA54-415D-8C53-5AB1A849AF91}"
 EndProject
@@ -9,9 +9,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinderCmd", "RouteFind
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteCleanerTests", "RouteCleanerTests\RouteCleanerTests.csproj", "{2DA546A7-8BE3-450E-82C5-68253CCED5E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteFinder", "RouteFinder\RouteFinder.csproj", "{6311C862-AB43-4504-BA92-8D432E2E1390}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinder", "RouteFinder\RouteFinder.csproj", "{6311C862-AB43-4504-BA92-8D432E2E1390}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteFinderTests", "RouteFinderTests\RouteFinderTests.csproj", "{0FAB3D74-CEF5-4E63-961B-C98005505D72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OsmDataLoader", "OsmDataLoader\OsmDataLoader.csproj", "{1689FBE1-3CCC-4344-9044-4729F3F18A6D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OsmETL", "OsmETL\OsmETL.csproj", "{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosDBLayer", "CosmosDBLayer\CosmosDBLayer.csproj", "{C4CADAFF-2102-4860-8C2F-C80F789F94BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinderDataModel", "RouteFinderDataModel\RouteFinderDataModel.csproj", "{86E17CC5-D2F1-471D-A26D-F42B994185F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmosDBLayerTests", "CosmosDBLayerTests\CosmosDBLayerTests.csproj", "{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinderTests", "RouteFinderTests\RouteFinderTests.csproj", "{FCAF87F6-17FE-4885-AA69-585F9FB917EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +45,30 @@ Global
 		{6311C862-AB43-4504-BA92-8D432E2E1390}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6311C862-AB43-4504-BA92-8D432E2E1390}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6311C862-AB43-4504-BA92-8D432E2E1390}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0FAB3D74-CEF5-4E63-961B-C98005505D72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0FAB3D74-CEF5-4E63-961B-C98005505D72}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0FAB3D74-CEF5-4E63-961B-C98005505D72}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0FAB3D74-CEF5-4E63-961B-C98005505D72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1689FBE1-3CCC-4344-9044-4729F3F18A6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1689FBE1-3CCC-4344-9044-4729F3F18A6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1689FBE1-3CCC-4344-9044-4729F3F18A6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1689FBE1-3CCC-4344-9044-4729F3F18A6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4CADAFF-2102-4860-8C2F-C80F789F94BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4CADAFF-2102-4860-8C2F-C80F789F94BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4CADAFF-2102-4860-8C2F-C80F789F94BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4CADAFF-2102-4860-8C2F-C80F789F94BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86E17CC5-D2F1-471D-A26D-F42B994185F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86E17CC5-D2F1-471D-A26D-F42B994185F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86E17CC5-D2F1-471D-A26D-F42B994185F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86E17CC5-D2F1-471D-A26D-F42B994185F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using RouteCleaner.Model;
+﻿using RouteFinderDataModel;
 
 namespace RouteCleaner.Transformers
 {
@@ -7,9 +6,7 @@ namespace RouteCleaner.Transformers
     {
         public Geometry Transform(Geometry geometry)
         {
-            var ways = geometry.Ways.Where(w => !w.Tags.ContainsKey("building") || w.Tags["building"] != "yes");
-            // Assumption: buildings aren't in relations.
-            return new Geometry(geometry.Nodes, ways.ToArray(), geometry.Relations);
+            return WayFilterWithNodeCleanup.Transform(geometry, w => !(w.Tags.ContainsKey("building") || (w.Tags.ContainsKey("amenity") && w.Tags["amenity"] == "school")));
         }
     }
 }

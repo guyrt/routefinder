@@ -1,4 +1,4 @@
-﻿using RouteCleaner.Model;
+﻿using RouteFinderDataModel;
 using RouteFinder;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,17 +79,17 @@ namespace RouteFinderCmd
             {
                 if (step.End == previousStep?.Start && previousStep?.End == step.Start)
                 {
-                    sb.AppendLine($"Turn around and go back to {step.End} on {step.Path.Name} ({step.Weight} miles)");
+                    sb.AppendLine($"Turn around and go back to {step.End} on {step.Path.Name()} ({step.Weight} miles)");
                 }
                 else
                 {
                     var prefix = "[Stay straight] ";
-                    if (previousStep?.Path.Name != step.Path.Name)
+                    if (previousStep?.Path.Name() != step.Path.Name())
                     {
                         prefix = "[Turn] ";
                     }
-                    sb.Append($"{prefix} {step.Weight} miles on {step.Path.Name} to ");
-                    sb.AppendLine($"intersection of {string.Join(", ", step.IntersectionPoints.Select(x => x.Name).Distinct())}");
+                    sb.Append($"{prefix} {step.Weight} miles on {step.Path.Name()} to ");
+                    sb.AppendLine($"intersection of {string.Join(", ", step.IntersectionPoints.Select(x => x.Name()).Distinct())}");
                 }
 
                 previousStep = step;
@@ -123,7 +123,7 @@ namespace RouteFinderCmd
                         End = nextNode.Vertex,
                         Path = way,
                         IntersectionPoints = nextNodeWays.ToArray(),
-                        Weight = nextNode.Weight
+                        Weight = nextNode.Distance
                     });
                 }
 

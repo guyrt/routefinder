@@ -2,8 +2,9 @@
 using System.Linq;
 using GeoJSON.Net.Feature;
 using GeoJSON.Net.Geometry;
-using RouteCleaner.Model;
-using Polygon = RouteCleaner.Model.Polygon;
+using RouteCleaner.PolygonUtils;
+using RouteFinderDataModel;
+using Polygon = RouteCleaner.PolygonUtils.Polygon;
 
 namespace RouteCleaner
 {

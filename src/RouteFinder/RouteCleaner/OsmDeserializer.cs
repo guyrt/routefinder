@@ -2,21 +2,109 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
-using RouteCleaner.Model;
+using RouteFinderDataModel;
 
 namespace RouteCleaner
 {
     public class OsmDeserializer
     {
+        private readonly bool discardPartials;
+
+        public OsmDeserializer(bool discardPartials = false)
+        {
+            this.discardPartials = discardPartials;
+        }
+
         public Geometry ReadFile(StreamReader stream)
         {
-            var root = XElement.Load(stream);
-            var nodes = root.Descendants("node").ToDictionary(n => n.Attribute("id")?.Value, ReadNode);
-            var ways = root.Descendants("way").ToDictionary(w => w.Attribute("id")?.Value, w => ReadWay(w, nodes));
-            var relations = root.Descendants("relation").Select(r => ReadRelation(r, ways)).Where(n => n != null);
+            var nodes = new Dictionary<string, Node>();
+            var ways = new Dictionary<string, Way>();
+            var relations = new List<Relation>();
 
+            bool hitWay = false;
+            bool hitRelation = false;
+
+            foreach (var childElt in StreamRootChildDoc(stream))
+            {
+                switch (childElt.Name.LocalName)
+                {
+                    case "node":
+                        if (hitWay)
+                        {
+                            throw new InvalidDataException("Found node after way. This isn't allowed");
+                        }
+                        var node = ReadNode(childElt);
+                        nodes.Add(node.Id, node);
+                        break;
+                    case "way":
+                        if (hitRelation)
+                        {
+                            throw new InvalidDataException("Found way after relation. This isn't allowed");
+                        }
+                        if (!hitWay)
+                        {
+                            Console.WriteLine($"Found {nodes.Count} nodes.");
+                        }
+                        hitWay = true;
+                        var way = ReadWay(childElt, nodes);
+                        if (way != default)
+                        {
+                            ways.Add(way.Id, way);
+                        }
+                        break;
+                    case "relation":
+                        if (!hitRelation)
+                        {
+                            Console.WriteLine($"Found {ways.Count} ways.");
+                        }
+                        hitRelation = true;
+                        var relation = ReadRelation(childElt, ways);
+                        if (relation != default)
+                        {
+                            relations.Add(relation);
+                        }
+                        break;
+                }
+            }
+            Console.WriteLine($"Found {relations.Count} relations.");
             return new Geometry(nodes.Values.ToArray(), ways.Values.ToArray(), relations.ToArray());
+        }
+
+        private IEnumerable<XElement> StreamRootChildDoc(StreamReader stream)
+        {
+            using (XmlReader reader = XmlReader.Create(stream))
+            {
+                reader.MoveToContent();
+                // Parse the file and display each of the nodes.
+                while (reader.Read())
+                {
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            if (reader.Name == "node")
+                            {
+                                XElement el = XElement.ReadFrom(reader) as XElement;
+                                if (el != null)
+                                    yield return el;
+                            }
+                            if (reader.Name == "way")
+                            {
+                                XElement el = XElement.ReadFrom(reader) as XElement;
+                                if (el != null)
+                                    yield return el;
+                            }
+                            if (reader.Name == "relation")
+                            {
+                                XElement el = XElement.ReadFrom(reader) as XElement;
+                                if (el != null)
+                                    yield return el;
+                            }
+                            break;
+                    }
+                }
+            }
         }
 
         private Relation ReadRelation(XElement relation, IReadOnlyDictionary<string, Way> ways)
@@ -38,6 +126,11 @@ namespace RouteCleaner
             {
                 if (!ways.ContainsKey(memberRef))
                 {
+                    if (this.discardPartials)
+                    {
+                        return default;
+                    }
+
                     incomplete = true;
                 }
                 else
@@ -79,7 +172,11 @@ namespace RouteCleaner
             }
             catch (KeyNotFoundException k)
             {
-                throw new KeyNotFoundException($"Key {k} not found in node list.");
+                if (this.discardPartials)
+                {
+                    return default;
+                }
+                throw new KeyNotFoundException($"Key {k} not found in node list.", k);
             }
 
             var tags = GetTags(way);

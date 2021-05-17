@@ -1,12 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RouteCleaner\RouteCleaner.csproj" />
+    <ProjectReference Include="..\RouteFinderDataModel\RouteFinderDataModel.csproj" />
     <ProjectReference Include="..\RouteFinder\RouteFinder.csproj" />
   </ItemGroup>
 

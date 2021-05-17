@@ -25,15 +25,21 @@ namespace RouteFinder
 
         private bool _ran;
 
-        public AllDestinationShortestPaths(T start, IEnumerable<T> targets, Graph<T> graph)
+        /// <summary>
+        /// Used to compute distance for a WeightedAdjancencyNode
+        /// </summary>
+        private readonly Func<T, WeightedAdjacencyNode<T>, double> _getDistance;
+
+        public AllDestinationShortestPaths(T start, IEnumerable<T> targets, Graph<T> graph, Func<T, WeightedAdjacencyNode<T>, double> getDistance)
         {
             _targets = new HashSet<T>(targets);
             _visited = new HashSet<T>{start};
             _graph = graph;
             _nextToVisit = new PriorityQueue<(T from, T to)>();
+            _getDistance = getDistance;
             foreach (var adjancencyNode in graph.Neighbors[start])
             {
-                _nextToVisit.Add((start, adjancencyNode.Vertex), adjancencyNode.Weight);
+                _nextToVisit.Add((start, adjancencyNode.Vertex), _getDistance(start, adjancencyNode));
             }
             _lowestCost = new Dictionary<T, double>();
             TraversalPath = new Dictionary<T, T>();
@@ -41,7 +47,22 @@ namespace RouteFinder
             _ran = false;
         }
 
-        public void Run(int findTargets = -1)
+        public void Run()
+        {
+            Run(-1, Double.MaxValue);
+        }
+
+        public void RunWithNumTargets(int findTargets)
+        {
+            Run(findTargets, Double.MaxValue);
+        }
+
+        public void RunWithDistanceCap(double distanceCap)
+        {
+            Run(-1, distanceCap);
+        }
+
+        private void Run(int findTargets, double distanceCap)
         {
             int localTargetsStopCount = 0;
             if (findTargets > 0)
@@ -65,8 +86,11 @@ namespace RouteFinder
                     continue;
                 }
                 TraversalPath.Add(nextEdge.to, nextEdge.from);
-                var weight = _lowestCost[fromT] + _graph.EdgeWeights(toT, fromT);
-                _lowestCost.Add(toT, weight);
+                var weight = _lowestCost[fromT] + _getDistance(toT, _graph.GetEdge(toT, fromT));
+                if (weight < distanceCap)
+                {
+                    _lowestCost.Add(toT, weight);
+                }
                 if (localTargets.Contains(toT))
                 {
                     localTargets.Remove(toT);
@@ -75,7 +99,7 @@ namespace RouteFinder
                 {
                     if (!_visited.Contains(adjancencyNode.Vertex))
                     {
-                        var newWeight = weight + adjancencyNode.Weight;
+                        var newWeight = weight + _getDistance(toT, adjancencyNode);
                         _nextToVisit.Add((toT, adjancencyNode.Vertex), newWeight);
                     }
                 }

@@ -1,6 +1,8 @@
-﻿using RouteCleaner.Model;
+using System.Collections.Concurrent;
+﻿using RouteFinderDataModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RouteCleaner.Transformers
 {
@@ -55,12 +57,11 @@ namespace RouteCleaner.Transformers
         /// </summary>
         /// <param name="geometry"></param>
         /// <returns></returns>
-        private Dictionary<Node, Node> FindParkingLots(Geometry geometry)
+        private IDictionary<Node, Node> FindParkingLots(Geometry geometry)
         {
-            var parkingLots = geometry.Ways.Where(w => w.IsParkingLot());
-            var outputNodes = new Dictionary<Node, Node>();
-            foreach (var parkingLot in parkingLots)
-            {
+            var parkingLots = geometry.Ways.AsParallel().Where(w => w.IsParkingLot());
+            var outputNodes = new ConcurrentDictionary<Node, Node>();
+            Parallel.ForEach(parkingLots, parkingLot => {
                 var latMean = parkingLot.Nodes.Select(x => x.Latitude).Average();
                 var lngMean = parkingLot.Nodes.Select(x => x.Longitude).Average();
                 var newNode = new Node(parkingLot.Id + "_node", latMean, lngMean, parkingLot.Tags);
@@ -68,7 +69,7 @@ namespace RouteCleaner.Transformers
                 {
                     outputNodes.TryAdd(n, newNode);
                 }
-            }
+            });
             return outputNodes;
         }
     }

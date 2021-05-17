@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace RouteFinder
 {
+    /// <summary>
+    /// A graph contains a Node -> LinkedList of neighbors. All graphs are weighted, and 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class Graph<T>
     {
         private readonly IComparer<T> _comparer;
@@ -57,18 +61,18 @@ namespace RouteFinder
         /// <param name="n1"></param>
         /// <param name="n2"></param>
         /// <returns></returns>
-        public double EdgeWeights(T n1, T n2)
+        public WeightedAdjacencyNode<T> GetEdge(T n1, T n2)
         {
             var weightList = Neighbors[n1];
-            return weightList.First(x => x.Vertex.Equals(n2)).Weight;
+            return weightList.First(x => x.Vertex.Equals(n2));
         }
 
-        public bool AddEdge(T n1, T n2, double totalCost, bool mustHit)
+        public bool AddEdge(T n1, T n2, double distance, double weight, bool mustHit)
         {
             if (!EdgeExists(n1, n2))
             {
-                Neighbors[n1].AddLast(new WeightedAdjacencyNode<T>(n2, totalCost, mustHit));
-                Neighbors[n2].AddLast(new WeightedAdjacencyNode<T>(n1, totalCost, mustHit, false));
+                Neighbors[n1].AddLast(new WeightedAdjacencyNode<T>(n2, distance, weight, mustHit));
+                Neighbors[n2].AddLast(new WeightedAdjacencyNode<T>(n1, distance, weight, mustHit, false));
                 return true;
             }
 
@@ -82,7 +86,7 @@ namespace RouteFinder
 
         public double RequiredEdgeCost()
         {
-            return Neighbors.Sum(kvp => kvp.Value.Where(x => x.MustHit && x.PrimaryCopy).Select(x => x.Weight).Sum());
+            return Neighbors.Sum(kvp => kvp.Value.Where(x => x.MustHit && x.PrimaryCopy).Select(x => x.Distance).Sum());
         }
 
         /// <summary>
@@ -115,7 +119,7 @@ namespace RouteFinder
             {
                 Neighbors[end].Remove(n2);
             }
-            return n2.Weight;
+            return n2.Distance;
 
         }
 

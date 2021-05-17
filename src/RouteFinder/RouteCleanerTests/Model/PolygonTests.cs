@@ -1,5 +1,6 @@
 ﻿using System;
-using RouteCleaner.Model;
+using RouteFinderDataModel;
+using RouteCleaner.PolygonUtils;
 using Xunit;
 
 namespace RouteCleanerTests.Model
@@ -26,7 +27,7 @@ namespace RouteCleanerTests.Model
             {
                 way
             };
-            var poly = Polygon.BuildPolygons(ll);
+            var poly = PolygonFactory.BuildPolygons(ll);
             Assert.Single(poly);
             Assert.Contains(n1, poly[0].Nodes);
             Assert.Contains(n2, poly[0].Nodes);

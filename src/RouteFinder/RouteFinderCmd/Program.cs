@@ -1,24 +1,107 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Newtonsoft.Json;
-using RouteCleaner;
-using RouteCleaner.Model;
-using RouteCleaner.Transformers;
-using RouteFinder;
-using RouteFinder.GreedyRoute;
-
-namespace RouteFinderCmd
+﻿namespace RouteFinderCmd
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using Newtonsoft.Json;
+    using RouteCleaner;
+    using RouteFinderDataModel;
+    using RouteCleaner.Transformers;
+    using RouteCleaner.PolygonUtils;
+    using RouteFinder;
+    using RouteFinder.GreedyRoute;
+
     public class Program
     {
-        private static readonly string outputLocation = @"C:\Users\riguy\Documents\GitHub\routefinder\src\RouteViewerWeb\data\";
+        private static readonly string outputLocation = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle_containment.xml";
+        private static readonly string localFile = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle.xml";
 
         public static void Main()
         {
-            var deserializer = new OsmDeserializer();
-            var geometry = deserializer.ReadFile(File.OpenText(@"C:\Users\riguy\Documents\GitHub\routefinder\data\cougar.osm"));
+            RouteContainment();
+        }
+
+        private static void RouteContainment()
+        {
+            var osmDeserializer = new OsmDeserializer(true);
+            Geometry region;
+            using (var fs = File.OpenRead(localFile))
+            {
+                using (var sr = new StreamReader(fs))
+                {
+                    region = osmDeserializer.ReadFile(sr);
+                }
+            }
+
+            var relations = region.Relations;
+            for (var i = 0; i < relations.Length; i++)
+            {
+                var target = relations[i];
+                var polygon = RelationPolygonMemoizer.Instance.GetPolygons(target).First();  // todo first is a problem. some relations have more than one! 
+                var p = new PolygonTriangulation(polygon);
+                var triangles = p.Triangulate();
+                var containment = new PolygonContainment(polygon, triangles);
+
+                for (var j = i + 2; j < relations.Length; j++)
+                {
+                    var candidate = relations[j];
+                    var candidatePolygon = RelationPolygonMemoizer.Instance.GetPolygons(candidate).First();
+                    
+                    var relationship = containment.ComputePolygonRelation(candidatePolygon);
+                    switch (relationship)
+                    {
+                        case PolygonContainmentRelation.Contains:
+                            target.InternalRelations.Add(candidate);
+                            break;
+                        case PolygonContainmentRelation.Overlap: // see if reversed contains!
+                            var candidateTriangulation = new PolygonTriangulation(polygon);
+                            var candidateTriangles = candidateTriangulation.Triangulate();
+                            var candidateContainment = new PolygonContainment(candidatePolygon, candidateTriangles);
+                            if (candidateContainment.ComputePolygonRelation(polygon) == PolygonContainmentRelation.Contains)
+                            {
+                                candidate.InternalRelations.Add(target);
+                            } 
+                            else
+                            {
+                                target.OverlappingRelations.Add(candidate);
+                                candidate.OverlappingRelations.Add(target);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            var a = 1;
+        }
+
+        private static void Dunno()
+        {
+            /*var acd = AreaCacheDownload.Create(new AzureFileCache());
+            var region = acd.GetRegion(47.627773, -122.208002, 5);
+            region = new OnlyTraversable().Transform(region);
+            region = new CollapseParkingLots().Transform(region);
+            var ways = new SplitBisectedWays().Transform(region.Ways);
+            var graph = new GraphBuilder(new NoopGraphFilter(), new ReasonablyEnjoyableRunningCost()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
+            //var routes = new PotentialRoutes<Node>(graph, SimpleDistance.Compute);
+            //var routeList = routes.GetRouteGreedy(region.Nodes.First(x => x.Id == "4521863210"), 20).ToList();
+            var routes = new AllPairsShortestWithReturns<Node>(graph);
+            var routeList = routes.GetRoutes(region.Nodes.First(x => x.Id == "29937652"), 20);
+            for (var i = 0; i < routeList.Count - 1; i++)
+            {
+                if (!routeList[i].Equals(routeList[i + 1]))
+                {
+                    var way = originalEdgeWays[routeList[i], routeList[i + 1]];
+                    Console.WriteLine(way);
+                }
+            }*/
+        }
+
+        /// <summary>
+        /// Find optimal running route through cougar
+        /// </summary>
+        /// <param name="geometry"></param>
+        private static void RunCougarFinder(Geometry geometry) {
             geometry = new DropBuildings().Transform(geometry);
             geometry = new DropWater().Transform(geometry);
 
@@ -41,7 +124,7 @@ namespace RouteFinderCmd
                 }
             }
 
-            var graph = new GraphBuilder().BuildGraph(ways.ToArray(), out var originalEdgeWays);
+            var graph = new GraphBuilder(new RequiredEdgeGraphFilter(), new ReasonablyEnjoyableRunningCost()).BuildGraph(ways.ToArray(), out var originalEdgeWays);
 
             new GraphSummaryOutputter(outputLocation).OutputGraph(graph, originalEdgeWays, "reducedGraph.json");
 
@@ -50,14 +133,14 @@ namespace RouteFinderCmd
             // lazy route
             var lazyRouteFinder = new RouteFinder<Node>(new LazyGraphAugmenter<Node>());
             var lazyRoute = lazyRouteFinder.GetRoute(graph);
-            var lazyRouteCost = lazyRoute.Select(x => x.Weight).Sum();
+            var lazyRouteCost = lazyRoute.Select(x => x.Distance).Sum();
 
             // do regular route (rebuilds graph)
-            graph = new GraphBuilder().BuildGraph(ways.ToArray(), out originalEdgeWays);
+            graph = new GraphBuilder(new RequiredEdgeGraphFilter(), new ReasonablyEnjoyableRunningCost()).BuildGraph(ways.ToArray(), out originalEdgeWays);
             var greedRouteFinder = new RouteFinder<Node>(new GreedyGraphAugmenter<Node>());
             var route = greedRouteFinder.GetRoute(graph);
 
-            var routeCost = route.Select(x => x.Weight).Sum();
+            var routeCost = route.Select(x => x.Distance).Sum();
             //new RouteCoverageOutputter(outputLocation).OutputGraph(route, originalEdgeWays, "greedyRouteCoverage.json");
 
             new RouteDetailOutputter(ways, outputLocation, "lazyRouteCoverage.json", "instructions.txt").DescribeRoutesAsWays(lazyRoute);
@@ -71,7 +154,7 @@ namespace RouteFinderCmd
         private static void OutputPolygons(string polygonId, Geometry geometry)
         {
             var cougar = geometry.Relations.First(x => x.Id == polygonId);
-            var polygons = cougar.Polygons;
+            var polygons = RelationPolygonMemoizer.Instance.GetPolygons(cougar);
             DebugOut(polygons.First(), "cleanpolygon.json");
         }
 
