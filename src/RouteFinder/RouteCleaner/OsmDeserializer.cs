@@ -119,7 +119,7 @@ namespace RouteCleaner
                 return null;
             }
 
-            var memberRefs = relation.Descendants("member").Select(nd => nd.Attribute("ref")?.Value);
+            var memberRefs = relation.Descendants("member").Where(nd => nd.Attribute("type")?.Value == "way").Select(nd => nd.Attribute("ref")?.Value);
             var foundWays = new List<Way>();
             var incomplete = false;
             foreach (var memberRef in memberRefs)

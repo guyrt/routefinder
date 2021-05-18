@@ -13,6 +13,7 @@
         public PolygonContainment(Polygon polygon)
         {
             _triangles = new PolygonTriangulation(polygon).Triangulate();
+            _polygon = polygon;
         }
 
         // todo - memoize so you don't need this and can always just call the triangulator.
@@ -48,6 +49,8 @@
 
         /// <summary>
         /// Compute polygon containment of a <see cref="Way"/>.
+        /// 
+        /// For now, splits take value of the first node in Way. We could change to "all in" or "one in" as option I suppose.
         /// </summary>
         /// <param name="way"></param>
         /// <returns>Tuple of Way lists. First list is set of ways that are in the polygon. Second is list of ways that are outside the polygon.</returns>
@@ -122,6 +125,5 @@
 
             return nonOverlap;
         }
-
     }
 }

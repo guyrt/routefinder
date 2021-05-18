@@ -58,7 +58,7 @@ namespace RouteCleanerTests.Utils
             var polygonContainment = new PolygonContainment(polygon);
             var (contained, uncontained) = polygonContainment.SplitWayByContainment(way);
             Assert.Contains(way, uncontained);
-            Assert.Empty(contained);
+            Assert.Null(contained);
         }
 
         [Fact]
@@ -80,11 +80,12 @@ namespace RouteCleanerTests.Utils
             Assert.Contains(way.Nodes[0], uncontained[0].Nodes);
             Assert.Contains(way.Nodes[1], contained[0].Nodes);
             Assert.Contains(way.Nodes[2], contained[0].Nodes);
+            Assert.Contains(way.Nodes[3], contained[0].Nodes);
             Assert.Contains(way.Nodes[3], uncontained[1].Nodes);
             Assert.Contains(way.Nodes[4], contained[1].Nodes);
-            Assert.Contains(way.Nodes[5], uncontained[2].Nodes);
+            Assert.Contains(way.Nodes[5], contained[1].Nodes);
             Assert.Equal(2, contained.Count);
-            Assert.Equal(3, uncontained.Count);
+            Assert.Equal(2, uncontained.Count);
         }
     }
 }
