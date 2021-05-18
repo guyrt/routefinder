@@ -35,5 +35,10 @@
                 Tags = Tags.Count == 0 ? null : Tags
             };
         }
+
+        public override string ToString()
+        {
+            return $"https://www.openstreetmap.org/relation/{Id}";
+        }
     }
 }

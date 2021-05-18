@@ -43,7 +43,7 @@
                         }
                         if (node.Latitude > _maxLatitude)
                         {
-                            _maxLatitude = node.Longitude;
+                            _maxLatitude = node.Latitude;
                         }
                     }
                     _boundsSet = true;

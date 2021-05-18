@@ -108,7 +108,7 @@
             {
                 (var contains, var notContains) = this.SplitWayByContainment(way);
                 someWayInPolygon |= contains?.Count > 0; // something is inside the polygon.
-                someWayAndAllWaysInPolygon &= contains?.Count == 0; // nothing is outside the polygon.
+                someWayAndAllWaysInPolygon &= notContains?.Count == 0; // nothing is outside the polygon.
             }
 
             return someWayInPolygon ? (someWayAndAllWaysInPolygon ? PolygonContainmentRelation.Contains : PolygonContainmentRelation.Overlap) : PolygonContainmentRelation.NoOverlap;

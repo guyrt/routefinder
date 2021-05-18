@@ -15,24 +15,73 @@
     public class Program
     {
         private static readonly string outputLocation = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle_containment.xml";
-        private static readonly string localFile = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle.xml";
+        private static readonly string localFileRegions = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle.xml";
+        private static readonly string localFileWays = @"C:\Users\riguy\code\routefinder\data\runnable_ways_seattle.xml";
 
         public static void Main()
         {
-            RouteContainment();
-        }
 
-        private static void RouteContainment()
-        {
             var osmDeserializer = new OsmDeserializer(true);
-            Geometry region;
-            using (var fs = File.OpenRead(localFile))
+            Geometry relationRegion;
+            Geometry wayRegion;
+            using (var fs = File.OpenRead(localFileRegions))
             {
                 using (var sr = new StreamReader(fs))
                 {
-                    region = osmDeserializer.ReadFile(sr);
+                    relationRegion = osmDeserializer.ReadFile(sr);
                 }
             }
+
+            /*using (var fs = File.OpenRead(localFileWays))
+            {
+                using (var sr = new StreamReader(fs))
+                {
+                    wayRegion = osmDeserializer.ReadFile(sr);
+                }
+            }*/
+
+            RouteContainment(relationRegion);
+//            WayContainment(relationRegion, wayRegion);
+        }
+
+        private static void WayContainment(Geometry relationRegion, Geometry waysRegion)
+        {
+            var relations = relationRegion.Relations;
+            var ways = waysRegion.Ways;
+
+            for (var i = 0; i < relations.Length; i++)
+            {
+                var target = relations[i];
+                var polygons = RelationPolygonMemoizer.Instance.GetPolygons(target);
+                if (polygons.Count() == 0)
+                {
+                    Console.WriteLine($"Skipping {target.Id}");
+                    continue;  // typically this implies a non-closed relation.
+                }
+                var polygon = polygons.First();  // todo first is a problem. some relations have more than one!;
+                var p = new PolygonTriangulation(polygon);
+                var triangles = p.Triangulate();
+                var containment = new PolygonContainment(polygon, triangles);
+
+                Console.WriteLine($"Process {target}");
+                if (target.Id == "237385")
+                {
+                    var a = 1;
+                }
+
+                foreach (var way in ways)
+                {
+                    var (contained, uncontained) = containment.SplitWayByContainment(way);
+                    if (contained?.Count > 0)
+                    {
+                        var a = 1;
+                    }
+                }
+            }
+        }
+
+        private static void RouteContainment(Geometry region)
+        {
 
             var relations = region.Relations;
             for (var i = 0; i < relations.Length; i++)

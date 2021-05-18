@@ -114,6 +114,7 @@ namespace RouteCleaner
                 throw new InvalidOperationException($"Expected relation but got {relation}");
             }
 
+            // disallow nested relations
             if (relation.Descendants("member").Select(m => m.Attribute("type")?.Value).Any(v => v == "relation"))
             {
                 return null;
@@ -128,6 +129,7 @@ namespace RouteCleaner
                 {
                     if (this.discardPartials)
                     {
+                        Console.WriteLine($"Skipping {GetId(relation)} because missing {memberRef}");
                         return default;
                     }
 
