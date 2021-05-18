@@ -26,14 +26,14 @@
             };
 
             var polygons = PolygonFactory.BuildPolygons(ways);
-         //   Assert.Single(polygons);
-            // todo = check polygon somehow
+            Assert.Single(polygons);
+            // todo = check polygon ways in right order!
 
             Array.Reverse(ways[1].Nodes);
             Array.Reverse(ways[3].Nodes);
 
-            polygons = PolygonFactory.BuildPolygons(ways);
-            Assert.Single(polygons);
+            var secondPolygons = PolygonFactory.BuildPolygons(ways);
+            Assert.Single(secondPolygons);
         }
     }
 }

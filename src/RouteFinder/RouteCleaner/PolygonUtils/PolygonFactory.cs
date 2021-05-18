@@ -90,49 +90,6 @@
                 polygons.AddRange(FindPolygons(nodes, ways, reversedWay));
             }
 
-            // old
-
-            var startToWay = new Dictionary<Node, Way>();
-            foreach (var way in remainingWays)
-            {
-                var start = way.Nodes.First();
-                if (startToWay.ContainsKey(start))
-                {
-                    Array.Reverse(way.Nodes);
-                    start = way.Nodes.First();
-                }
-
-                startToWay.Add(start, way);
-            }
-
-            var unusedWays = new HashSet<Way>(remainingWays);
-            while (unusedWays.Count > 0)
-            {
-                var polygonWays = new LinkedList<Way>();
-                var way = unusedWays.First();
-                var firstNode = way.Nodes.First();
-                unusedWays.Remove(way);
-                polygonWays.AddLast(way);
-                while (true)
-                {
-                    var end = way.Nodes.Last();
-                    if (end == firstNode)
-                    {
-                        break;
-                    }
-
-                    if (!startToWay.ContainsKey(end))
-                    {
-                        throw new InvalidOperationException($"Can't link node {end}");
-                    }
-
-                    way = startToWay[end];
-                    polygonWays.AddLast(way);
-                    unusedWays.Remove(way);
-                }
-                polygons.Add(new Polygon(polygonWays)); // todo - track reversals.
-            }
-
             return polygons;
         }
 
@@ -193,17 +150,30 @@
             var polygons = new List<Polygon>();
             var firstSeenIndex = new Dictionary<Node, int>();
             var idx = 0;
+            var alreadyUsed = new bool[nodes.Count]; // if true then omit this from subsequent polygons because a closed circuit has been removed.
+
             foreach (var node in nodes)
             {
                 if (firstSeenIndex.ContainsKey(node))
                 {
-                    // found a polygon from range firstSeenIndex to idx. Use a mask.
-
-                } 
+                    var polygonWays = new LinkedList<Way>();
+                    // found a polygon from range firstSeenIndex to idx.
+                    for (var j = firstSeenIndex[node]; j < idx; j++)
+                    {
+                        if (!alreadyUsed[j])
+                        {
+                            polygonWays.AddLast(ways[j]);
+                            alreadyUsed[j] = true;
+                        }
+                    }
+                    polygons.Add(new Polygon(polygonWays));
+                    firstSeenIndex.Remove(node); // not strictly necessary, but this allows us to avoid recycling over some elements.
+                }
                 else
                 {
                     firstSeenIndex.Add(node, idx);
                 }
+
                 idx++;
             }
             return polygons;
