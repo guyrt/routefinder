@@ -36,7 +36,8 @@
 
                     if (triangleItem.Value.LastHitWasOnLine)
                     {
-                        Console.WriteLine($"Warning: Node {node.Id} hit on line.");
+                        // likely because they share node.
+//                        Console.WriteLine($"Warning: Node {node.Id} hit on line.");
                     }
 
                     return true;

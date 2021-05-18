@@ -129,7 +129,7 @@ namespace RouteCleaner
                 {
                     if (this.discardPartials)
                     {
-                        Console.WriteLine($"Skipping {GetId(relation)} because missing {memberRef}");
+                     //   Console.WriteLine($"Skipping {GetId(relation)} because missing {memberRef}");
                         return default;
                     }
 

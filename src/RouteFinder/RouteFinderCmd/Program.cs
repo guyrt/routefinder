@@ -32,22 +32,23 @@
                 }
             }
 
-            /*using (var fs = File.OpenRead(localFileWays))
+            using (var fs = File.OpenRead(localFileWays))
             {
                 using (var sr = new StreamReader(fs))
                 {
                     wayRegion = osmDeserializer.ReadFile(sr);
                 }
-            }*/
+            }
 
-            RouteContainment(relationRegion);
-//            WayContainment(relationRegion, wayRegion);
+          //  RouteContainment(relationRegion);
+            WayContainment(relationRegion, wayRegion);
         }
 
         private static void WayContainment(Geometry relationRegion, Geometry waysRegion)
         {
-            var relations = relationRegion.Relations;
+            var relations = relationRegion.Relations.Where(x => x.Id == "11556206").ToArray();
             var ways = waysRegion.Ways;
+            var cnt = 0;
 
             for (var i = 0; i < relations.Length; i++)
             {
@@ -58,25 +59,27 @@
                     Console.WriteLine($"Skipping {target.Id}");
                     continue;  // typically this implies a non-closed relation.
                 }
-                var polygon = polygons.First();  // todo first is a problem. some relations have more than one!;
-                var p = new PolygonTriangulation(polygon);
-                var triangles = p.Triangulate();
-                var containment = new PolygonContainment(polygon, triangles);
 
-                Console.WriteLine($"Process {target}");
-                if (target.Id == "237385")
+                cnt = 0;
+                foreach (var polygon in polygons)
                 {
-                    var a = 1;
-                }
+                    var p = new PolygonTriangulation(polygon);
+                    var triangles = p.Triangulate();
+                    var containment = new PolygonContainment(polygon, triangles);
 
-                foreach (var way in ways)
-                {
-                    var (contained, uncontained) = containment.SplitWayByContainment(way);
-                    if (contained?.Count > 0)
+
+                    foreach (var way in ways)
                     {
-                        var a = 1;
+                        var (contained, uncontained) = containment.SplitWayByContainment(way);
+                        if (contained?.Count > 0)
+                        {
+                            cnt++;
+                            Console.WriteLine(way);
+                        }
                     }
                 }
+
+                Console.WriteLine($"Process {target} Found {cnt} in and {ways.Length - cnt} out.");
             }
         }
 
@@ -131,8 +134,6 @@
                     }
                 }
             }
-
-            var a = 1;
         }
 
         private static void Dunno()
