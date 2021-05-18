@@ -38,7 +38,12 @@
             for (var i = 0; i < relations.Length; i++)
             {
                 var target = relations[i];
-                var polygon = RelationPolygonMemoizer.Instance.GetPolygons(target).First();  // todo first is a problem. some relations have more than one! 
+                var polygons = RelationPolygonMemoizer.Instance.GetPolygons(target);
+                if (polygons.Count() == 0)
+                {
+                    continue;  // typically this implies a non-closed relation.
+                }
+                var polygon = polygons.First();  // todo first is a problem. some relations have more than one!;
                 var p = new PolygonTriangulation(polygon);
                 var triangles = p.Triangulate();
                 var containment = new PolygonContainment(polygon, triangles);
@@ -46,7 +51,12 @@
                 for (var j = i + 2; j < relations.Length; j++)
                 {
                     var candidate = relations[j];
-                    var candidatePolygon = RelationPolygonMemoizer.Instance.GetPolygons(candidate).First();
+                    var candidatePolygons = RelationPolygonMemoizer.Instance.GetPolygons(candidate);
+                    if (candidatePolygons.Count() == 0)
+                    {
+                        continue;
+                    }
+                    var candidatePolygon = candidatePolygons.First();
                     
                     var relationship = containment.ComputePolygonRelation(candidatePolygon);
                     switch (relationship)

@@ -1,5 +1,6 @@
 ﻿namespace RouteCleaner.PolygonUtils
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Azure.Cosmos.Spatial;
@@ -17,28 +18,37 @@
 
         private readonly NodeArrayBounds nodeArrayBounds;
 
-        internal Polygon(LinkedList<Way> ways)
+        internal Polygon(LinkedList<Way> ways, List<bool> reversals)
         {
             Ways = ways;
-            Nodes = BuildNodes(ways);
+            Reversals = reversals;
+            Nodes = BuildNodes(ways, reversals);
 
             nodeArrayBounds = new NodeArrayBounds(Nodes);
         }
 
-        private List<Node> BuildNodes(LinkedList<Way> ways)
+        private List<Node> BuildNodes(LinkedList<Way> ways, List<bool> reversals)
         {
             var originalNodes = new List<Node>();
+            var idx = 0;
             foreach (var way in ways)
             {
-                var lastNode = way.Nodes.Last();
-                originalNodes.Add(way.Nodes.First());
-                foreach (var node in way.Nodes.Skip(1))
+                var nodes = way.Nodes;
+                if (reversals[idx])
+                {
+                    nodes = this.Reverse(nodes);
+                }
+                var lastNode = nodes.Last();
+                originalNodes.Add(nodes[0]);
+                foreach (var node in nodes.Skip(1))
                 {
                     if (node != lastNode)
                     {
                         originalNodes.Add(node);
                     }
                 }
+
+                idx++;
             }
 
             var dotProducts = new List<double>();
@@ -65,12 +75,29 @@
             return newNodes;
         }
 
+        private Node[] Reverse(Node[] nodes)
+        {
+            var nodeLength = nodes.Length;
+            var newArr = new Node[nodes.Length];
+            for (var i = 0; i < newArr.Length; i++)
+            {
+                newArr[i] = nodes[nodeLength - 1 - i];
+            }
+            return newArr;
+        }
+
         /// <summary>
-        /// Ordered set of Ways where the end of node n_i is the start of node n_j
+        /// Ordered set of Ways where the end of node n_i is the start/end of node n_j depending on reversals.
         /// </summary>
         public LinkedList<Way> Ways { get; }
 
         public List<Node> Nodes { get; }
+
+        /// <summary>
+        /// List of bools corresponding to the list of Ways. If all values are false, then the end of Ways[n] is start of Wans[n+1].
+        /// If Reversals[n] == true, then the Nodes in Way[n] must be reversed for the quality Ways[n].End == Ways[n+1].Start. 
+        /// </summary>
+        public List<bool> Reversals { get; }
 
         public (Point, Point) Bounds => this.nodeArrayBounds.Bounds;
 

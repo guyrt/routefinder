@@ -51,7 +51,7 @@
                 {
                     var wayLL = new LinkedList<Way>();
                     wayLL.AddLast(way);
-                    polygons.Add(new Polygon(wayLL));
+                    polygons.Add(new Polygon(wayLL, new List<bool> { false }));
                 }
                 else
                 {
@@ -72,6 +72,7 @@
                 var reversedWay = new List<bool>();
 
                 var node = nodeToWayMap.First().Key; // in non-reversed order, starting node is the start of first Way and end of last.
+                var firstNode = node;
                 nodes.Add(node);
                 while (nodeToWayMap.Count > 0) // can't be infinite b/c we remove something from a value in every iteration.
                 {
@@ -84,6 +85,11 @@
                     nodes.Add(node);
                     nodeToWayMap = DropWayFromMap(nodeToWayMap, node, localWay); // drop return connection.
                     remainingWays.Remove(localWay);
+
+                    if (firstNode == node)
+                    {
+                        break;
+                    }
                 }
 
                 // Step 3 - find/cull sets of nodes into polygons
@@ -157,16 +163,18 @@
                 if (firstSeenIndex.ContainsKey(node))
                 {
                     var polygonWays = new LinkedList<Way>();
+                    var reversals = new List<bool>();
                     // found a polygon from range firstSeenIndex to idx.
                     for (var j = firstSeenIndex[node]; j < idx; j++)
                     {
                         if (!alreadyUsed[j])
                         {
                             polygonWays.AddLast(ways[j]);
+                            reversals.Add(reversed[j]);
                             alreadyUsed[j] = true;
                         }
                     }
-                    polygons.Add(new Polygon(polygonWays));
+                    polygons.Add(new Polygon(polygonWays, reversals));
                     firstSeenIndex.Remove(node); // not strictly necessary, but this allows us to avoid recycling over some elements.
                 }
                 else
