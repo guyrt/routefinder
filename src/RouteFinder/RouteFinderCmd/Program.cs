@@ -14,7 +14,7 @@
 
     public class Program
     {
-        private static readonly string outputLocation = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle_containment.xml";
+        private static readonly string outputLocation = @"C:\Users\riguy\code\routefinder\src\RouteViewerWeb\data\";
         private static readonly string localFileRegions = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle.xml";
         private static readonly string localFileWays = @"C:\Users\riguy\code\routefinder\data\runnable_ways_seattle.xml";
 
@@ -39,6 +39,8 @@
                     wayRegion = osmDeserializer.ReadFile(sr);
                 }
             }
+
+            OutputPolygons("11556206", relationRegion);
 
           //  RouteContainment(relationRegion);
             WayContainment(relationRegion, wayRegion);
