@@ -15,6 +15,8 @@
         [Fact]
         public void SinglePolygonFromDiamond()
         {
+            GlobalSettings.RouteCleanerSettings.GetInstance().PolygonsShouldConsolidateStraightEdges = false; // all our nodes are in same spot in this test.
+
             var nodes = (new[] { 1, 2, 3, 4 }).Select(x => new Node($"{x}", 0.0, 0.0)).ToArray();
             var dummyNodes = (new[] { 1, 2, 3, 4 }).Select(x => new Node($"dummy{x}", 0.0, 0.0)).ToArray(); // sit in middle of wyas
             var ways = new Way[]
@@ -26,14 +28,20 @@
             };
 
             var polygons = PolygonFactory.BuildPolygons(ways);
-            Assert.Single(polygons);
-            // todo = check polygon ways in right order!
+            var firstPolygon = polygons.Single();
 
             Array.Reverse(ways[1].Nodes);
             Array.Reverse(ways[3].Nodes);
 
             var secondPolygons = PolygonFactory.BuildPolygons(ways);
-            Assert.Single(secondPolygons);
+            var secondPolygon = polygons.Single();
+
+            Assert.NotEmpty(firstPolygon.Nodes);
+
+            for (var i = 0; i < firstPolygon.Nodes.Count; i++)
+            {
+                Assert.Equal(firstPolygon.Nodes[i], secondPolygon.Nodes[i]);
+            }
         }
 
         [Fact]
@@ -55,7 +63,6 @@
 
             var polygons = PolygonFactory.BuildPolygons(ways);
             Assert.Equal(2, polygons.Count);
-            // todo = check polygon ways in right order!
 
             Array.Reverse(ways[1].Nodes);
             Array.Reverse(ways[3].Nodes);

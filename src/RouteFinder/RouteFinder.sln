@@ -19,9 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosDBLayer", "CosmosDBLa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinderDataModel", "RouteFinderDataModel\RouteFinderDataModel.csproj", "{86E17CC5-D2F1-471D-A26D-F42B994185F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmosDBLayerTests", "CosmosDBLayerTests\CosmosDBLayerTests.csproj", "{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosDBLayerTests", "CosmosDBLayerTests\CosmosDBLayerTests.csproj", "{DABAACB0-9E48-45B9-9431-E746EB6F5EB8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinderTests", "RouteFinderTests\RouteFinderTests.csproj", "{FCAF87F6-17FE-4885-AA69-585F9FB917EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalSettings", "GlobalSettings\GlobalSettings.csproj", "{13101A7D-CB9B-4516-B166-3B82349AF682}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCAF87F6-17FE-4885-AA69-585F9FB917EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13101A7D-CB9B-4516-B166-3B82349AF682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13101A7D-CB9B-4516-B166-3B82349AF682}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13101A7D-CB9B-4516-B166-3B82349AF682}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13101A7D-CB9B-4516-B166-3B82349AF682}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

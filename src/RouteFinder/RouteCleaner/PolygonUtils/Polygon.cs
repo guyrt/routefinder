@@ -1,18 +1,17 @@
 ﻿namespace RouteCleaner.PolygonUtils
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Azure.Cosmos.Spatial;
     using RouteFinderDataModel;
     using RouteFinderDataModel.Tools;
+    using GlobalSettings;
 
     /// <summary>
     /// A polygon is a series of nodes that form 1 or more ways that connect into a circuit.
     /// </summary>
     public class Polygon
     {
-
         public const double FlattenThreshold = -1 + 1e-2;
         public List<Node> EliminatedNodes;
 
@@ -51,6 +50,11 @@
                 idx++;
             }
 
+            if (!RouteCleanerSettings.GetInstance().PolygonsShouldConsolidateStraightEdges)
+            {
+                return originalNodes;
+            }
+
             var dotProducts = new List<double>();
             for (var i = 0; i < originalNodes.Count; i++)
             {
@@ -79,7 +83,7 @@
         {
             var nodeLength = nodes.Length;
             var newArr = new Node[nodes.Length];
-            for (var i = 0; i < newArr.Length; i++)
+            for (var i = 0; i < nodeLength; i++)
             {
                 newArr[i] = nodes[nodeLength - 1 - i];
             }

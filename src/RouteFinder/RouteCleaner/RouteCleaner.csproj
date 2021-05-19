@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GlobalSettings\GlobalSettings.csproj" />
     <ProjectReference Include="..\RouteFinderDataModel\RouteFinderDataModel.csproj" />
     <ProjectReference Include="..\RouteFinder\RouteFinder.csproj" />
   </ItemGroup>
