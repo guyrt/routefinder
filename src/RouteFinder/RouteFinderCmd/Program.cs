@@ -67,6 +67,9 @@
                 {
                     var p = new PolygonTriangulation(polygon);
                     var triangles = p.Triangulate();
+
+                    Program.DebugOut(triangles, "triangles.json");
+
                     var containment = new PolygonContainment(polygon, triangles);
 
 
@@ -101,6 +104,7 @@
                 var polygon = polygons.First();  // todo first is a problem. some relations have more than one!;
                 var p = new PolygonTriangulation(polygon);
                 var triangles = p.Triangulate();
+
                 var containment = new PolygonContainment(polygon, triangles);
 
                 for (var j = i + 1; j < relations.Length; j++)
@@ -245,6 +249,15 @@
             var converter = new GeoJsonConverter();
             var polygonOut = converter.Convert(nodes);
             var serialized = JsonConvert.SerializeObject(polygonOut);
+            File.WriteAllLines(fullPath, new[] { serialized });
+        }
+
+        public static void DebugOut(LinkedList<Triangle> triangles, string filename)
+        {
+            var fullPath = Path.Combine(outputLocation, filename);
+            var converter = new GeoJsonConverter();
+            var trianglesOut = converter.Convert(triangles);
+            var serialized = JsonConvert.SerializeObject(trianglesOut);
             File.WriteAllLines(fullPath, new[] { serialized });
         }
 

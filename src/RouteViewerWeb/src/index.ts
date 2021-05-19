@@ -13,7 +13,7 @@ export class RouteFinder {
         let map = new mapboxgl.Map({
             container: domTarget,
             style: 'mapbox://styles/mapbox/streets-v9', // outdoors
-            center: [-122.1170367, 47.5379512],
+            center: [-122.10851, 47.68325],
             zoom: 13
         });
         this.map = map;
