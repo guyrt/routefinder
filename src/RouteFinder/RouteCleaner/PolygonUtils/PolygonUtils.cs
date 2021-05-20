@@ -25,21 +25,24 @@
             return dotProduct;
         }
 
-        public static double CrossProduct(List<Node> nodes, int centerIndex)
+        public static double CrossProductZ(List<Node> nodes, int centerIndex)
         {
             var nodeLength = nodes.Count;
             var left = nodes[(centerIndex - 1 + nodeLength) % nodeLength];
             var center = nodes[centerIndex];
             var right = nodes[(centerIndex + 1) % nodeLength];
 
-            var crossProduct = CrossProduct(left, center, right);
+            var crossProduct = CrossProductZ(left, center, right);
             return crossProduct;
         }
 
-        public static double CrossProduct(Node left, Node center, Node right)
+        public static double CrossProductZ(Node left, Node center, Node right)
         {
             var leftVector = new[] { left.Latitude - center.Latitude, left.Longitude - center.Longitude };
             var rightVector = new[] { right.Latitude - center.Latitude, right.Longitude - center.Longitude };
+
+            var leftMagnitude = Math.Sqrt(leftVector[0] * leftVector[0] + leftVector[1] * leftVector[1]);
+            var rightMagnitude = Math.Sqrt(rightVector[0] * rightVector[0] + rightVector[1] * rightVector[1]);
             var crossProduct = leftVector[0] * rightVector[1] - leftVector[1] * rightVector[0];
             return crossProduct;
         }

@@ -39,13 +39,13 @@
         public bool Contains(Node n)
         {
             LastHitWasOnLine = false;
-            var cp1Raw = PolygonUtils.CrossProduct(Nodes[1], Nodes[0], n);
+            var cp1Raw = PolygonUtils.CrossProductZ(Nodes[1], Nodes[0], n);
             if (Math.Abs(cp1Raw) < 1e-12)
             {
                 LastHitWasOnLine = true;
                 return true;
             }
-            var cp2Raw = PolygonUtils.CrossProduct(Nodes[2], Nodes[1], n);
+            var cp2Raw = PolygonUtils.CrossProductZ(Nodes[2], Nodes[1], n);
             if (Math.Abs(cp2Raw) < 1e-12)
             {
                 LastHitWasOnLine = true;
@@ -57,7 +57,7 @@
             {
                 return false;
             }
-            var cp3Raw = PolygonUtils.CrossProduct(Nodes[0], Nodes[2], n);
+            var cp3Raw = PolygonUtils.CrossProductZ(Nodes[0], Nodes[2], n);
             if (Math.Abs(cp3Raw) < 1e-12)
             {
                 LastHitWasOnLine = true;

@@ -8,44 +8,46 @@
     public class PolygonContainment
     {
         private readonly Polygon _polygon;
-        private readonly LinkedList<Triangle> _triangles;
 
         public PolygonContainment(Polygon polygon)
         {
-            _triangles = new PolygonTriangulation(polygon).Triangulate();
             _polygon = polygon;
         }
 
-        // todo - memoize so you don't need this and can always just call the triangulator.
-        public PolygonContainment(Polygon polygon, LinkedList<Triangle> triangles)
-        {
-            _triangles = triangles;
-            _polygon = polygon;
-        }
-
+        // Ray tracing (cross number) based implementation.
         public bool Contains(Node node)
         {
-            var triangleItem = _triangles.First;
-            while (triangleItem != null)
+            var crossings = 0;
+            (var startLat, var startLng) = TranslateNode(_polygon.Nodes[0], node);
+            for (int i = 0; i < _polygon.Nodes.Count; i++)
             {
-                var triangle = triangleItem.Value;
-                if (triangleItem.Value.Contains(node))
+                (var endLat, var endLng) = TranslateNode(_polygon.Nodes[(i + 1) % _polygon.Nodes.Count], node);
+
+                if ((startLng < 0) != (endLng < 0) && (startLat > 0 || endLat > 0))
                 {
-                    _triangles.Remove(triangleItem);
-                    _triangles.AddFirst(triangle);
-
-                    if (triangleItem.Value.LastHitWasOnLine)
+                    // potential crossing: +y and -y.
+                    if (startLat * endLat > 0)
                     {
-                        // likely because they share node.
-//                        Console.WriteLine($"Warning: Node {node.Id} hit on line.");
+                        // if both x are positive then definite crossing.
+                        crossings++;
+                    } 
+                    else if (startLat * (endLng - startLng) - startLng * (endLat - startLat) > 0)
+                    {
+                        // if the line crosses in positive x space then definite crossing.
+                        crossings++;
                     }
-
-                    return true;
                 }
-                triangleItem = triangleItem.Next;
+
+                startLat = endLat;
+                startLng = endLng;
             }
 
-            return false;
+            return crossings % 2 > 0;
+        }
+
+        private (double startLat, double startLng) TranslateNode(Node n, Node origin)
+        {
+            return (n.Latitude - origin.Latitude, n.Longitude - origin.Longitude); 
         }
 
         /// <summary>

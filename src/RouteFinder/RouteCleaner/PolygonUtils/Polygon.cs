@@ -116,10 +116,10 @@
                 return true;
             }
 
-            var originalNumber = PolygonUtils.CrossProduct(Nodes, 0) > 0 ? 1 : -1;
+            var originalNumber = PolygonUtils.CrossProductZ(Nodes, 0) > 0 ? 1 : -1;
             for (var i = 1; i < Nodes.Count; i++)
             {
-                var newCp = PolygonUtils.CrossProduct(Nodes, i);
+                var newCp = PolygonUtils.CrossProductZ(Nodes, i);
                 if (newCp * originalNumber < 0)
                 {
                     return false;
@@ -134,7 +134,7 @@
         /// <summary>
         /// Direction is either +1 or -1 and corresponds to the sign of the cross product of convex angles.
         ///
-        /// A negative value means that a cross-product that is negative denotes a convex angle. This also
+        /// A negative value means that negative cross-product that implies a convex angle. This also
         /// corresponds to a counter-clockwise direction of travel around the parimeter of the polygon.
         /// </summary>
         public int Direction => (_direction ?? (_direction = SetDirection())).Value;

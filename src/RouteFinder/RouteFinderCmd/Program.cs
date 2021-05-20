@@ -11,6 +11,9 @@
     using RouteCleaner.PolygonUtils;
     using RouteFinder;
     using RouteFinder.GreedyRoute;
+    using System.Threading.Tasks;
+    using System.Collections.Concurrent;
+    using System.Threading;
 
     public class Program
     {
@@ -48,29 +51,24 @@
 
         private static void WayContainment(Geometry relationRegion, Geometry waysRegion)
         {
-            var relations = relationRegion.Relations.Where(x => x.Id == "11556206").ToArray();
+            var relations = relationRegion.Relations;//.Where(x => x.Id == "237356").ToArray();// kirkland: 237356. nike park 11556206
             var ways = waysRegion.Ways;
-            var cnt = 0;
 
-            for (var i = 0; i < relations.Length; i++)
+            Parallel.ForEach(relations, target =>
+            //for (var i = 0; i < relations.Length; i++)
             {
-                var target = relations[i];
+                var cnt = 0;
                 var polygons = RelationPolygonMemoizer.Instance.GetPolygons(target);
                 if (polygons.Count() == 0)
                 {
-                    Console.WriteLine($"Skipping {target.Id}");
-                    continue;  // typically this implies a non-closed relation.
+                    NonBlockingConsole.WriteLine($"Skipping {target.Id}");
+                    return;  // typically this implies a non-closed relation.
                 }
 
                 cnt = 0;
                 foreach (var polygon in polygons)
                 {
-                    var p = new PolygonTriangulation(polygon);
-                    var triangles = p.Triangulate();
-
-                    Program.DebugOut(triangles, "triangles.json");
-
-                    var containment = new PolygonContainment(polygon, triangles);
+                    var containment = new PolygonContainment(polygon);
 
 
                     foreach (var way in ways)
@@ -79,13 +77,13 @@
                         if (contained?.Count > 0)
                         {
                             cnt++;
-                            Console.WriteLine(way);
+                            //  Console.WriteLine(way);
                         }
                     }
                 }
 
-                Console.WriteLine($"Process {target} Found {cnt} in and {ways.Length - cnt} out.");
-            }
+                NonBlockingConsole.WriteLine($"Process {target} Found {cnt} in and {ways.Length - cnt} out.");
+            });
         }
 
         private static void RouteContainment(Geometry region)
@@ -102,10 +100,7 @@
                     continue;  // typically this implies a non-closed relation.
                 }
                 var polygon = polygons.First();  // todo first is a problem. some relations have more than one!;
-                var p = new PolygonTriangulation(polygon);
-                var triangles = p.Triangulate();
-
-                var containment = new PolygonContainment(polygon, triangles);
+                var containment = new PolygonContainment(polygon);
 
                 for (var j = i + 1; j < relations.Length; j++)
                 {
@@ -124,9 +119,7 @@
                             target.InternalRelations.Add(candidate);
                             break;
                         case PolygonContainmentRelation.Overlap: // see if reversed contains!
-                            var candidateTriangulation = new PolygonTriangulation(polygon);
-                            var candidateTriangles = candidateTriangulation.Triangulate();
-                            var candidateContainment = new PolygonContainment(candidatePolygon, candidateTriangles);
+                            var candidateContainment = new PolygonContainment(candidatePolygon);
                             if (candidateContainment.ComputePolygonRelation(polygon) == PolygonContainmentRelation.Contains)
                             {
                                 candidate.InternalRelations.Add(target);
@@ -261,5 +254,27 @@
             File.WriteAllLines(fullPath, new[] { serialized });
         }
 
+    }
+
+    // thanks, internet! I wrote one of these in grad school but found this one suitable for a quick test.
+    public static class NonBlockingConsole
+    {
+        private static BlockingCollection<string> m_Queue = new BlockingCollection<string>();
+
+        static NonBlockingConsole()
+        {
+            var thread = new Thread(
+              () =>
+              {
+                  while (true) Console.WriteLine(m_Queue.Take());
+              });
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        public static void WriteLine(string value)
+        {
+            m_Queue.Add(value);
+        }
     }
 }

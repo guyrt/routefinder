@@ -16,11 +16,7 @@
         public List<Way> Transform(Relation target, Geometry geometry)
         {
             var polygon = RelationPolygonMemoizer.Instance.GetPolygons(target).First();  // todo first is a problem. some relations have more than one! 
-            var p = new PolygonTriangulation(polygon);
-            var triangles = p.Triangulate();
-            DebugOut(triangles, "triangles.json");
-
-            var containment = new PolygonContainment(polygon, triangles);
+            var containment = new PolygonContainment(polygon);
             var ways = new List<Way>();
             foreach (var way in geometry.Ways)
             {

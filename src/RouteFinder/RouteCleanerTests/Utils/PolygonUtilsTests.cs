@@ -13,10 +13,10 @@ namespace RouteCleanerTests.Utils
             var left = new Node("2", 47.5271130, -122.1431340);
             var right = new Node("3", 47.5288370, -122.1275700);
 
-            var cp = PolygonUtils.CrossProduct(left, center, right);
+            var cp = PolygonUtils.CrossProductZ(left, center, right);
             Assert.True(cp > 0);
 
-            var cp2 = PolygonUtils.CrossProduct(right, center, left);
+            var cp2 = PolygonUtils.CrossProductZ(right, center, left);
             Assert.True(cp2 < 0);
         }
     }
