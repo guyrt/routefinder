@@ -11,9 +11,6 @@
     using RouteCleaner.PolygonUtils;
     using RouteFinder;
     using RouteFinder.GreedyRoute;
-    using System.Threading.Tasks;
-    using System.Collections.Concurrent;
-    using System.Threading;
 
     public class Program
     {
@@ -43,48 +40,10 @@
                 }
             }
 
-            OutputPolygons("11556206", relationRegion);
-
-          //  RouteContainment(relationRegion);
-            WayContainment(relationRegion, wayRegion);
+            new RouteFinderDataPrepDriver().NodeContainment(relationRegion, wayRegion);
         }
 
-        private static void WayContainment(Geometry relationRegion, Geometry waysRegion)
-        {
-            var relations = relationRegion.Relations;//.Where(x => x.Id == "237356").ToArray();// kirkland: 237356. nike park 11556206
-            var ways = waysRegion.Ways;
-
-            Parallel.ForEach(relations, target =>
-            //for (var i = 0; i < relations.Length; i++)
-            {
-                var cnt = 0;
-                var polygons = RelationPolygonMemoizer.Instance.GetPolygons(target);
-                if (polygons.Count() == 0)
-                {
-                    NonBlockingConsole.WriteLine($"Skipping {target.Id}");
-                    return;  // typically this implies a non-closed relation.
-                }
-
-                cnt = 0;
-                foreach (var polygon in polygons)
-                {
-                    var containment = new PolygonContainment(polygon);
-
-
-                    foreach (var way in ways)
-                    {
-                        var (contained, uncontained) = containment.SplitWayByContainment(way);
-                        if (contained?.Count > 0)
-                        {
-                            cnt++;
-                            //  Console.WriteLine(way);
-                        }
-                    }
-                }
-
-                NonBlockingConsole.WriteLine($"Process {target} Found {cnt} in and {ways.Length - cnt} out.");
-            });
-        }
+        
 
         private static void RouteContainment(Geometry region)
         {
@@ -254,27 +213,5 @@
             File.WriteAllLines(fullPath, new[] { serialized });
         }
 
-    }
-
-    // thanks, internet! I wrote one of these in grad school but found this one suitable for a quick test.
-    public static class NonBlockingConsole
-    {
-        private static BlockingCollection<string> m_Queue = new BlockingCollection<string>();
-
-        static NonBlockingConsole()
-        {
-            var thread = new Thread(
-              () =>
-              {
-                  while (true) Console.WriteLine(m_Queue.Take());
-              });
-            thread.IsBackground = true;
-            thread.Start();
-        }
-
-        public static void WriteLine(string value)
-        {
-            m_Queue.Add(value);
-        }
     }
 }

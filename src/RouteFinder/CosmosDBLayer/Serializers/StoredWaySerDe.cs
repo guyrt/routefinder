@@ -17,6 +17,7 @@
             return objectType == typeof(Way);
         }
 
+        // Generate a real way from the Json
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var obj = JObject.Load(reader);

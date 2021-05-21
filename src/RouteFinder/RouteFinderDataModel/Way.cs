@@ -7,9 +7,10 @@
 
     public class Way : TaggableIdentifiableElement
     {
-        public Way(string id, Node[] nodes, Dictionary<string, string> tags = null) : base(id, tags)
+        public Way(string id, Node[] nodes, Dictionary<string, string> tags = null, Relation containedIn = null) : base(id, tags)
         {
             Nodes = nodes;
+            ContainedIn = containedIn;
             _avgPointSet = false;
             _avgLatitude = 0;
             _avgLongitude = 0;
@@ -18,6 +19,13 @@
         }
 
         public Node[] Nodes { get; }
+
+        /// <summary>
+        /// If this Way is in a single Relation, mark the relation.
+        /// 
+        /// Note that we duplicate ways in more than one relation. They can only be in one.
+        /// </summary>
+        public Relation ContainedIn { get; }
 
         private readonly NodeArrayBounds nodeArrayBounds;
 
@@ -39,7 +47,14 @@
             }
         }
 
+        [JsonIgnore]
         public (Point, Point) Bounds => this.nodeArrayBounds.Bounds;
+
+        public override string ToString()
+        {
+            return $"https://www.openstreetmap.org/way/{Id}";
+        }
+
 
         private void SetAverages()
         {
@@ -56,11 +71,5 @@
             _avgPointSet = true;
 
         }
-
-        public override string ToString()
-        {
-            return $"https://www.openstreetmap.org/way/{Id}";
-        }
-
     }
 }

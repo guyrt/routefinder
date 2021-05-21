@@ -1,6 +1,7 @@
 ﻿namespace RouteFinderDataModel
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using Microsoft.Azure.Cosmos.Spatial;
     using Newtonsoft.Json;
@@ -14,7 +15,10 @@
         public Node(string id, double latitude, double longitude, Dictionary<string, string> tags = null) : base(id, tags)
         {
             Location = new Point(longitude, latitude);
+            Relations = new ConcurrentBag<Relation>();
         }
+
+        public ConcurrentBag<Relation> Relations { get; set; }
 
         /// <summary>
         /// We store lat/long in a CosmosDB point to avoid copying objects on read. However,

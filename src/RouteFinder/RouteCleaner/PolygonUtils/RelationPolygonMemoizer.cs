@@ -31,7 +31,7 @@
             return newPolygons;
         }
 
-        private Polygon[] BuildPolygons(Relation relation)
+        public static Polygon[] BuildPolygons(Relation relation)
         {
             if (!relation.Tags.TryGetValue("type", out var foo) || (foo != "multipolygon" && foo != "boundary")) // multipolygon is deprecated in favor of boundary
             {

@@ -76,6 +76,11 @@
                 }
             }
 
+            if (newNodes[0] == newNodes[newNodes.Count - 1])
+            {
+                throw new System.Exception($"Node {newNodes[0]} duplicate at start and end.");
+            }
+
             return newNodes;
         }
 

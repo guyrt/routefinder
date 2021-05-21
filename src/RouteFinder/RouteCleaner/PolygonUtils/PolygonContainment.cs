@@ -17,6 +17,11 @@
         // Ray tracing (cross number) based implementation.
         public bool Contains(Node node)
         {
+            if (SimpleNonOverlap(node))
+            {
+                return false;
+            }
+
             var crossings = 0;
             (var startLat, var startLng) = TranslateNode(_polygon.Nodes[0], node);
             for (int i = 0; i < _polygon.Nodes.Count; i++)
@@ -125,6 +130,16 @@
 
             var nonOverlap = wayBoundsMax.Position.Latitude < polyBoundsMin.Position.Latitude || polyBoundsMax.Position.Latitude < wayBoundsMin.Position.Latitude
                 || wayBoundsMax.Position.Longitude < polyBoundsMin.Position.Longitude || polyBoundsMax.Position.Longitude < wayBoundsMin.Position.Longitude;
+
+            return nonOverlap;
+        }
+
+        private bool SimpleNonOverlap(Node n)
+        {
+            (var polyBoundsMin, var polyBoundsMax) = this._polygon.Bounds;
+
+            var nonOverlap = n.Latitude < polyBoundsMin.Position.Latitude || polyBoundsMax.Position.Latitude < n.Latitude
+                || n.Longitude < polyBoundsMin.Position.Longitude || polyBoundsMax.Position.Longitude < n.Longitude;
 
             return nonOverlap;
         }

@@ -6,6 +6,7 @@
 
     using RouteFinderDataModel;
 
+    [Obsolete("Use ray tracing")]
     [DebuggerDisplay("Triangle {Nodes[0].Id} {Nodes[1].Id} {Nodes[2].Id}")]
     public class Triangle
     {
