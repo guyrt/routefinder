@@ -10,19 +10,22 @@
     /// <summary>
     /// A single point in space.
     /// </summary>
-    public class Node : TaggableIdentifiableElement
+    public class Node
     {
-        public Node(string id, double latitude, double longitude, Dictionary<string, string> tags = null) : base(id, tags)
+        public Node(string id, double latitude, double longitude)
         {
+            Id = id;
             Location = new Point(longitude, latitude);
             Relations = new ConcurrentBag<Relation>();
             ContainingWays = new List<Way>();
         }
 
+        [JsonProperty("id")]
+        public string Id { get; }
+
         public ConcurrentBag<Relation> Relations { get; set; }
 
         public List<Way> ContainingWays { get; set; }
-
 
         /// <summary>
         /// We store lat/long in a CosmosDB point to avoid copying objects on read. However,
@@ -33,18 +36,10 @@
         private Point Location { get; }
 
         [JsonIgnore]
-        public double Latitude { get
-            {
-                return Location.Position.Latitude;
-            }
-        }
+        public double Latitude => Location.Position.Latitude;
 
         [JsonIgnore]
-        public double Longitude { get
-            {
-                return Location.Position.Longitude;
-            }
-        }
+        public double Longitude =>  Location.Position.Longitude;
 
         public static Comparer<Node> NodeComparer = Comparer<Node>.Create((n1, n2) => string.Compare(n1.Id, n2.Id, StringComparison.Ordinal));
 
@@ -58,7 +53,6 @@
             return new ThinNode
             {
                 Id = Id,
-                Tags = Tags.Count == 0 ? null : Tags,
                 Latitude = Latitude,
                 Longitude = Longitude
             };

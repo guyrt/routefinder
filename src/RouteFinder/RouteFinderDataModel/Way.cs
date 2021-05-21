@@ -61,6 +61,19 @@
             return $"https://www.openstreetmap.org/way/{Id}";
         }
 
+        public string Name {
+            get {
+                var defaultName = "Unnamed way";
+                if (this.Tags.TryGetValue("name", out var wayName))
+                {
+                    return string.IsNullOrEmpty(wayName) ? defaultName : wayName;
+                }
+                else
+                {
+                    return defaultName;
+                }
+            }
+        }
 
         private void SetAverages()
         {

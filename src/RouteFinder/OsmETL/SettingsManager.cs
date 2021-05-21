@@ -1,7 +1,5 @@
 ﻿namespace CosmosDBLayer
 {
-
-    using System;
     using Microsoft.Extensions.Configuration;
 
     public static class SettingsManager

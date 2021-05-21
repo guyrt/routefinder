@@ -13,7 +13,7 @@ namespace CosmosDBLayerTests
         {
             var nodes = new[]
             {
-                new Node("node1", 0.0, 0.0, new Dictionary<string, string>() {{"firstNode", "yep" } }),
+                new Node("node1", 0.0, 0.0),
                 new Node("node2", 1.0, 1.0)
             };
             var tags = new Dictionary<string, string>()
@@ -35,8 +35,6 @@ namespace CosmosDBLayerTests
             var newWay = JsonConvert.DeserializeObject<Way>(serialized, serde);
             Assert.Equal(1.0, newWay.Nodes[1].Latitude);
             Assert.Equal(1.0, newWay.Nodes[1].Longitude);
-            Assert.Equal("yep", newWay.Nodes[0].Tags["firstNode"]);
-            Assert.Empty(newWay.Nodes[1].Tags);
             Assert.Equal("v1", newWay.Tags["k1"]);
             Assert.Equal("v2", newWay.Tags["k2"]);
 

@@ -28,6 +28,7 @@
             {
                 using (var sr = new StreamReader(fs))
                 {
+                    Console.WriteLine($"Loading regions from {localFileRegions}.");
                     relationRegion = osmDeserializer.ReadFile(sr);
                 }
             }
@@ -36,11 +37,13 @@
             {
                 using (var sr = new StreamReader(fs))
                 {
+                    Console.WriteLine($"Loading ways from {localFileWays}.");
                     wayRegion = osmDeserializer.ReadFile(sr);
                 }
             }
 
             var outputGeometry = new RouteFinderDataPrepDriver().RunChain(relationRegion, wayRegion);
+
 
         }
 

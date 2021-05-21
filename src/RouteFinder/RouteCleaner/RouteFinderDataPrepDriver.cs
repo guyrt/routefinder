@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteFinderDataModel;
 using RouteCleaner.PolygonUtils;
+using System.Diagnostics;
 
 namespace RouteCleaner
 {
@@ -11,11 +12,25 @@ namespace RouteCleaner
     {
         public Geometry RunChain(Geometry relationRegion, Geometry waysRegion)
         {
+            var watch = Stopwatch.StartNew();
             var nodes = NodeContainment(relationRegion, waysRegion);
-            Console.WriteLine("Done with NodeContainment");
-            var ways = GeneratedWaysPerRegion(nodes, waysRegion);
-            Console.WriteLine("Done with GeneratedWaysPerRegion");
-            AddNodesToWays(ways);
+            var time = watch.Elapsed;
+            Console.WriteLine($"Done with NodeContainment in {time.TotalSeconds} seconds.");
+            
+            watch.Restart();
+            var ways = GeneratedWaysPerRegion(nodes, waysRegion.Ways);
+            time = watch.Elapsed;
+            Console.WriteLine($"Done with GeneratedWaysPerRegion in {time.TotalSeconds} seconds. Have {ways.Count} ways.");
+
+            watch.Restart();
+            ways = ConsolidateWays(ways);
+            time = watch.Elapsed;
+            Console.WriteLine($"Done with ConsolidatedWays in {time.TotalSeconds} seconds. Have {ways.Count} ways.");
+
+            watch.Restart();
+            AddWaysToNodes(ways);
+            time = watch.Elapsed;
+            Console.WriteLine($"Done with AddWaystonodes in {time.TotalSeconds} seconds. Have {ways.Count} ways.");
             return new Geometry(nodes.Values.ToArray(), ways.ToArray(), Array.Empty<Relation>());
         }
 
@@ -39,7 +54,6 @@ namespace RouteCleaner
             var rnd = new Random();
             var randomRelations = relations.OrderBy(x => rnd.Next()); // randomize order to reduce contention on Nodes.
 
-            //for (var i = 0; i < relations.Length; i++)
             Parallel.ForEach(randomRelations, target =>
             {
                 var cnt = 0;
@@ -86,11 +100,11 @@ namespace RouteCleaner
         /// 
         /// Track number of relations that contain the node. 
         /// </summary>
-        public List<Way> GeneratedWaysPerRegion(Dictionary<string, Node> nodeDict, Geometry waysRegion)
+        public List<Way> GeneratedWaysPerRegion(Dictionary<string, Node> nodeDict, IEnumerable<Way> incomingWays)
         {
             var ways = new List<Way>();
 
-            foreach (var way in waysRegion.Ways)
+            foreach (var way in incomingWays)
             {
                 var activeRegions = new Dictionary<Relation, List<Node>>();
 
@@ -107,7 +121,7 @@ namespace RouteCleaner
 
                     foreach (var region in activeRegions.Keys)
                     {
-                        if (!node.Relations.Contains(region))  // todo - not very performant.
+                        if (!node.Relations.Contains(region)) // this is a very short set.
                         {
                             // the end of a way segment. Create a new Way
                             var newId = $"{way.Id}_in_{region.Id}";
@@ -116,6 +130,14 @@ namespace RouteCleaner
                             activeRegions.Remove(region);
                         }
                     }
+                }
+
+                foreach (var region in activeRegions.Keys)
+                {
+                    // the end of a way segment. Create a new Way
+                    var newId = $"{way.Id}_in_{region.Id}";
+                    var newWay = new Way(newId, activeRegions[region].ToArray(), way.Tags, region);
+                    ways.Add(newWay);
                 }
             }
 
@@ -126,34 +148,28 @@ namespace RouteCleaner
         /// Make at most one Way per region with same name.
         /// 
         /// If name is blank, then make one up.
+        /// 
+        /// We want to track "done" by looking at the whole street done AND node done rate. But for counties ect this will be very hard for streets. Lot of "1st st" in WA state. Eh. Run em all.
         /// </summary>
         /// <returns></returns>
         public List<Way> ConsolidateWays(IEnumerable<Way> ways)
         {
-            var defaultName = "Unnamed path";
-            var wayDictionary = new Dictionary<string, Dictionary<string, List<Way>>>(); // relationId => (wayName => Ways)
+            var wayDictionary = new Dictionary<Relation, Dictionary<string, List<Way>>>(); // relationId => (wayName => Ways)
 
             foreach (var way in ways)
             {
-                if (way.Tags.TryGetValue("name", out var wayName))
-                {
-                    wayName = string.IsNullOrEmpty(wayName) ? defaultName : wayName;
-                }
-                else
-                {
-                    wayName = defaultName;
-                }
+                var wayName = way.Name;
 
-                var relationId = way.ContainedIn.Id;
-                if (!wayDictionary.ContainsKey(relationId))
+                var relation = way.ContainedIn;
+                if (!wayDictionary.ContainsKey(relation))
                 {
-                    wayDictionary.Add(relationId, new Dictionary<string, List<Way>>());
+                    wayDictionary.Add(relation, new Dictionary<string, List<Way>>());
                 }
-                if (!wayDictionary[relationId].ContainsKey(wayName))
+                if (!wayDictionary[relation].ContainsKey(wayName))
                 {
-                    wayDictionary[relationId][wayName] = new List<Way>();
+                    wayDictionary[relation][wayName] = new List<Way>();
                 }
-                wayDictionary[relationId][wayName].Add(way);
+                wayDictionary[relation][wayName].Add(way);
             }
 
             var newWays = new List<Way>();
@@ -161,15 +177,28 @@ namespace RouteCleaner
             {
                 foreach ((var wayName, var innerWays) in waysByName)
                 {
-                    var nodes = innerWays.SelectMany(x => x.Nodes).Distinct().ToArray();
-
+                    var nodes = innerWays.SelectMany(x => x.Nodes).Distinct().ToArray(); // order is obliterated.
+                    var tags = new Dictionary<string, string>();
+                    // take tags somewhat arbitrarily.
+                    foreach (var innerWay in innerWays)
+                    {
+                        foreach (var kvp in innerWay.Tags)
+                        {
+                            if (!tags.ContainsKey(kvp.Key))
+                            {
+                                tags.Add(kvp.Key, kvp.Value);
+                            }
+                        }
+                    }
+                    var way = new Way(innerWays.First().Id, nodes, tags, relation, true);
+                    newWays.Add(way);
                 }
             }
 
             return newWays;
         }
 
-        public void AddNodesToWays(IEnumerable<Way> ways)
+        public void AddWaysToNodes(IEnumerable<Way> ways)
         {
             foreach (var way in ways)
             {

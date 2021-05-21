@@ -64,7 +64,7 @@ namespace RouteCleaner.Transformers
             Parallel.ForEach(parkingLots, parkingLot => {
                 var latMean = parkingLot.Nodes.Select(x => x.Latitude).Average();
                 var lngMean = parkingLot.Nodes.Select(x => x.Longitude).Average();
-                var newNode = new Node(parkingLot.Id + "_node", latMean, lngMean, parkingLot.Tags);
+                var newNode = new Node(parkingLot.Id + "_node", latMean, lngMean);
                 foreach (var n in parkingLot.Nodes)
                 {
                     outputNodes.TryAdd(n, newNode);

@@ -33,7 +33,7 @@
                 var location = (JArray)nodeRaw["location"]["coordinates"];
                 var nodeTags = nodeRaw["Tags"]?.ToObject<Dictionary<string, string>>();
                 
-                var node = new Node(nodeId, location.First.Value<double>(), location.Last.Value<double>(), nodeTags);
+                var node = new Node(nodeId, location.First.Value<double>(), location.Last.Value<double>());
                 nodes[i++] = node;
             }
             var tags = obj["Tags"]?.ToObject<Dictionary<string, string>>();

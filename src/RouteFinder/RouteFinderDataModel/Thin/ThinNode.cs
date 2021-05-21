@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace RouteFinderDataModel.Thin
+﻿namespace RouteFinderDataModel.Thin
 {
     public class ThinNode
     {
@@ -10,11 +8,9 @@ namespace RouteFinderDataModel.Thin
 
         public double Longitude { get; set; }
 
-        public Dictionary<string, string> Tags { get; set; }
-
         public Node ToThick()
         {
-            return new Node(Id, Latitude, Longitude, Tags);
+            return new Node(Id, Latitude, Longitude);
         }
     }
 }

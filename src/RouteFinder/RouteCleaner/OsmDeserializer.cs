@@ -155,7 +155,7 @@ namespace RouteCleaner
 
             var lat = double.Parse(node.Attribute("lat")?.Value);
             var lng = double.Parse(node.Attribute("lon")?.Value);
-            return new Node(GetId(node), lat, lng, GetTags(node));
+            return new Node(GetId(node), lat, lng);
         }
 
         private Way ReadWay(XElement way, Dictionary<string, Node> nodes)
@@ -181,7 +181,7 @@ namespace RouteCleaner
                 throw new KeyNotFoundException($"Key {k} not found in node list.", k);
             }
 
-            var tags = GetTags(way);
+            var tags = GetTags(way).Where(kvp => !kvp.Key.StartsWith("tiger:")).ToDictionary(k => k.Key, v => v.Value);
 
             return new Way(GetId(way), nodeObjs, tags);
         }
