@@ -7,7 +7,7 @@
 
     public class Way : TaggableIdentifiableElement
     {
-        public Way(string id, Node[] nodes, Dictionary<string, string> tags = null, Relation containedIn = null) : base(id, tags)
+        public Way(string id, Node[] nodes, Dictionary<string, string> tags = null, Relation containedIn = null, bool isComposite = false) : base(id, tags)
         {
             Nodes = nodes;
             ContainedIn = containedIn;
@@ -26,6 +26,12 @@
         /// Note that we duplicate ways in more than one relation. They can only be in one.
         /// </summary>
         public Relation ContainedIn { get; }
+
+        /// <summary>
+        /// If true then this was constructed by us and may not have contiguous nodes.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsComposite { get; }
 
         private readonly NodeArrayBounds nodeArrayBounds;
 
@@ -48,7 +54,7 @@
         }
 
         [JsonIgnore]
-        public (Point, Point) Bounds => this.nodeArrayBounds.Bounds;
+        public (Point, Point) Bounds => this.IsComposite ? throw new System.Exception("Can't take bounds of Composite Way") : this.nodeArrayBounds.Bounds;
 
         public override string ToString()
         {

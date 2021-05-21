@@ -72,21 +72,6 @@ namespace RouteCleaner
             return new GeoJSON.Net.Geometry.Polygon(new []{lineString});
         }
 
-        public FeatureCollection Convert(IEnumerable<Triangle> triangles)
-        {
-            return new FeatureCollection(triangles.Select(Convert).ToList());
-        }
-
-        public Feature Convert(Triangle t)
-        {
-            return new Feature(ConvertSimple(t));
-        }
-
-        public GeoJSON.Net.Geometry.Polygon ConvertSimple(Triangle p)
-        {
-            return new GeoJSON.Net.Geometry.Polygon(new []{ConvertSimple(p.Nodes, true)});
-        }
-
         public FeatureCollection Convert(IEnumerable<Way> ways)
         {
             return new FeatureCollection(ways.Select(Convert).ToList());

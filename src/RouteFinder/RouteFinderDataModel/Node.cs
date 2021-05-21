@@ -16,9 +16,13 @@
         {
             Location = new Point(longitude, latitude);
             Relations = new ConcurrentBag<Relation>();
+            ContainingWays = new List<Way>();
         }
 
         public ConcurrentBag<Relation> Relations { get; set; }
+
+        public List<Way> ContainingWays { get; set; }
+
 
         /// <summary>
         /// We store lat/long in a CosmosDB point to avoid copying objects on read. However,

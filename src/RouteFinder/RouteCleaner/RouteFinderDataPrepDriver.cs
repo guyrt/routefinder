@@ -9,12 +9,14 @@ namespace RouteCleaner
 {
     public class RouteFinderDataPrepDriver
     {
-        public void RunChain(Geometry relationRegion, Geometry waysRegion)
+        public Geometry RunChain(Geometry relationRegion, Geometry waysRegion)
         {
             var nodes = NodeContainment(relationRegion, waysRegion);
             Console.WriteLine("Done with NodeContainment");
             var ways = GeneratedWaysPerRegion(nodes, waysRegion);
             Console.WriteLine("Done with GeneratedWaysPerRegion");
+            AddNodesToWays(ways);
+            return new Geometry(nodes.Values.ToArray(), ways.ToArray(), Array.Empty<Relation>());
         }
 
         public Dictionary<string, Node> NodeContainment(Geometry relationRegion, Geometry waysRegion)
@@ -34,8 +36,11 @@ namespace RouteCleaner
                 }
             }
 
+            var rnd = new Random();
+            var randomRelations = relations.OrderBy(x => rnd.Next()); // randomize order to reduce contention on Nodes.
+
             //for (var i = 0; i < relations.Length; i++)
-            Parallel.ForEach(relations, target =>
+            Parallel.ForEach(randomRelations, target =>
             {
                 var cnt = 0;
                 var polygons = RelationPolygonMemoizer.BuildPolygons(target);
@@ -115,6 +120,64 @@ namespace RouteCleaner
             }
 
             return ways;
+        }
+
+        /// <summary>
+        /// Make at most one Way per region with same name.
+        /// 
+        /// If name is blank, then make one up.
+        /// </summary>
+        /// <returns></returns>
+        public List<Way> ConsolidateWays(IEnumerable<Way> ways)
+        {
+            var defaultName = "Unnamed path";
+            var wayDictionary = new Dictionary<string, Dictionary<string, List<Way>>>(); // relationId => (wayName => Ways)
+
+            foreach (var way in ways)
+            {
+                if (way.Tags.TryGetValue("name", out var wayName))
+                {
+                    wayName = string.IsNullOrEmpty(wayName) ? defaultName : wayName;
+                }
+                else
+                {
+                    wayName = defaultName;
+                }
+
+                var relationId = way.ContainedIn.Id;
+                if (!wayDictionary.ContainsKey(relationId))
+                {
+                    wayDictionary.Add(relationId, new Dictionary<string, List<Way>>());
+                }
+                if (!wayDictionary[relationId].ContainsKey(wayName))
+                {
+                    wayDictionary[relationId][wayName] = new List<Way>();
+                }
+                wayDictionary[relationId][wayName].Add(way);
+            }
+
+            var newWays = new List<Way>();
+            foreach ((var relation, var waysByName) in wayDictionary)
+            {
+                foreach ((var wayName, var innerWays) in waysByName)
+                {
+                    var nodes = innerWays.SelectMany(x => x.Nodes).Distinct().ToArray();
+
+                }
+            }
+
+            return newWays;
+        }
+
+        public void AddNodesToWays(IEnumerable<Way> ways)
+        {
+            foreach (var way in ways)
+            {
+                foreach (var node in way.Nodes)
+                {
+                    node.ContainingWays.Add(way);
+                }
+            }
         }
     }
 }

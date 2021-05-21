@@ -1,18 +1,12 @@
 ﻿namespace RouteCleaner.Transformers
 {
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using Newtonsoft.Json;
     using RouteFinderDataModel;
     using RouteCleaner.PolygonUtils;
 
     public class LabelWaysInRelation
     {
-
-        private bool _debugOut = false;
-        private string _debutOutputLocation = "";
-
         public List<Way> Transform(Relation target, Geometry geometry)
         {
             var polygon = RelationPolygonMemoizer.Instance.GetPolygons(target).First();  // todo first is a problem. some relations have more than one! 
@@ -35,20 +29,6 @@
             }
 
             return ways;
-        }
-
-        public void DebugOut(LinkedList<Triangle> triangles, string filename)
-        {
-            if (!_debugOut)
-            {
-                return;
-
-            }
-            var fullPath = Path.Combine(_debutOutputLocation, filename);
-            var converter = new GeoJsonConverter();
-            var trianglesOut = converter.Convert(triangles);
-            var serialized = JsonConvert.SerializeObject(trianglesOut);
-            File.WriteAllLines(fullPath, new[] { serialized });
         }
     }
 }

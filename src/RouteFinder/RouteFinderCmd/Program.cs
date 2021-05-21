@@ -40,7 +40,8 @@
                 }
             }
 
-            new RouteFinderDataPrepDriver().NodeContainment(relationRegion, wayRegion);
+            var outputGeometry = new RouteFinderDataPrepDriver().RunChain(relationRegion, wayRegion);
+
         }
 
         
@@ -203,15 +204,5 @@
             var serialized = JsonConvert.SerializeObject(polygonOut);
             File.WriteAllLines(fullPath, new[] { serialized });
         }
-
-        public static void DebugOut(LinkedList<Triangle> triangles, string filename)
-        {
-            var fullPath = Path.Combine(outputLocation, filename);
-            var converter = new GeoJsonConverter();
-            var trianglesOut = converter.Convert(triangles);
-            var serialized = JsonConvert.SerializeObject(trianglesOut);
-            File.WriteAllLines(fullPath, new[] { serialized });
-        }
-
     }
 }
