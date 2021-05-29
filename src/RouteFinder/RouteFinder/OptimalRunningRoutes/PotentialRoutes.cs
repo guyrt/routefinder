@@ -96,10 +96,6 @@
         private int AddPath(WeightedAdjacencyNode<T>[] path)
         {
             _paths.Add(path);
-            if (path.Any(p => p.Vertex.ToString().EndsWith("6511")))
-            {
-                var i = 0;
-            }
             if (_paths.Count() % 20 == 0)
             {
                 Console.WriteLine($"{_paths.Count()} paths");

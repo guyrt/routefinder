@@ -21,7 +21,7 @@ namespace RouteCleanerTests.Model
             var way = new Way("5", new[] { n1, n2, n3, n4, n5, n6, n1 });
             if (reverse)
             {
-                Array.Reverse(way.Nodes);
+                way.Nodes.Reverse();
             }
             var ll = new[]
             {

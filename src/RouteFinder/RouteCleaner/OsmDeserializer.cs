@@ -17,7 +17,31 @@ namespace RouteCleaner
             this.discardPartials = discardPartials;
         }
 
-        public Geometry ReadFile(StreamReader stream)
+        /// <summary>
+        /// Stream Nodes only
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public IEnumerable<Node> StreamNode(string filePath)
+        {
+            using (var fs = File.OpenRead(filePath))
+            {
+                using (var sr = new StreamReader(fs))
+                {
+                    Console.WriteLine($"Loading regions from {filePath}.");
+                    foreach (var childElt in StreamRootChildDoc(sr, false))
+                    {
+                        if (childElt.Name.LocalName == "node")
+                        {
+                            var node = ReadNode(childElt);
+                            yield return node;
+                        }
+                    }
+                }
+            }
+        }
+
+        public Geometry ReadFile(StreamReader stream, bool ignoreNodes = false)
         {
             var nodes = new Dictionary<string, Node>();
             var ways = new Dictionary<string, Way>();
@@ -26,15 +50,21 @@ namespace RouteCleaner
             bool hitWay = false;
             bool hitRelation = false;
 
-            foreach (var childElt in StreamRootChildDoc(stream))
+            foreach (var childElt in StreamRootChildDoc(stream, ignoreNodes))
             {
                 switch (childElt.Name.LocalName)
                 {
                     case "node":
+                        if (ignoreNodes)
+                        {
+                            continue;
+                        }
+
                         if (hitWay)
                         {
                             throw new InvalidDataException("Found node after way. This isn't allowed");
                         }
+
                         var node = ReadNode(childElt);
                         nodes.Add(node.Id, node);
                         break;
@@ -72,7 +102,7 @@ namespace RouteCleaner
             return new Geometry(nodes.Values.ToArray(), ways.Values.ToArray(), relations.ToArray());
         }
 
-        private IEnumerable<XElement> StreamRootChildDoc(StreamReader stream)
+        private IEnumerable<XElement> StreamRootChildDoc(StreamReader stream, bool ignoreNodes)
         {
             using (XmlReader reader = XmlReader.Create(stream))
             {
@@ -83,7 +113,7 @@ namespace RouteCleaner
                     switch (reader.NodeType)
                     {
                         case XmlNodeType.Element:
-                            if (reader.Name == "node")
+                            if (reader.Name == "node" && !ignoreNodes)
                             {
                                 XElement el = XElement.ReadFrom(reader) as XElement;
                                 if (el != null)
@@ -164,26 +194,28 @@ namespace RouteCleaner
             {
                 throw new InvalidOperationException($"Expected way but got {way}");
             }
-
-            Node[] nodeObjs;
-
-            var nodeRefs = way.Descendants("nd").Select(nd => nd.Attribute("ref")?.Value);
-            try
-            {
-                nodeObjs = nodeRefs.Select(nd => nodes[nd]).ToArray();
-            }
-            catch (KeyNotFoundException k)
-            {
-                if (this.discardPartials)
-                {
-                    return default;
-                }
-                throw new KeyNotFoundException($"Key {k} not found in node list.", k);
-            }
-
             var tags = GetTags(way).Where(kvp => !kvp.Key.StartsWith("tiger:")).ToDictionary(k => k.Key, v => v.Value);
 
-            return new Way(GetId(way), nodeObjs, tags);
+
+            var nodeRefs = way.Descendants("nd").Select(nd => nd.Attribute("ref")?.Value);
+            if (nodes.Count > 0)
+            {
+                try
+                {
+                    var nodeObjs = nodeRefs.Select(nd => nodes[nd]).ToArray();
+                    return new Way(GetId(way), nodeObjs, tags);
+                }
+                catch (KeyNotFoundException k)
+                {
+                    if (this.discardPartials)
+                    {
+                        return default;
+                    }
+                    throw new KeyNotFoundException($"Key {k} not found in node list.", k);
+                }
+            }
+
+            return new Way(GetId(way), nodeRefs.ToArray(), tags);
         }
 
         private Dictionary<string, string> GetTags(XElement elt)

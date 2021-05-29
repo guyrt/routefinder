@@ -13,7 +13,7 @@
             _polygon = polygon;
         }
 
-        // Ray tracing (cross number) based implementation.
+        // Winding number based implementation.
         public bool Contains(Node node)
         {
             if (SimpleNonOverlap(node))
@@ -21,24 +21,33 @@
                 return false;
             }
 
-            var crossings = 0;
-            (var startLat, var startLng) = TranslateNode(_polygon.Nodes[0], node);
+            var windingNumber = 0;
+            var startLat = _polygon.Nodes[0].Latitude;
+            var startLng = _polygon.Nodes[0].Longitude;
             for (int i = 0; i < _polygon.Nodes.Count; i++)
             {
-                (var endLat, var endLng) = TranslateNode(_polygon.Nodes[(i + 1) % _polygon.Nodes.Count], node);
+                var endNode = _polygon.Nodes[(i + 1) % _polygon.Nodes.Count];
+                var endLat = endNode.Latitude;
+                var endLng = endNode.Longitude;
 
-                if ((startLng < 0) != (endLng < 0) && (startLat > 0 || endLat > 0))
+                if (startLat <= node.Latitude)
                 {
-                    // potential crossing: +y and -y.
-                    if (startLat * endLat > 0)
+                    if (endLat > node.Latitude)
                     {
-                        // if both x are positive then definite crossing.
-                        crossings++;
-                    } 
-                    else if (startLat * (endLng - startLng) - startLng * (endLat - startLat) > 0)
+                        if (IsLeft(startLat, startLng, endLat, endLng, node.Latitude, node.Longitude) > 0)
+                        {
+                            windingNumber++; // up intersection
+                        }
+                    }
+                }
+                else
+                {
+                    if (endLat <= node.Latitude)
                     {
-                        // if the line crosses in positive x space then definite crossing.
-                        crossings++;
+                        if (IsLeft(startLat, startLng, endLat, endLng, node.Latitude, node.Longitude) < 0)
+                        {
+                            windingNumber--; // down intersection
+                        }
                     }
                 }
 
@@ -46,12 +55,12 @@
                 startLng = endLng;
             }
 
-            return crossings % 2 > 0;
+            return windingNumber != 0;
         }
 
-        private (double startLat, double startLng) TranslateNode(Node n, Node origin)
+        private double IsLeft(double p0Lat, double p0Lng, double p1Lat, double p1Lng, double p2Lat, double p2Lng)
         {
-            return (n.Latitude - origin.Latitude, n.Longitude - origin.Longitude); 
+            return ((p1Lng - p0Lng) * (p2Lat - p0Lat) - (p2Lng - p0Lng) * (p1Lat - p0Lat));
         }
 
         /// <summary>

@@ -14,40 +14,17 @@
 
     public class Program
     {
+        // used in legacy paths for Cougar Mtn project.
         private static readonly string outputLocation = @"C:\Users\riguy\code\routefinder\src\RouteViewerWeb\data\";
+
+        // used now for testing.
         private static readonly string localFileRegions = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle.xml";
         private static readonly string localFileWays = @"C:\Users\riguy\code\routefinder\data\runnable_ways_seattle.xml";
 
         public static void Main()
         {
-
-            var osmDeserializer = new OsmDeserializer(true);
-            Geometry relationRegion;
-            Geometry wayRegion;
-            using (var fs = File.OpenRead(localFileRegions))
-            {
-                using (var sr = new StreamReader(fs))
-                {
-                    Console.WriteLine($"Loading regions from {localFileRegions}.");
-                    relationRegion = osmDeserializer.ReadFile(sr);
-                }
-            }
-
-            using (var fs = File.OpenRead(localFileWays))
-            {
-                using (var sr = new StreamReader(fs))
-                {
-                    Console.WriteLine($"Loading ways from {localFileWays}.");
-                    wayRegion = osmDeserializer.ReadFile(sr);
-                }
-            }
-
-            var outputGeometry = new RouteFinderDataPrepDriver().RunChain(relationRegion, wayRegion);
-
-
+            new RouteFinderDataPrepDriver().RunChain(localFileRegions, localFileWays);
         }
-
-        
 
         private static void RouteContainment(Geometry region)
         {

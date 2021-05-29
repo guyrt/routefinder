@@ -24,7 +24,7 @@ namespace RouteCleaner.Transformers
             {
                 var cntr = 0;
                 var lastStartIndex = 0;
-                for (var i = 1; i < way.Nodes.Length - 1; i++)
+                for (var i = 1; i < way.Nodes.Count - 1; i++)
                 {
                     var node = way.Nodes[i];
                     if (endNodes.Contains(node))
@@ -42,8 +42,8 @@ namespace RouteCleaner.Transformers
 
                 if (lastStartIndex > 0)
                 {
-                    var nodes = new Node[way.Nodes.Length - lastStartIndex];
-                    for (var j = lastStartIndex; j < way.Nodes.Length; j++)
+                    var nodes = new Node[way.Nodes.Count - lastStartIndex];
+                    for (var j = lastStartIndex; j < way.Nodes.Count; j++)
                     {
                         nodes[j - lastStartIndex] = way.Nodes[j];
                     }

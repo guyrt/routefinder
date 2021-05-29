@@ -77,7 +77,7 @@ namespace RouteCleaner
                 {
                     // this is a loop!
                     nodes.Add(start);
-                    if (way.Nodes.Length < 2)
+                    if (way.Nodes.Count< 2)
                     {
                         throw new InvalidOperationException($"Way {way.Id} has too few nodes");
                     }

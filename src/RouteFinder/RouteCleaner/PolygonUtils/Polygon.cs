@@ -32,7 +32,7 @@
             var idx = 0;
             foreach (var way in ways)
             {
-                var nodes = way.Nodes;
+                var nodes = way.Nodes.ToArray();
                 if (reversals[idx])
                 {
                     nodes = this.Reverse(nodes);

@@ -28,7 +28,7 @@ namespace RouteCleaner
 
         public IGeometryObject ConvertSimple(Way w)
         {
-            if (w.Nodes.Length < 2)
+            if (w.Nodes.Count < 2)
             {
                 return ConvertSimple(w.Nodes[0]);
             }

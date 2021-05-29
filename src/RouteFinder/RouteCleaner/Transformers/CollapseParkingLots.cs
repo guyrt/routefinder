@@ -40,7 +40,7 @@ namespace RouteCleaner.Transformers
                 }
                 if (replaced)
                 {
-                    ways.Add(new Way(way.Id, newNodes, way.Tags));
+                    ways.Add(new Way(way.Id, newNodes.ToArray(), way.Tags));
                 }
                 else
                 {

@@ -1,26 +1,32 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using RouteFinderDataModel;
 using RouteCleaner.PolygonUtils;
 using System.Diagnostics;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace RouteCleaner
 {
     public class RouteFinderDataPrepDriver
     {
-        public Geometry RunChain(Geometry relationRegion, Geometry waysRegion)
+        public void RunChain(string boundariesFilePath, string runnableWaysPath)
         {
+            var relationRegion = this.GetRegionGeometry(boundariesFilePath, false);
+            var waysRegion = this.GetRegionGeometry(runnableWaysPath, true);
+            var nodeStreamer = this.GetNodeStreamer(runnableWaysPath);
+
+            var createTargetableWays = new CreateTargetableWaysWithinRegions(waysRegion.Ways, relationRegion.Relations);
+
             var watch = Stopwatch.StartNew();
-            var nodes = NodeContainment(relationRegion, waysRegion);
+            WriteNodesToDoc(createTargetableWays, relationRegion, nodeStreamer, @"C:\Users\riguy\code\routefinder\data\nodesWithContainment.json");
             var time = watch.Elapsed;
             Console.WriteLine($"Done with NodeContainment in {time.TotalSeconds} seconds.");
+
+            Console.WriteLine($"Found {createTargetableWays.OutputWays.Count} targetableWays");
             
-            watch.Restart();
-            var ways = GeneratedWaysPerRegion(nodes, waysRegion.Ways);
-            time = watch.Elapsed;
-            Console.WriteLine($"Done with GeneratedWaysPerRegion in {time.TotalSeconds} seconds. Have {ways.Count} ways.");
+           /* watch.Restart();
 
             watch.Restart();
             ways = ConsolidateWays(ways);
@@ -30,118 +36,75 @@ namespace RouteCleaner
             watch.Restart();
             AddWaysToNodes(ways);
             time = watch.Elapsed;
-            Console.WriteLine($"Done with AddWaystonodes in {time.TotalSeconds} seconds. Have {ways.Count} ways.");
-            return new Geometry(nodes.Values.ToArray(), ways.ToArray(), Array.Empty<Relation>());
+            Console.WriteLine($"Done with AddWaystonodes in {time.TotalSeconds} seconds. Have {ways.Count} ways."); */
+            
         }
 
-        public Dictionary<string, Node> NodeContainment(Geometry relationRegion, Geometry waysRegion)
+        /// <summary>
+        /// Write nodes to doc 1 at a time as Json
+        /// </summary>
+        /// <returns></returns>
+        public string WriteNodesToDoc(CreateTargetableWaysWithinRegions createTargetableWays, Geometry relationRegion, IEnumerable<Node> nodeStreamer, string outPath)
         {
-            var relations = relationRegion.Relations;//.Where(x => x.Id == "237356").ToArray();// kirkland: 237356. nike park 11556206
-            var ways = waysRegion.Ways;
-
-            var nodes = new Dictionary<string, Node>();
-            foreach (var w in ways)
+            using (var fs = File.OpenWrite(outPath))
             {
-                foreach (var n in w.Nodes)
+                using (var sr = new StreamWriter(fs))
                 {
-                    if (!nodes.ContainsKey(n.Id))
+                    foreach (var node in NodeContainment(relationRegion, nodeStreamer))
                     {
-                        nodes.Add(n.Id, n);
+                        var nodeStr = JsonConvert.SerializeObject(node);
+                        sr.WriteLine(nodeStr);
+
+                        createTargetableWays.ProcessNode(node);
                     }
                 }
             }
+            return outPath;
+        }
 
-            var rnd = new Random();
-            var randomRelations = relations.OrderBy(x => rnd.Next()); // randomize order to reduce contention on Nodes.
+        public IEnumerable<Node> NodeContainment(Geometry relationRegion, IEnumerable<Node> nodeStreamer)
+        {
+            var relations = relationRegion.Relations.Where(x => x.Id == "237385").ToArray();// kirkland: 237356. nike park 11556206
 
-            Parallel.ForEach(randomRelations, target =>
+            // prebuild polygons to reduce contention
+            var relationsDict = relationRegion.Relations.ToDictionary(k => k, v => RelationPolygonMemoizer.BuildPolygons(v));
+            var nodeCounter = 0;
+            foreach (var node in nodeStreamer)
             {
-                var cnt = 0;
-                var polygons = RelationPolygonMemoizer.BuildPolygons(target);
-                if (polygons.Count() == 0)
+                var containingRelations = relationsDict.AsParallel().Where(kvp => 
                 {
-                    NonBlockingConsole.WriteLine($"Skipping {target.Id}");
-                    return;  // typically this implies a non-closed relation.
-                }
+                    var target = kvp.Key;
+                    var polygons = kvp.Value;
 
-                cnt = 0;
-                // todo - do the in/out part
-                foreach (var polygon in polygons)
-                {
-                    var containment = new PolygonContainment(polygon);
-                    
-                    foreach (var node in nodes.Values)
+                    foreach (var polygon in polygons)
                     {
+                        var containment = new PolygonContainment(polygon);
+
                         if (containment.Contains(node))
                         {
-                            node.Relations.Add(target);
-                            cnt++;
+                            return true;
                         }
-                    }
 
-                    foreach (var node in polygon.Nodes)
-                    {
-                        if (nodes.ContainsKey(node.Id) && !nodes[node.Id].Relations.Contains(target))
+                        foreach (var polyNodes in polygon.Nodes)
                         {
-                            nodes[node.Id].Relations.Add(target);
+                            if (polyNodes.Id == node.Id)
+                            {
+                                return true;
+                            }
                         }
                     }
-                }
+                    return false;
+                }).Select(x => x.Key.Id);
 
-                NonBlockingConsole.WriteLine($"Process {target} Found {cnt} nodes in and {nodes.Count - cnt} out.");
-            });
-
-            Console.WriteLine($"Found {nodes.Values.Select(x => x.Relations.Count).Sum()} contains with max of {nodes.Values.Select(x => x.Relations.Count).Max()}");
-            return nodes;
-        }
-    
-        /// <summary>
-        /// Construct a unique Way for each region based on node containments.
-        /// 
-        /// Track number of relations that contain the node. 
-        /// </summary>
-        public List<Way> GeneratedWaysPerRegion(Dictionary<string, Node> nodeDict, IEnumerable<Way> incomingWays)
-        {
-            var ways = new List<Way>();
-
-            foreach (var way in incomingWays)
-            {
-                var activeRegions = new Dictionary<Relation, List<Node>>();
-
-                foreach (var node in way.Nodes)
+                node.Relations.AddRange(containingRelations);
+                nodeCounter++;
+                if (nodeCounter % 10000 == 0)
                 {
-                    foreach (var region in node.Relations)
-                    {
-                        if (!activeRegions.ContainsKey(region))
-                        {
-                            activeRegions[region] = new List<Node>();
-                        }
-                        activeRegions[region].Add(node);
-                    }
-
-                    foreach (var region in activeRegions.Keys)
-                    {
-                        if (!node.Relations.Contains(region)) // this is a very short set.
-                        {
-                            // the end of a way segment. Create a new Way
-                            var newId = $"{way.Id}_in_{region.Id}";
-                            var newWay = new Way(newId, activeRegions[region].ToArray(), way.Tags, region);
-                            ways.Add(newWay);
-                            activeRegions.Remove(region);
-                        }
-                    }
+                    Console.WriteLine($"Processed {nodeCounter} nodes: {node}");
                 }
-
-                foreach (var region in activeRegions.Keys)
-                {
-                    // the end of a way segment. Create a new Way
-                    var newId = $"{way.Id}_in_{region.Id}";
-                    var newWay = new Way(newId, activeRegions[region].ToArray(), way.Tags, region);
-                    ways.Add(newWay);
-                }
+                yield return node;
             }
 
-            return ways;
         }
 
         /// <summary>
@@ -154,7 +117,7 @@ namespace RouteCleaner
         /// <returns></returns>
         public List<Way> ConsolidateWays(IEnumerable<Way> ways)
         {
-            var wayDictionary = new Dictionary<Relation, Dictionary<string, List<Way>>>(); // relationId => (wayName => Ways)
+            var wayDictionary = new Dictionary<string, Dictionary<string, List<Way>>>(); // relationId => (wayName => Ways)
 
             foreach (var way in ways)
             {
@@ -173,7 +136,7 @@ namespace RouteCleaner
             }
 
             var newWays = new List<Way>();
-            foreach ((var relation, var waysByName) in wayDictionary)
+            foreach ((var relationId, var waysByName) in wayDictionary)
             {
                 foreach ((var wayName, var innerWays) in waysByName)
                 {
@@ -190,7 +153,7 @@ namespace RouteCleaner
                             }
                         }
                     }
-                    var way = new Way(innerWays.First().Id, nodes, tags, relation, true);
+                    var way = new Way(innerWays.First().Id, nodes, tags, relationId, true);
                     newWays.Add(way);
                 }
             }
@@ -198,15 +161,37 @@ namespace RouteCleaner
             return newWays;
         }
 
-        public void AddWaysToNodes(IEnumerable<Way> ways)
+       /* todo - this but streaming
+        * public void AddWaysToNodes(IEnumerable<Way> ways)
         {
             foreach (var way in ways)
             {
                 foreach (var node in way.Nodes)
                 {
-                    node.ContainingWays.Add(way);
+                    node.ContainingWays.Add(way.Id);
                 }
             }
+        }*/
+
+        private Geometry GetRegionGeometry(string filePath, bool ignoreNodes)
+        {
+            var osmDeserializer = new OsmDeserializer(true);
+            Geometry relationRegion;
+            using (var fs = File.OpenRead(filePath))
+            {
+                using (var sr = new StreamReader(fs))
+                {
+                    Console.WriteLine($"Loading regions from {filePath}.");
+                    relationRegion = osmDeserializer.ReadFile(sr, ignoreNodes);
+                }
+            }
+            return relationRegion;
+        }
+
+        private IEnumerable<Node> GetNodeStreamer(string filePath)
+        {
+            var osmDeserializer = new OsmDeserializer();
+            return osmDeserializer.StreamNode(filePath);
         }
     }
 }

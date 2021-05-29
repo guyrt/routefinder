@@ -30,8 +30,8 @@
             var polygons = PolygonFactory.BuildPolygons(ways);
             var firstPolygon = polygons.Single();
 
-            Array.Reverse(ways[1].Nodes);
-            Array.Reverse(ways[3].Nodes);
+            ways[1].Nodes.Reverse();
+            ways[3].Nodes.Reverse();
 
             var secondPolygons = PolygonFactory.BuildPolygons(ways);
             var secondPolygon = polygons.Single();
@@ -64,8 +64,8 @@
             var polygons = PolygonFactory.BuildPolygons(ways);
             Assert.Equal(2, polygons.Count);
 
-            Array.Reverse(ways[1].Nodes);
-            Array.Reverse(ways[3].Nodes);
+            ways[1].Nodes.Reverse();
+            ways[3].Nodes.Reverse();
 
             var secondPolygons = PolygonFactory.BuildPolygons(ways);
             Assert.Equal(2, secondPolygons.Count);

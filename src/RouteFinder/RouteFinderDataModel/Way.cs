@@ -1,5 +1,6 @@
 ﻿namespace RouteFinderDataModel
 {
+    using System.Linq;
     using Microsoft.Azure.Cosmos.Spatial;
     using Newtonsoft.Json;
     using RouteFinderDataModel.Tools;
@@ -7,25 +8,33 @@
 
     public class Way : TaggableIdentifiableElement
     {
-        public Way(string id, Node[] nodes, Dictionary<string, string> tags = null, Relation containedIn = null, bool isComposite = false) : base(id, tags)
+        public Way(string id, string[] nodeIds, Dictionary<string, string> tags = null, string containedIn = null, bool isComposite = false) : base(id, tags)
         {
-            Nodes = nodes;
+            NodeIds = nodeIds;
             ContainedIn = containedIn;
-            _avgPointSet = false;
-            _avgLatitude = 0;
-            _avgLongitude = 0;
-
-            nodeArrayBounds = new NodeArrayBounds(nodes);
+            this.Nodes = new List<Node>();
         }
 
-        public Node[] Nodes { get; }
+        public Way(string id, Node[] nodes, Dictionary<string, string> tags = null, string containedIn = null, bool isComposite = false) : this(id, nodes.Select(n => n.Id).ToArray(), tags, containedIn, isComposite)
+        {
+            this.Nodes = nodes.ToList();
+            nodeArrayBounds = new NodeArrayBounds(this.Nodes);
+        }
+
+        public string[] NodeIds { get; }
+
+        /// <summary>
+        /// Ways are an optional field that can be updated with the actual nodes that correspond to NodeIds.
+        /// </summary>
+        [JsonIgnore]
+        public List<Node> Nodes { get; }
 
         /// <summary>
         /// If this Way is in a single Relation, mark the relation.
         /// 
         /// Note that we duplicate ways in more than one relation. They can only be in one.
         /// </summary>
-        public Relation ContainedIn { get; }
+        public string ContainedIn { get; }
 
         /// <summary>
         /// If true then this was constructed by us and may not have contiguous nodes.
@@ -33,28 +42,32 @@
         [JsonIgnore]
         public bool IsComposite { get; }
 
-        private readonly NodeArrayBounds nodeArrayBounds;
+        [JsonIgnore]
+        public bool IsComplete => this.Nodes.Count == this.NodeIds.Length;
 
-        // Memoized variables.
-        private bool _avgPointSet;
-        private double _avgLatitude;
-        private double _avgLongitude;
+        private NodeArrayBounds nodeArrayBounds;
 
-        [JsonProperty("location")]
-        public Point Location
+        /// <summary>
+        /// Add a node to the nodes. This assumes you have already validated the add makes sense. In fact, if you add the right number of arbitrary
+        /// nodes, the Way belives it is complete!
+        /// 
+        /// Returns true iff the added node completes the Way
+        /// </summary>
+        /// <param name="node"></param>
+        public bool AddNode(Node node)
         {
-            get
+            var currentIsComplete = this.IsComplete;
+            this.Nodes.Add(node);
+            if (this.IsComplete && !currentIsComplete)
             {
-                if (!_avgPointSet)
-                {
-                    SetAverages();
-                }
-                return new Point(_avgLongitude, _avgLatitude);
+                nodeArrayBounds = new NodeArrayBounds(this.Nodes);
+                return true;
             }
+            return false;
         }
 
         [JsonIgnore]
-        public (Point, Point) Bounds => this.IsComposite ? throw new System.Exception("Can't take bounds of Composite Way") : this.nodeArrayBounds.Bounds;
+        public (Point, Point) Bounds => this.IsComposite || !this.IsComplete ? throw new System.Exception("Can't take bounds of Composite Way") : this.nodeArrayBounds.Bounds;
 
         public override string ToString()
         {
@@ -73,22 +86,6 @@
                     return defaultName;
                 }
             }
-        }
-
-        private void SetAverages()
-        {
-            double sumLat = 0.0;
-            double sumLng = 0.0;
-            foreach (var node in Nodes)
-            {
-                sumLat += node.Latitude;
-                sumLng += node.Longitude;
-            }
-
-            _avgLatitude = sumLat / Nodes.Length;
-            _avgLongitude = sumLng / Nodes.Length;
-            _avgPointSet = true;
-
         }
     }
 }
