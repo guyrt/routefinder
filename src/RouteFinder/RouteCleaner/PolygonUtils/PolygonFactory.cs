@@ -50,7 +50,8 @@
                 if (way.Nodes.First() == way.Nodes.Last())
                 {
                     var wayLL = new LinkedList<Way>();
-                    wayLL.AddLast(way);
+                    var newWay = new Way(way.Id, way.Nodes.Skip(1).ToArray(), way.Tags, way.ContainedIn, way.IsComposite);
+                    wayLL.AddLast(newWay);
                     polygons.Add(new Polygon(wayLL, new List<bool> { false }));
                 }
                 else

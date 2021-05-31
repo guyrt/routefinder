@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace RouteCleaner
 {
@@ -34,18 +35,13 @@ namespace RouteCleaner
 
             Console.WriteLine($"Found {createTargetableWays.OutputWays.Count} targetableWays");
             
-           /* watch.Restart();
-
             watch.Restart();
+            var ways = createTargetableWays.OutputWays;
             ways = ConsolidateWays(ways);
             time = watch.Elapsed;
             Console.WriteLine($"Done with ConsolidatedWays in {time.TotalSeconds} seconds. Have {ways.Count} ways.");
 
-            watch.Restart();
-            AddWaysToNodes(ways);
-            time = watch.Elapsed;
-            Console.WriteLine($"Done with AddWaystonodes in {time.TotalSeconds} seconds. Have {ways.Count} ways."); */
-            
+            this.WriteWays(ways, @"C:\Users\riguy\code\routefinder\data\targetableWays.json");
         }
 
         /// <summary>
@@ -54,9 +50,9 @@ namespace RouteCleaner
         /// <returns></returns>
         public string WriteNodesToDoc(CreateTargetableWaysWithinRegions createTargetableWays, Dictionary<Relation, Polygon[]> relationRegion, IEnumerable<Node> nodeStreamer, string outPath)
         {
-            using (var fs = File.OpenWrite(outPath))
+            using (var fs = File.Open(outPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
             {
-                using (var sr = new StreamWriter(fs))
+                using (var sr = new StreamWriter(fs, Encoding.UTF8, 65536)) // set a larger buffer
                 {
                     foreach (var node in NodeContainment(relationRegion, nodeStreamer))
                     {
@@ -70,13 +66,41 @@ namespace RouteCleaner
             return outPath;
         }
 
-        private Dictionary<Relation, Polygon[]> CreateRelationPolygons(IEnumerable<Relation> relations)
+        public string WriteWays(IEnumerable<TargetableWay> targetableWays, string outPath)
         {
-            var watch = Stopwatch.StartNew();
-            var retVal = relations.AsParallel().ToDictionary(k => k, v => RelationPolygonMemoizer.BuildPolygons(v));
-            var time = watch.Elapsed;
-            Console.WriteLine($"Done building polygons in {time}");
-            return retVal;
+            using (var fs = File.OpenWrite(outPath))
+            {
+                using (var sr = new StreamWriter(fs))
+                {
+                    foreach (var way in targetableWays)
+                    {
+                        sr.WriteLine(JsonConvert.SerializeObject(way));
+                    }
+                }
+            }
+            return outPath;
+        }
+
+        public string WriteRelations(Dictionary<Relation, Polygon[]> relations, string outPath)
+        {
+            using (var fs = File.OpenWrite(outPath))
+            {
+                using (var sr = new StreamWriter(fs))
+                {
+                    foreach (var kvp in relations)
+                    {
+                        var outputRelation = new TargetableRelation
+                        {
+                            Id = kvp.Key.Id,
+                            Borders = kvp.Value.Select(v => v.Nodes.Select(n => n.ToThin()).ToArray()).ToArray(),
+                            Name = kvp.Key.Name,
+                            RelationType = "todo"
+                        };
+                        sr.WriteLine(JsonConvert.SerializeObject(outputRelation));
+                    }
+                }
+            }
+            return outPath; 
         }
 
         public IEnumerable<Node> NodeContainment(Dictionary<Relation, Polygon[]> relationsDict, IEnumerable<Node> nodeStreamer)
@@ -123,63 +147,42 @@ namespace RouteCleaner
         /// We want to track "done" by looking at the whole street done AND node done rate. But for counties ect this will be very hard for streets. Lot of "1st st" in WA state. Eh. Run em all.
         /// </summary>
         /// <returns></returns>
-        public List<Way> ConsolidateWays(IEnumerable<Way> ways)
+        public List<TargetableWay> ConsolidateWays(IEnumerable<TargetableWay> ways)
         {
-            var wayDictionary = new Dictionary<string, Dictionary<string, List<Way>>>(); // relationId => (wayName => Ways)
+            var wayDictionary = new Dictionary<string, Dictionary<string, List<TargetableWay>>>(); // relationId => (wayName => Ways)
 
             foreach (var way in ways)
             {
                 var wayName = way.Name;
 
-                var relation = way.ContainedIn;
+                var relation = way.Relation.Id;
                 if (!wayDictionary.ContainsKey(relation))
                 {
-                    wayDictionary.Add(relation, new Dictionary<string, List<Way>>());
+                    wayDictionary.Add(relation, new Dictionary<string, List<TargetableWay>>());
                 }
                 if (!wayDictionary[relation].ContainsKey(wayName))
                 {
-                    wayDictionary[relation][wayName] = new List<Way>();
+                    wayDictionary[relation][wayName] = new List<TargetableWay>();
                 }
                 wayDictionary[relation][wayName].Add(way);
             }
 
-            var newWays = new List<Way>();
+            var newWays = new List<TargetableWay>();
             foreach ((var relationId, var waysByName) in wayDictionary)
             {
                 foreach ((var wayName, var innerWays) in waysByName)
                 {
-                    var nodes = innerWays.SelectMany(x => x.Nodes).Distinct().ToArray(); // order is obliterated.
-                    var tags = new Dictionary<string, string>();
-                    // take tags somewhat arbitrarily.
-                    foreach (var innerWay in innerWays)
+                    var firstWay = innerWays.First();
+                    foreach (var innerWay in innerWays.Skip(1))
                     {
-                        foreach (var kvp in innerWay.Tags)
-                        {
-                            if (!tags.ContainsKey(kvp.Key))
-                            {
-                                tags.Add(kvp.Key, kvp.Value);
-                            }
-                        }
+                        firstWay.Merge(innerWay);
                     }
-                    var way = new Way(innerWays.First().Id, nodes, tags, relationId, true);
-                    newWays.Add(way);
+                    newWays.Add(firstWay);
                 }
             }
 
             return newWays;
         }
-
-       /* todo - this but streaming
-        * public void AddWaysToNodes(IEnumerable<Way> ways)
-        {
-            foreach (var way in ways)
-            {
-                foreach (var node in way.Nodes)
-                {
-                    node.ContainingWays.Add(way.Id);
-                }
-            }
-        }*/
 
         private Geometry GetRegionGeometry(string filePath, bool ignoreNodes)
         {
@@ -203,6 +206,15 @@ namespace RouteCleaner
         {
             var osmDeserializer = new OsmDeserializer();
             return osmDeserializer.StreamNode(filePath);
+        }
+
+        private Dictionary<Relation, Polygon[]> CreateRelationPolygons(IEnumerable<Relation> relations)
+        {
+            var watch = Stopwatch.StartNew();
+            var retVal = relations.AsParallel().ToDictionary(k => k, v => RelationPolygonMemoizer.BuildPolygons(v));
+            var time = watch.Elapsed;
+            Console.WriteLine($"Done building polygons in {time}");
+            return retVal;
         }
     }
 }

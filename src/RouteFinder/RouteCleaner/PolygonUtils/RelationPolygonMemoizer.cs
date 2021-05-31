@@ -47,7 +47,7 @@
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Failed on {relation}: {e}");
+                Console.WriteLine($"Failed on {relation}: {e.Message}");
                 //throw e;
                 return new Polygon[0];
             }

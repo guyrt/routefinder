@@ -36,6 +36,22 @@
             };
         }
 
+        public string Name
+        {
+            get
+            {
+                var defaultName = "Unnamed relation";
+                if (this.Tags.TryGetValue("name", out var wayName))
+                {
+                    return string.IsNullOrEmpty(wayName) ? defaultName : wayName;
+                }
+                else
+                {
+                    return defaultName;
+                }
+            }
+        }
+
         public override string ToString()
         {
             return $"https://www.openstreetmap.org/relation/{Id}";

@@ -40,16 +40,22 @@ namespace RouteCleaner
                 {
                     // way is complete
                     this.ConvertToOutputWays(way);
-                } 
+                }
                 else
                 {
-                    remainingWays.Add(way);
+                    if (!way.IsComplete)
+                    {
+                        remainingWays.Add(way);
+                    }
                 }
             }
 
             if (remainingWays.Count > 0)
             {
-                this.wayMap[node.Id] = remainingWays;
+                if (remainingWays.Count < this.wayMap[node.Id].Count)
+                {
+                    this.wayMap[node.Id] = remainingWays;
+                }
             } 
             else
             {
