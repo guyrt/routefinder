@@ -6,6 +6,7 @@ using RouteCleaner.PolygonUtils;
 using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace RouteCleaner
 {
@@ -14,13 +15,20 @@ namespace RouteCleaner
         public void RunChain(string boundariesFilePath, string runnableWaysPath)
         {
             var relationRegion = this.GetRegionGeometry(boundariesFilePath, false);
-            var waysRegion = this.GetRegionGeometry(runnableWaysPath, true);
+
+            var thread1 = Task<Dictionary<Relation, Polygon[]>>.Factory.StartNew(() => this.CreateRelationPolygons(relationRegion.Relations));
+            var thread2 = Task<Geometry>.Factory.StartNew(() => this.GetRegionGeometry(runnableWaysPath, true));
+
+            Task.WaitAll(thread1, thread2);
+            var waysRegion = thread2.Result;
+            var relationsDict = thread1.Result;
+
             var nodeStreamer = this.GetNodeStreamer(runnableWaysPath);
 
             var createTargetableWays = new CreateTargetableWaysWithinRegions(waysRegion.Ways, relationRegion.Relations);
 
             var watch = Stopwatch.StartNew();
-            WriteNodesToDoc(createTargetableWays, relationRegion, nodeStreamer, @"C:\Users\riguy\code\routefinder\data\nodesWithContainment.json");
+            WriteNodesToDoc(createTargetableWays, relationsDict, nodeStreamer, @"C:\Users\riguy\code\routefinder\data\nodesWithContainment.json");
             var time = watch.Elapsed;
             Console.WriteLine($"Done with NodeContainment in {time.TotalSeconds} seconds.");
 
@@ -44,7 +52,7 @@ namespace RouteCleaner
         /// Write nodes to doc 1 at a time as Json
         /// </summary>
         /// <returns></returns>
-        public string WriteNodesToDoc(CreateTargetableWaysWithinRegions createTargetableWays, Geometry relationRegion, IEnumerable<Node> nodeStreamer, string outPath)
+        public string WriteNodesToDoc(CreateTargetableWaysWithinRegions createTargetableWays, Dictionary<Relation, Polygon[]> relationRegion, IEnumerable<Node> nodeStreamer, string outPath)
         {
             using (var fs = File.OpenWrite(outPath))
             {
@@ -62,13 +70,18 @@ namespace RouteCleaner
             return outPath;
         }
 
-        public IEnumerable<Node> NodeContainment(Geometry relationRegion, IEnumerable<Node> nodeStreamer)
+        private Dictionary<Relation, Polygon[]> CreateRelationPolygons(IEnumerable<Relation> relations)
         {
-            var relations = relationRegion.Relations.Where(x => x.Id == "237385").ToArray();// kirkland: 237356. nike park 11556206
+            var watch = Stopwatch.StartNew();
+            var retVal = relations.AsParallel().ToDictionary(k => k, v => RelationPolygonMemoizer.BuildPolygons(v));
+            var time = watch.Elapsed;
+            Console.WriteLine($"Done building polygons in {time}");
+            return retVal;
+        }
 
+        public IEnumerable<Node> NodeContainment(Dictionary<Relation, Polygon[]> relationsDict, IEnumerable<Node> nodeStreamer)
+        {
             // prebuild polygons to reduce contention
-            var relationsDict = relationRegion.Relations.ToDictionary(k => k, v => RelationPolygonMemoizer.BuildPolygons(v));
-            var nodeCounter = 0;
             foreach (var node in nodeStreamer)
             {
                 var containingRelations = relationsDict.AsParallel().Where(kvp => 
@@ -97,11 +110,6 @@ namespace RouteCleaner
                 }).Select(x => x.Key.Id);
 
                 node.Relations.AddRange(containingRelations);
-                nodeCounter++;
-                if (nodeCounter % 10000 == 0)
-                {
-                    Console.WriteLine($"Processed {nodeCounter} nodes: {node}");
-                }
                 yield return node;
             }
 
@@ -175,6 +183,7 @@ namespace RouteCleaner
 
         private Geometry GetRegionGeometry(string filePath, bool ignoreNodes)
         {
+            var watch = Stopwatch.StartNew();
             var osmDeserializer = new OsmDeserializer(true);
             Geometry relationRegion;
             using (var fs = File.OpenRead(filePath))
@@ -185,6 +194,8 @@ namespace RouteCleaner
                     relationRegion = osmDeserializer.ReadFile(sr, ignoreNodes);
                 }
             }
+            var time = watch.Elapsed;
+            Console.WriteLine($"Done loading {filePath} in {time}");
             return relationRegion;
         }
 
