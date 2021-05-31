@@ -48,7 +48,8 @@
             catch (Exception e)
             {
                 Console.WriteLine($"Failed on {relation}: {e}");
-                throw e;
+                //throw e;
+                return new Polygon[0];
             }
         }
 
