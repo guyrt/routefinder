@@ -1,7 +1,6 @@
 ﻿namespace RouteFinderDataModel.Tools
 {
     using System.Collections.Generic;
-    using Microsoft.Azure.Cosmos.Spatial;
 
     /// <summary>
     /// A lazy tracker of Node[] bounds
@@ -21,7 +20,7 @@
             this.nodes = nodes;
         }
 
-        public (Point, Point) Bounds
+        public (double minLng, double minLat, double maxLng, double maxLat) Bounds
         {
             get
             {
@@ -48,7 +47,7 @@
                     }
                     _boundsSet = true;
                 }
-                return (new Point(_minLongitude, _minLatitude), new Point(_maxLongitude, _maxLatitude));
+                return (minLng: _minLongitude, minLat: _minLatitude, maxLng: _maxLongitude, maxLat: _maxLatitude);
             }
         }
 

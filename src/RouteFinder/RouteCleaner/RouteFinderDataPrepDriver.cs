@@ -179,14 +179,6 @@ namespace RouteCleaner
                                 {
                                     return true;
                                 }
-
-                                foreach (var polyNodes in polygon.Nodes)
-                                {
-                                    if (polyNodes.Id == nodeToProcess.Id)
-                                    {
-                                        return true;
-                                    }
-                                }
                             }
 
                             return false;

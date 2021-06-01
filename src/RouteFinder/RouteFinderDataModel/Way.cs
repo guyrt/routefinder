@@ -67,7 +67,7 @@
         }
 
         [JsonIgnore]
-        public (Point, Point) Bounds => this.IsComposite || !this.IsComplete ? throw new System.Exception("Can't take bounds of Composite Way") : this.nodeArrayBounds.Bounds;
+        public (double minLng, double minLat, double maxLng, double maxLat) Bounds => this.IsComposite || !this.IsComplete ? throw new System.Exception("Can't take bounds of Composite Way") : this.nodeArrayBounds.Bounds;
 
         public override string ToString()
         {

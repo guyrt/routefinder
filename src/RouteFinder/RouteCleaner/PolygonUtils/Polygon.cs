@@ -108,7 +108,7 @@
         /// </summary>
         public List<bool> Reversals { get; }
 
-        public (Point, Point) Bounds => this.nodeArrayBounds.Bounds;
+        public (double minLng, double minLat, double maxLng, double maxLat) Bounds => this.nodeArrayBounds.Bounds;
 
         private bool? _isConvex;
 

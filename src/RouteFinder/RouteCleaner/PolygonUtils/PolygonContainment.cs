@@ -133,21 +133,21 @@
         // Check based on bounding boxes. This quickly rules out containment for the most common case.
         private bool SimpleNonOverlap(Way w)
         {
-            (var wayBoundsMin, var wayBoundsMax) = w.Bounds;
-            (var polyBoundsMin, var polyBoundsMax) = this._polygon.Bounds;
+            (double minLng, double minLat, double maxLng, double maxLat) = w.Bounds;
+            (double polyMinLng, double polyMinLat, double polyMaxLng, double polyMaxLat) = this._polygon.Bounds;
 
-            var nonOverlap = wayBoundsMax.Position.Latitude < polyBoundsMin.Position.Latitude || polyBoundsMax.Position.Latitude < wayBoundsMin.Position.Latitude
-                || wayBoundsMax.Position.Longitude < polyBoundsMin.Position.Longitude || polyBoundsMax.Position.Longitude < wayBoundsMin.Position.Longitude;
+            var nonOverlap = maxLat < polyMinLat|| polyMaxLat < minLat
+                || maxLng < polyMinLng || polyMaxLng < minLng;
 
             return nonOverlap;
         }
 
         private static bool SimpleNonOverlap(Polygon polygon, Node n)
         {
-            (var polyBoundsMin, var polyBoundsMax) = polygon.Bounds;
+            (double minLng, double minLat, double maxLng, double maxLat) = polygon.Bounds;
 
-            var nonOverlap = n.Latitude < polyBoundsMin.Position.Latitude || polyBoundsMax.Position.Latitude < n.Latitude
-                || n.Longitude < polyBoundsMin.Position.Longitude || polyBoundsMax.Position.Longitude < n.Longitude;
+            var nonOverlap = n.Latitude < minLat || maxLat < n.Latitude
+                || n.Longitude < minLng || maxLng < n.Longitude;
 
             return nonOverlap;
         }
