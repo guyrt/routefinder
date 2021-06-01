@@ -25,11 +25,11 @@ namespace RouteCleaner
             Initialize(ways, relations);
         }
 
-        public void ProcessNode(Node node)
+        public bool ProcessNode(Node node)
         {
             if (!this.wayMap.ContainsKey(node.Id))
             {
-                return;
+                return false;
             }
 
             var remainingWays = new List<Way>();
@@ -68,6 +68,8 @@ namespace RouteCleaner
             {
                 Console.WriteLine($"After Node {this.counter}, have {this.wayMap.Count} nodes remaining and {this.wayMap.Select(w => w.Value.Count).Sum()} total way nodes to map. {this.OutputWays.Count()} ways created.");
             }
+
+            return true;
         }
 
         private void ConvertToOutputWays(Way way)

@@ -14,19 +14,19 @@
         }
 
         // Winding number based implementation.
-        public bool Contains(Node node)
+        public static bool Contains(Polygon polygon, Node node)
         {
-            if (SimpleNonOverlap(node))
+            if (PolygonContainment.SimpleNonOverlap(polygon, node))
             {
                 return false;
             }
 
             var windingNumber = 0;
-            var startLat = _polygon.Nodes[0].Latitude;
-            var startLng = _polygon.Nodes[0].Longitude;
-            for (int i = 0; i < _polygon.Nodes.Count; i++)
+            var startLat = polygon.Nodes[0].Latitude;
+            var startLng = polygon.Nodes[0].Longitude;
+            for (int i = 0; i < polygon.Nodes.Count; i++)
             {
-                var endNode = _polygon.Nodes[(i + 1) % _polygon.Nodes.Count];
+                var endNode = polygon.Nodes[(i + 1) % polygon.Nodes.Count];
                 var endLat = endNode.Latitude;
                 var endLng = endNode.Longitude;
 
@@ -58,7 +58,7 @@
             return windingNumber != 0;
         }
 
-        private double IsLeft(double p0Lat, double p0Lng, double p1Lat, double p1Lng, double p2Lat, double p2Lng)
+        private static double IsLeft(double p0Lat, double p0Lng, double p1Lat, double p1Lng, double p2Lat, double p2Lng)
         {
             return ((p1Lng - p0Lng) * (p2Lat - p0Lat) - (p2Lng - p0Lng) * (p1Lat - p0Lat));
         }
@@ -80,14 +80,14 @@
             var contains = new List<Way>();
             var notContains = new List<Way>();
 
-            var nodeIn = Contains(way.Nodes.First());
+            var nodeIn = Contains(this._polygon, way.Nodes.First());
             var splitWay = false;
             var nodes = new LinkedList<Node>();
             var i = 0;
             bool newNodeIn = false;
             foreach (var node in way.Nodes)
             {
-                newNodeIn = Contains(node);
+                newNodeIn = Contains(this._polygon, node);
                 nodes.AddLast(node);
                 if (nodeIn != newNodeIn)
                 {
@@ -142,9 +142,9 @@
             return nonOverlap;
         }
 
-        private bool SimpleNonOverlap(Node n)
+        private static bool SimpleNonOverlap(Polygon polygon, Node n)
         {
-            (var polyBoundsMin, var polyBoundsMax) = this._polygon.Bounds;
+            (var polyBoundsMin, var polyBoundsMax) = polygon.Bounds;
 
             var nonOverlap = n.Latitude < polyBoundsMin.Position.Latitude || polyBoundsMax.Position.Latitude < n.Latitude
                 || n.Longitude < polyBoundsMin.Position.Longitude || polyBoundsMax.Position.Longitude < n.Longitude;

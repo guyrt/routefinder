@@ -41,7 +41,7 @@ namespace RouteCleaner
             }
         }
 
-        public Geometry ReadFile(StreamReader stream, bool ignoreNodes = false)
+        public Geometry ReadFile(StreamReader stream, bool ignoreNodes = false, bool trimTags = false)
         {
             var nodes = new Dictionary<string, Node>();
             var ways = new Dictionary<string, Way>();
@@ -78,7 +78,7 @@ namespace RouteCleaner
                             Console.WriteLine($"Found {nodes.Count} nodes.");
                         }
                         hitWay = true;
-                        var way = ReadWay(childElt, nodes);
+                        var way = ReadWay(childElt, nodes, trimTags);
                         if (way != default)
                         {
                             ways.Add(way.Id, way);
@@ -90,7 +90,7 @@ namespace RouteCleaner
                             Console.WriteLine($"Found {ways.Count} ways.");
                         }
                         hitRelation = true;
-                        var relation = ReadRelation(childElt, ways);
+                        var relation = ReadRelation(childElt, ways, trimTags);
                         if (relation != default)
                         {
                             relations.Add(relation);
@@ -137,7 +137,7 @@ namespace RouteCleaner
             }
         }
 
-        private Relation ReadRelation(XElement relation, IReadOnlyDictionary<string, Way> ways)
+        private Relation ReadRelation(XElement relation, IReadOnlyDictionary<string, Way> ways, bool trimTags)
         {
             if (relation.Name != "relation")
             {
@@ -172,6 +172,11 @@ namespace RouteCleaner
             }
 
             var tags = GetTags(relation);
+            if (trimTags)
+            {
+                // todo - what else do we need?
+                tags = tags.Where(k => k.Key == "name").ToDictionary(k => k.Key, v => v.Value);
+            }
 
             return new Relation(GetId(relation), foundWays.ToArray(), tags, incomplete);
         }
@@ -188,14 +193,19 @@ namespace RouteCleaner
             return new Node(GetId(node), lat, lng);
         }
 
-        private Way ReadWay(XElement way, Dictionary<string, Node> nodes)
+        private Way ReadWay(XElement way, Dictionary<string, Node> nodes, bool trimTags)
         {
             if (way.Name != "way")
             {
                 throw new InvalidOperationException($"Expected way but got {way}");
             }
-            var tags = GetTags(way).Where(kvp => !kvp.Key.StartsWith("tiger:")).ToDictionary(k => k.Key, v => v.Value);
 
+            var tags = GetTags(way).Where(kvp => !kvp.Key.StartsWith("tiger:")).ToDictionary(k => k.Key, v => v.Value);
+            if (trimTags)
+            {
+                // todo - what else do we need?
+                tags = tags.Where(k => k.Key == "name").ToDictionary(k => k.Key, v => v.Value);
+            }
 
             var nodeRefs = way.Descendants("nd").Select(nd => nd.Attribute("ref")?.Value);
             if (nodes.Count > 0)

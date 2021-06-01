@@ -8,6 +8,9 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Text;
+using GlobalSettings;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace RouteCleaner
 {
@@ -15,10 +18,10 @@ namespace RouteCleaner
     {
         public void RunChain(string boundariesFilePath, string runnableWaysPath)
         {
-            var relationRegion = this.GetRegionGeometry(boundariesFilePath, false);
+            var relationRegion = this.GetRegionGeometry(boundariesFilePath, false, false);
 
             var thread1 = Task<Dictionary<Relation, Polygon[]>>.Factory.StartNew(() => this.CreateRelationPolygons(relationRegion.Relations));
-            var thread2 = Task<Geometry>.Factory.StartNew(() => this.GetRegionGeometry(runnableWaysPath, true));
+            var thread2 = Task<Geometry>.Factory.StartNew(() => this.GetRegionGeometry(runnableWaysPath, true, false));
 
             Task.WaitAll(thread1, thread2);
             var waysRegion = thread2.Result;
@@ -54,12 +57,12 @@ namespace RouteCleaner
             {
                 using (var sr = new StreamWriter(fs, Encoding.UTF8, 65536)) // set a larger buffer
                 {
-                    foreach (var node in NodeContainment(relationRegion, nodeStreamer))
+                    foreach (var node in ThreadedNodeContainment(relationRegion, nodeStreamer))
                     {
-                        var nodeStr = JsonConvert.SerializeObject(node);
-                        sr.WriteLine(nodeStr);
-
-                        createTargetableWays.ProcessNode(node);
+                        if (createTargetableWays.ProcessNode(node) || node.Relations.Count() > 0) {
+                            var nodeStr = JsonConvert.SerializeObject(node);
+                            sr.WriteLine(nodeStr);
+                        }
                     }
                 }
             }
@@ -103,6 +106,150 @@ namespace RouteCleaner
             return outPath; 
         }
 
+        /// <summary>
+        /// use n + 2 threads. 
+        /// Thread 0 will iterate through nodeStreamer and add to n queues in round robin.
+        /// Threads 1-n will read a queue and process, writing to a queue.
+        /// Thread n+1 will read all output queues and yield one at a time.
+        /// </summary>
+        /// <param name="relationsDict"></param>
+        /// <param name="nodeStreamer"></param>
+        /// <returns></returns>
+
+        public IEnumerable<Node> ThreadedNodeContainment(Dictionary<Relation, Polygon[]> relationsDict, IEnumerable<Node> nodeStreamer)
+        {
+            var allDone = false; // shared - read but only written by the main thread.
+            int numThreads = RouteCleanerSettings.GetInstance().NumThreads;
+            var requestQueues = Enumerable.Range(0, numThreads).Select(_ => new ConcurrentQueue<Node>()).ToArray();
+            var responseQueues = Enumerable.Range(0, numThreads).Select(_ => new ConcurrentQueue<Node>()).ToArray();
+            var readThread = Task<int>.Factory.StartNew(() =>
+            {
+                var numNodes = 0;
+                foreach (var node in nodeStreamer)
+                {
+                    requestQueues[numNodes % numThreads].Enqueue(node);
+                    numNodes++;
+
+                    if (numNodes % 10000 == 0)
+                    {
+                        var depths = requestQueues.Select(q => q.Count);
+                        var averageDepth = depths.Average();
+                        if (averageDepth > 10000)
+                        {
+                            Console.WriteLine($"Reader thread sleeping to let other threads catch up");
+                            Thread.Sleep(1000); // give it a little time to cool off.
+                        }
+                    }
+                }
+
+                // when done, push a null to each queue
+                Console.WriteLine($"Reader thread done"); 
+                foreach (var q in requestQueues)
+                {
+                    q.Enqueue(null);
+                }
+
+                return numNodes;
+            });
+
+            var processedCount = new int[numThreads];
+            var processThreads = Enumerable.Range(0, numThreads).Select(processThreadIdx => Task<int>.Factory.StartNew(() => {
+                Console.WriteLine($"Thread {processThreadIdx} reporting for duty");
+                while(true)
+                {
+                    Node nodeToProcess = null;
+                    while (requestQueues[processThreadIdx].TryDequeue(out nodeToProcess))  // when queue is empty, we want to keep processing. When it has a null in it, we halt. Thus two whiles.
+                    {
+                        if (nodeToProcess == null)
+                        {
+                            // pusher will push a null when the queue is done.
+                            responseQueues[processThreadIdx].Enqueue(null);
+                            Console.WriteLine($"Thread {processThreadIdx} done");
+                            return processThreadIdx;
+                        }
+
+                        var containingRelations = relationsDict.Where(kvp =>
+                        {
+                            var target = kvp.Key;
+                            var polygons = kvp.Value;
+
+                            foreach (var polygon in polygons)
+                            {
+                                if (PolygonContainment.Contains(polygon, nodeToProcess))
+                                {
+                                    return true;
+                                }
+
+                                foreach (var polyNodes in polygon.Nodes)
+                                {
+                                    if (polyNodes.Id == nodeToProcess.Id)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+
+                            return false;
+                        }).Select(x => x.Key.Id);
+
+                        nodeToProcess.Relations.AddRange(containingRelations);
+                        responseQueues[processThreadIdx].Enqueue(nodeToProcess);
+                        processedCount[processThreadIdx]++;
+                    }
+
+                    Console.WriteLine($"Thread {processThreadIdx} failed to dequeue");
+                    Thread.Sleep(1000);
+                }
+            })).ToArray(); // <-- that's important - otherwise these never actually happen!
+
+            // print status thread
+            var statusThread = Task.Factory.StartNew(() =>
+            {
+                while (!allDone) {
+                    Thread.Sleep(10 * 1000);
+                    var queueDepths = requestQueues.Select(q => q.Count).Average();
+                    var averageFinished = processedCount.Average();
+                    Console.WriteLine($"Checkin: {queueDepths} average depth with {averageFinished} processed.");
+                }
+            });
+
+            // main thread writes
+            var deadThreads = Enumerable.Range(0, numThreads).Select(_ => false).ToArray();
+            while(true)
+            {
+                var didWork = false;
+                for (var i = 0; i < numThreads; i++)
+                {
+                    if (!deadThreads[i])
+                    {
+                        Node processedNode = null;
+                        if (responseQueues[i].TryDequeue(out processedNode))
+                        {
+                            if (processedNode == null)
+                            {
+                                deadThreads[i] = true;
+                            } else
+                            {
+                                didWork = true;
+                                yield return processedNode;
+                            }
+                        }
+                    }
+                }
+                if (deadThreads.All(x => x))
+                {
+                    break;
+                }
+                if (!didWork)
+                {
+                    Thread.Sleep(1000); // if the queues are all empty, then wait for a little while. No sense having this thread spin.
+                    // maybe we should do message passing here?
+                }
+            }
+
+            allDone = true;
+        }
+
         public IEnumerable<Node> NodeContainment(Dictionary<Relation, Polygon[]> relationsDict, IEnumerable<Node> nodeStreamer)
         {
             // prebuild polygons to reduce contention
@@ -115,9 +262,7 @@ namespace RouteCleaner
 
                     foreach (var polygon in polygons)
                     {
-                        var containment = new PolygonContainment(polygon);
-
-                        if (containment.Contains(node))
+                        if (PolygonContainment.Contains(polygon, node))
                         {
                             return true;
                         }
@@ -130,13 +275,13 @@ namespace RouteCleaner
                             }
                         }
                     }
+
                     return false;
                 }).Select(x => x.Key.Id);
 
                 node.Relations.AddRange(containingRelations);
                 yield return node;
             }
-
         }
 
         /// <summary>
@@ -184,7 +329,7 @@ namespace RouteCleaner
             return newWays;
         }
 
-        private Geometry GetRegionGeometry(string filePath, bool ignoreNodes)
+        private Geometry GetRegionGeometry(string filePath, bool ignoreNodes, bool trimTags)
         {
             var watch = Stopwatch.StartNew();
             var osmDeserializer = new OsmDeserializer(true);
@@ -194,7 +339,7 @@ namespace RouteCleaner
                 using (var sr = new StreamReader(fs))
                 {
                     Console.WriteLine($"Loading regions from {filePath}.");
-                    relationRegion = osmDeserializer.ReadFile(sr, ignoreNodes);
+                    relationRegion = osmDeserializer.ReadFile(sr, ignoreNodes, trimTags);
                 }
             }
             var time = watch.Elapsed;
