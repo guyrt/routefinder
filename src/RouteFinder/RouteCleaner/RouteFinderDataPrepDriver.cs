@@ -29,12 +29,15 @@ namespace RouteCleaner
 
             var nodeStreamer = this.GetNodeStreamer(runnableWaysPath);
 
-            var createTargetableWays = new CreateTargetableWaysWithinRegions(waysRegion.Ways, relationRegion.Relations);
-
             var watch = Stopwatch.StartNew();
-            WriteNodesToDoc(createTargetableWays, relationsDict, nodeStreamer, @"C:\Users\riguy\code\routefinder\data\nodesWithContainment.json");
+            var createTargetableWays = new CreateTargetableWaysWithinRegions(waysRegion.Ways, relationRegion.Relations);
             var time = watch.Elapsed;
-            Console.WriteLine($"Done with NodeContainment in {time.TotalSeconds} seconds.");
+            Console.WriteLine($"Done prepping ways in {time}");
+            watch.Restart();
+
+            WriteNodesToDoc(createTargetableWays, relationsDict, nodeStreamer, @"C:\Users\riguy\code\routefinder\data\nodesWithContainment.json");
+            time = watch.Elapsed;
+            Console.WriteLine($"Done with NodeContainment in {time} seconds.");
 
             Console.WriteLine($"Found {createTargetableWays.OutputWays.Count} targetableWays");
             
@@ -42,7 +45,7 @@ namespace RouteCleaner
             var ways = createTargetableWays.OutputWays;
             ways = ConsolidateWays(ways);
             time = watch.Elapsed;
-            Console.WriteLine($"Done with ConsolidatedWays in {time.TotalSeconds} seconds. Have {ways.Count} ways.");
+            Console.WriteLine($"Done with ConsolidatedWays in {time} seconds. Have {ways.Count} ways.");
 
             this.WriteWays(ways, @"C:\Users\riguy\code\routefinder\data\targetableWays.json");
         }
@@ -137,7 +140,7 @@ namespace RouteCleaner
                         if (averageDepth > 10000)
                         {
                             Console.WriteLine($"Reader thread sleeping to let other threads catch up");
-                            Thread.Sleep(1000); // give it a little time to cool off.
+                            Thread.Sleep(RouteCleanerSettings.GetInstance().ReaderThreadSleepInterval); // give it a little time to cool off.
                         }
                     }
                 }

@@ -7,7 +7,9 @@
         private RouteCleanerSettings() { }
 
 
-        public bool PolygonsShouldConsolidateStraightEdges { get; set; } = true;
+        public bool PolygonsShouldConsolidateStraightEdges { get; set; } = false;
+
+        public int ReaderThreadSleepInterval { get; set; } = 5 * 1000;
 
         public int NumThreads { get; set; } = 8;
 
