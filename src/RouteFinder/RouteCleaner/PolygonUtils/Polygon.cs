@@ -6,6 +6,7 @@
     using RouteFinderDataModel;
     using RouteFinderDataModel.Tools;
     using GlobalSettings;
+    using System;
 
     /// <summary>
     /// A polygon is a series of nodes that form 1 or more ways that connect into a circuit.
@@ -66,7 +67,7 @@
             // Keep nodes where the angle is not close enough to 180 degrees (based on threshold)
             for (var i = 0; i < dotProducts.Count; i++)
             {
-                if (dotProducts[i] > FlattenThreshold)
+                if (Math.Abs(dotProducts[i]) > FlattenThreshold)
                 {
                     newNodes.Add(originalNodes[i]);
                 }
