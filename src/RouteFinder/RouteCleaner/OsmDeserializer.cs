@@ -150,6 +150,8 @@ namespace RouteCleaner
                 return null;
             }
 
+            var relationId = GetId(relation);
+
             var memberRefs = relation.Descendants("member").Where(nd => nd.Attribute("type")?.Value == "way").Select(nd => nd.Attribute("ref")?.Value);
             var foundWays = new List<Way>();
             var incomplete = false;
@@ -178,7 +180,7 @@ namespace RouteCleaner
                 tags = tags.Where(k => k.Key == "name").ToDictionary(k => k.Key, v => v.Value);
             }
 
-            return new Relation(GetId(relation), foundWays.ToArray(), tags, incomplete);
+            return new Relation(relationId, foundWays.ToArray(), tags, incomplete);
         }
 
         private Node ReadNode(XElement node)
