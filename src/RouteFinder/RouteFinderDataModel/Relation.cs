@@ -14,15 +14,18 @@
         [JsonIgnore]
         public List<Relation> OverlappingRelations; // overlapping but not proper contained.
 
-        public Relation(string id, Way[] ways, Dictionary<string, string> tags, bool incomplete) : base(id, tags)
+        public Relation(string id, Way[] ways, HashSet<string> innerWays, Dictionary<string, string> tags, bool incomplete) : base(id, tags)
         {
             Ways = ways;
             Incomplete = incomplete;
             InternalRelations = new List<Relation>();
             OverlappingRelations = new List<Relation>();
+            InnerWays = innerWays;
         }
 
         public Way[] Ways { get; }
+
+        public HashSet<string> InnerWays { get; }
 
         public bool Incomplete { get; }
 

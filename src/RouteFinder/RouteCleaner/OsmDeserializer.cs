@@ -144,16 +144,11 @@ namespace RouteCleaner
                 throw new InvalidOperationException($"Expected relation but got {relation}");
             }
 
-            // disallow nested relations
-            if (relation.Descendants("member").Select(m => m.Attribute("type")?.Value).Any(v => v == "relation"))
-            {
-                return null;
-            }
-
             var relationId = GetId(relation);
-
-            var memberRefs = relation.Descendants("member").Where(nd => nd.Attribute("type")?.Value == "way").Select(nd => nd.Attribute("ref")?.Value);
+            var memberBase = relation.Descendants("member").Where(nd => nd.Attribute("type")?.Value == "way");
+            var memberRefs = memberBase.Select(nd => nd.Attribute("ref")?.Value);
             var foundWays = new List<Way>();
+            var innerWays = memberBase.Where(nd => nd.Attribute("role")?.Value == "inner").Select(nd => nd.Attribute("ref")?.Value).ToHashSet();
             var incomplete = false;
             foreach (var memberRef in memberRefs)
             {
@@ -180,7 +175,7 @@ namespace RouteCleaner
                 tags = tags.Where(k => k.Key == "name").ToDictionary(k => k.Key, v => v.Value);
             }
 
-            return new Relation(relationId, foundWays.ToArray(), tags, incomplete);
+            return new Relation(relationId, foundWays.ToArray(), innerWays, tags, incomplete);
         }
 
         private Node ReadNode(XElement node)

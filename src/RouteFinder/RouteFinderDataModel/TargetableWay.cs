@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using RouteFinderDataModel.Thin;
 
 namespace RouteFinderDataModel
@@ -12,7 +13,12 @@ namespace RouteFinderDataModel
 
         public string Name { get; set; }
 
-        public Relation Relation { get; set; }
+        [JsonIgnore]
+        public Relation FullRelation { get; set; }
+
+        public string RelationId => FullRelation?.Id;
+
+        public string RelationName => FullRelation?.Name ?? string.Empty;
 
         public List<OriginalWay> OriginalWays { get; set; }
 
@@ -30,14 +36,14 @@ namespace RouteFinderDataModel
                 throw new System.Exception($"Cannot merge TargetableWays - names {this.Name} and {otherWay.Name} differ.");
             }
 
-            if (this.Relation != null && otherWay.Relation != null && this.Relation != otherWay.Relation)
+            if (this.FullRelation != null && otherWay.FullRelation != null && this.FullRelation != otherWay.FullRelation)
             {
-                throw new System.Exception($"Cannot merge TargetableWays - relations are non null but different: {this.Relation} and {otherWay.Relation}");
+                throw new System.Exception($"Cannot merge TargetableWays - relations are non null but different: {this.FullRelation} and {otherWay.FullRelation}");
             }
 
             this.OriginalWays.AddRange(otherWay.OriginalWays);
 
-            this.Relation = this.Relation ?? otherWay.Relation;
+            this.FullRelation = this.FullRelation ?? otherWay.FullRelation;
         }
     }
 }

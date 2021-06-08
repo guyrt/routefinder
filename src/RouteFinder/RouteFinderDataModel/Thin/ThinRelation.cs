@@ -13,7 +13,7 @@ namespace RouteFinderDataModel.Thin
 
         public Relation ToThick(Dictionary<string, Way> wayLookup)
         {
-            return new Relation(Id, Ways.Where(w => wayLookup.ContainsKey(w)).Select(w => wayLookup[w]).ToArray(), Tags, false);
+            return new Relation(Id, Ways.Where(w => wayLookup.ContainsKey(w)).Select(w => wayLookup[w]).ToArray(), new HashSet<string>(), Tags, false);
         }
     }
 }

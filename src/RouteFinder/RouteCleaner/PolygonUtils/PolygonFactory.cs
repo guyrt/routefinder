@@ -10,7 +10,7 @@
 
         public static List<Polygon> BuildPolygons(Relation relation)
         {
-            return BuildPolygons(relation.Ways);
+            return BuildPolygons(relation.Ways, relation.InnerWays);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public static List<Polygon> BuildPolygons(Way[] originalWays)
+        public static List<Polygon> BuildPolygons(Way[] originalWays, HashSet<string> innerWays)
         {
             var polygons = new List<Polygon>();
             if (originalWays.Length == 0)
@@ -52,7 +52,7 @@
                     var wayLL = new LinkedList<Way>();
                     var newWay = new Way(way.Id, way.Nodes.Skip(1).ToArray(), way.Tags, way.ContainedIn, way.IsComposite);
                     wayLL.AddLast(newWay);
-                    polygons.Add(new Polygon(wayLL, new List<bool> { false }));
+                    polygons.Add(new Polygon(wayLL, new List<bool> { false }, !innerWays.Contains(way.Id)));
                 }
                 else
                 {
@@ -94,7 +94,7 @@
                 }
 
                 // Step 3 - find/cull sets of nodes into polygons
-                polygons.AddRange(FindPolygons(nodes, ways, reversedWay));
+                polygons.AddRange(FindPolygons(nodes, ways, reversedWay, innerWays));
             }
 
             return polygons;
@@ -152,7 +152,7 @@
             }
         }
 
-        private static List<Polygon> FindPolygons(List<Node> nodes, List<Way> ways, List<bool> reversed)
+        private static List<Polygon> FindPolygons(List<Node> nodes, List<Way> ways, List<bool> reversed, HashSet<string> innerWays)
         {
             var polygons = new List<Polygon>();
             var firstSeenIndex = new Dictionary<Node, int>();
@@ -175,7 +175,22 @@
                             alreadyUsed[j] = true;
                         }
                     }
-                    polygons.Add(new Polygon(polygonWays, reversals));
+
+                    var isOuter = false;
+                    var isInner = false;
+                    foreach (var way in polygonWays)
+                    {
+                        isOuter |= !innerWays.Contains(way.Id);
+                        isInner |= innerWays.Contains(way.Id);
+                    }
+
+/*                    todo - inner/outer is unclear right now so we default to outer. See relation 140781 for example where a way is unclear (but is actually inner)
+ *                    if (isOuter == isInner)
+                    {
+                        throw new Exception($"Created polygon with way {polygonWays.First()} that is both inner and outer.");
+                    }*/  
+
+                    polygons.Add(new Polygon(polygonWays, reversals, isOuter));
                     firstSeenIndex.Remove(node); // not strictly necessary, but this allows us to avoid recycling over some elements.
                 }
                 else

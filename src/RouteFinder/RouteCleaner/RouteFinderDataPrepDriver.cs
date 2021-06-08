@@ -20,6 +20,9 @@ namespace RouteCleaner
         {
             var relationRegion = this.GetRegionGeometry(boundariesFilePath, false, false);
 
+            var canadaOhio = relationRegion.Relations.Where(x => x.Id == "1428125" || x.Id == "162061");
+            var regionsSmall = this.CreateRelationPolygons(canadaOhio);
+
             var thread1 = Task<Dictionary<Relation, Polygon[]>>.Factory.StartNew(() => this.CreateRelationPolygons(relationRegion.Relations));
             var thread2 = Task<Geometry>.Factory.StartNew(() => this.GetRegionGeometry(runnableWaysPath, true, false));
 
@@ -137,10 +140,13 @@ namespace RouteCleaner
                     {
                         var depths = requestQueues.Select(q => q.Count);
                         var averageDepth = depths.Average();
-                        if (averageDepth > 10000)
+                        while (averageDepth > 20000)
                         {
-                            Console.WriteLine($"Reader thread sleeping to let other threads catch up");
+                         //   Console.WriteLine($"Reader thread sleeping to let other threads catch up");
                             Thread.Sleep(RouteCleanerSettings.GetInstance().ReaderThreadSleepInterval); // give it a little time to cool off.
+
+                            depths = requestQueues.Select(q => q.Count);
+                            averageDepth = depths.Average();
                         }
                     }
                 }
@@ -180,7 +186,7 @@ namespace RouteCleaner
                             {
                                 if (PolygonContainment.Contains(polygon, nodeToProcess))
                                 {
-                                    return true;
+                                    return polygon.IsOuter;
                                 }
                             }
 
@@ -203,9 +209,10 @@ namespace RouteCleaner
                 while (!allDone) {
                     Thread.Sleep(10 * 1000);
                     var queueDepths = requestQueues.Select(q => q.Count).Average();
-                    var averageFinished = processedCount.Average();
+                    var averageFinished = processedCount.Sum();
                     Console.WriteLine($"Checkin: {queueDepths} average depth with {averageFinished} processed.");
                 }
+                Console.WriteLine("Checking thread done.");
             });
 
             // main thread writes
@@ -295,7 +302,7 @@ namespace RouteCleaner
             {
                 var wayName = way.Name;
 
-                var relation = way.Relation.Id;
+                var relation = way.FullRelation.Id;
                 if (!wayDictionary.ContainsKey(relation))
                 {
                     wayDictionary.Add(relation, new Dictionary<string, List<TargetableWay>>());

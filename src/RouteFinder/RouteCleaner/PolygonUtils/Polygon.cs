@@ -16,10 +16,15 @@
         public const double FlattenThreshold = -1 + 1e-2;
         public List<Node> EliminatedNodes;
 
+        // If true, this polygon marks an outer boundary. If false, then it's inner and being inside the node means the relation doesn't
+        // contain the point.
+        public bool IsOuter { get; }
+
         private readonly NodeArrayBounds nodeArrayBounds;
 
-        internal Polygon(LinkedList<Way> ways, List<bool> reversals)
+        internal Polygon(LinkedList<Way> ways, List<bool> reversals, bool outer)
         {
+            IsOuter = outer;
             Ways = ways;
             Reversals = reversals;
             Nodes = BuildNodes(ways, reversals);

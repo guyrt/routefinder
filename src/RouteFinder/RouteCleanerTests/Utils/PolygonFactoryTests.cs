@@ -27,13 +27,13 @@
                 new Way("w4", new[] {nodes[3], dummyNodes[3], nodes[0]}),
             };
 
-            var polygons = PolygonFactory.BuildPolygons(ways);
+            var polygons = PolygonFactory.BuildPolygons(ways, new System.Collections.Generic.HashSet<string>());
             var firstPolygon = polygons.Single();
 
             ways[1].Nodes.Reverse();
             ways[3].Nodes.Reverse();
 
-            var secondPolygons = PolygonFactory.BuildPolygons(ways);
+            var secondPolygons = PolygonFactory.BuildPolygons(ways, new System.Collections.Generic.HashSet<string>());
             var secondPolygon = polygons.Single();
 
             Assert.NotEmpty(firstPolygon.Nodes);
@@ -61,13 +61,13 @@
                 new Way("w7", new[] {nodes[6], dummyNodes[7], nodes[2]}),
             };
 
-            var polygons = PolygonFactory.BuildPolygons(ways);
+            var polygons = PolygonFactory.BuildPolygons(ways, new System.Collections.Generic.HashSet<string>());
             Assert.Equal(2, polygons.Count);
 
             ways[1].Nodes.Reverse();
             ways[3].Nodes.Reverse();
 
-            var secondPolygons = PolygonFactory.BuildPolygons(ways);
+            var secondPolygons = PolygonFactory.BuildPolygons(ways, new System.Collections.Generic.HashSet<string>());
             Assert.Equal(2, secondPolygons.Count);
         }
     }

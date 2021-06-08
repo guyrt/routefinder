@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using RouteFinderDataModel;
@@ -14,9 +15,9 @@ namespace RouteCleaner
 
         public List<TargetableWay> OutputWays;
         
-        private Dictionary<string, List<Way>> wayMap; // NodeId => Ways that contain the node.
+        private Dictionary<string, List<Way>> wayMap; // NodeId => Ways that contain the node.  Not thread safe but assume nodes distribute onto threads.
 
-        private Dictionary<string, Relation> relationMap;
+        private ConcurrentDictionary<string, Relation> relationMap; // Relation.Id => Relation
 
         private int counter;
 
@@ -112,7 +113,7 @@ namespace RouteCleaner
             {
                 Id = newId,
                 Name = way.Name,
-                Relation = this.relationMap[region],
+                FullRelation = this.relationMap[region],
                 OriginalWays = new List<TargetableWay.OriginalWay>
                 {
                     new TargetableWay.OriginalWay
@@ -146,8 +147,7 @@ namespace RouteCleaner
                 }
             }
 
-            this.relationMap = relations.ToDictionary(r1 => r1.Id, r2 => r2);
-
+            this.relationMap = new ConcurrentDictionary<string, Relation>(relations.Select(r1 => new KeyValuePair<string, Relation>(r1.Id, r1)));
             this.OutputWays = new List<TargetableWay>();
         }
     }

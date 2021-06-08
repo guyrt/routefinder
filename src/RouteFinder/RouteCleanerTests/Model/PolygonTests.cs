@@ -27,7 +27,7 @@ namespace RouteCleanerTests.Model
             {
                 way
             };
-            var poly = PolygonFactory.BuildPolygons(ll);
+            var poly = PolygonFactory.BuildPolygons(ll, new System.Collections.Generic.HashSet<string>());
             Assert.Single(poly);
             Assert.Contains(n1, poly[0].Nodes);
             Assert.Contains(n2, poly[0].Nodes);

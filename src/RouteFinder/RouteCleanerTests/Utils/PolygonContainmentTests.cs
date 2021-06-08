@@ -19,7 +19,7 @@ namespace RouteCleanerTests.Utils
                     new Node("5", center + edgeLength, center),
                     n
                 })
-            })[0];
+            }, new System.Collections.Generic.HashSet<string>())[0];
         }
 
         [Theory]
