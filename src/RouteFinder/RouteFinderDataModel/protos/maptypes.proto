@@ -1,0 +1,11 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "RouteFinderDataModel.Proto";
+
+message PNode {
+	string id = 1;
+}
+
+message PWay {
+	string id = 1;
+}

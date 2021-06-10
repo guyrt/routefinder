@@ -1,6 +1,5 @@
 ﻿namespace RouteCleaner.PolygonUtils
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using RouteFinderDataModel;
@@ -65,7 +64,6 @@
 
                 // Step 1 - build map from node to ways
                 var nodeToWayMap = GetNodeToWayMap(remainingWays);
-                ValidateNodeToWayMap(nodeToWayMap);
 
                 // Step 2 - build a list of Node to Node links + associated Ways + associated directions.
                 var nodes = new List<Node>();
@@ -139,17 +137,6 @@
             }
 
             return retDict;
-        }
-
-        private static void ValidateNodeToWayMap(Dictionary<Node, LinkedList<Way>> nodeMap)
-        {
-            foreach (var kvp in nodeMap)
-            {
-                if (kvp.Value.Count % 2 != 0)
-                {
-                    throw new InvalidOperationException($"Node {kvp.Key} has odd number of Ways. Violates assumption of closed polygons.");
-                }
-            }
         }
 
         private static List<Polygon> FindPolygons(List<Node> nodes, List<Way> ways, List<bool> reversed, HashSet<string> innerWays)

@@ -145,6 +145,10 @@ namespace RouteCleaner
             }
 
             var relationId = GetId(relation);
+            if (relationId == "224042")
+            {
+                Console.WriteLine("here");
+            }
             var memberBase = relation.Descendants("member").Where(nd => nd.Attribute("type")?.Value == "way");
             var memberRefs = memberBase.Select(nd => nd.Attribute("ref")?.Value);
             var foundWays = new List<Way>();
