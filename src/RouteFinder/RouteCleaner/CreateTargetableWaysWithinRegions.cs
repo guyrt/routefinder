@@ -51,18 +51,7 @@ namespace RouteCleaner
                 }
             }
 
-            if (remainingWays.Count > 0)
-            {
-                if (remainingWays.Count < this.wayMap[node.Id].Count)
-                {
-                    this.wayMap[node.Id] = remainingWays;
-                }
-            } 
-            else
-            {
-                this.wayMap.Remove(node.Id);
-            }
-
+            this.wayMap.Remove(node.Id);
             this.counter++;
 
             if (this.counter % 10000 == 0)

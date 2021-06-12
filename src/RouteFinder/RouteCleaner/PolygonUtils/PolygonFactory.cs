@@ -30,7 +30,7 @@
         /// Pick a direction using first, arbitrary way. If subsequent nodes align with way1.end == way2.start then they are same. If backwards: way1.end == way2.end or way1.start == way2.start then mark way2 as reversed.
         /// all reversals are in reference to your first, arbitrary way.
         /// 
-        /// May need to repeate if the circuit has fully disconnected components.
+        /// May need to repeat if the circuit has fully disconnected components.
         /// 
         /// </summary>
         /// <returns></returns>

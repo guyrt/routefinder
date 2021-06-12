@@ -47,8 +47,8 @@
             }
             catch (Exception e)
             {
+                // Most common, accepted cause of failures here is that the polygon is in fact broken. For instance, https://www.openstreetmap.org/relation/34957 was broken for a while and failed here.
                 Console.WriteLine($"Failed on {relation}: {e.Message}");
-                //throw e;
                 return new Polygon[0];
             }
         }

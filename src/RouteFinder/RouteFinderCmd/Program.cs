@@ -18,12 +18,13 @@
         private static readonly string outputLocation = @"C:\Users\riguy\code\routefinder\src\RouteViewerWeb\data\";
 
         // used now for testing.
-        private static readonly string localFileRegions = @"C:\Users\riguy\code\routefinder\data\boundaries.xml";
+        private static readonly string localFileRegions = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle.xml";
         private static readonly string localFileWays = @"C:\Users\riguy\code\routefinder\data\runnable_ways_seattle.xml";
 
         public static void Main()
         {
-            new RouteFinderDataPrepDriver().RunChain(localFileRegions, localFileWays);
+            //new RouteFinderDataPrepDriver().RunChain(localFileRegions, localFileWays);
+            new NodeContainingWaysDriver().ProcessNodes();
         }
 
         /// <summary>

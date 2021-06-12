@@ -20,9 +20,6 @@ namespace RouteCleaner
         {
             var relationRegion = this.GetRegionGeometry(boundariesFilePath, false, false);
 
-            var canadaOhio = relationRegion.Relations.Where(x => x.Id == "1428125" || x.Id == "162061");
-            var regionsSmall = this.CreateRelationPolygons(canadaOhio);
-
             var thread1 = Task<Dictionary<Relation, Polygon[]>>.Factory.StartNew(() => this.CreateRelationPolygons(relationRegion.Relations));
             var thread2 = Task<Geometry>.Factory.StartNew(() => this.GetRegionGeometry(runnableWaysPath, true, false));
 
@@ -38,7 +35,7 @@ namespace RouteCleaner
             Console.WriteLine($"Done prepping ways in {time}");
             watch.Restart();
 
-            WriteNodesToDoc(createTargetableWays, relationsDict, nodeStreamer, @"C:\Users\riguy\code\routefinder\data\nodesWithContainment.json");
+            WriteNodesToDoc(createTargetableWays, relationsDict, nodeStreamer, RouteCleanerSettings.GetInstance().TemporaryNodeOutLocation);
             time = watch.Elapsed;
             Console.WriteLine($"Done with NodeContainment in {time} seconds.");
 
@@ -50,7 +47,7 @@ namespace RouteCleaner
             time = watch.Elapsed;
             Console.WriteLine($"Done with ConsolidatedWays in {time} seconds. Have {ways.Count} ways.");
 
-            this.WriteWays(ways, @"C:\Users\riguy\code\routefinder\data\targetableWays.json");
+            this.WriteWays(ways, RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation);
         }
 
         /// <summary>
