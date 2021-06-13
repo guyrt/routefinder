@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using GlobalSettings;
+using Google.OpenLocationCode;
 using Newtonsoft.Json;
 using RouteFinderDataModel;
 
@@ -28,16 +29,22 @@ namespace RouteCleaner
 
         private void WriteStreamedNodes(Dictionary<string, HashSet<string>> wayMap)
         {
-            using (var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryNodeWithContainingWayOutLocation, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+            using (var disposableDict = new DisposableDictionary<string, StreamWriter>())
             {
-                using (var sw = new StreamWriter(fs, Encoding.UTF8, 65536)) // set a larger buffer
-                {
-                    StreamNodes(wayMap, sw);
-                }
+                StreamNodes(wayMap, disposableDict);
             }
         }
 
-        private void StreamNodes(Dictionary<string, HashSet<string>> wayMap, StreamWriter sw)
+        private StreamWriter GetStreamWriter(string key)
+        {
+            System.IO.Directory.CreateDirectory(RouteCleanerSettings.GetInstance().TemporaryNodeWithContainingWayOutLocation);
+            var fullPath = Path.Combine(RouteCleanerSettings.GetInstance().TemporaryNodeWithContainingWayOutLocation, key + ".json");
+            Console.WriteLine($"Opening path {fullPath}");
+            var fs = File.Open(fullPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
+            return new StreamWriter(fs, Encoding.UTF8, 65536);
+        }
+
+        private void StreamNodes(Dictionary<string, HashSet<string>> wayMap, DisposableDictionary<string, StreamWriter> streamWriters)
         {
             var lineCntr = 0;
             using (var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryNodeOutLocation, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read))
@@ -54,7 +61,13 @@ namespace RouteCleaner
                             {
                                 node.ContainingWays = ways.ToList();
                             }
-                            sw.WriteLine(JsonConvert.SerializeObject(node));
+
+                            var code = new OpenLocationCode(node.Latitude, node.Longitude, codeLength: 2);
+                            if (!streamWriters.ContainsKey(code.Code))
+                            {
+                                streamWriters.Add(code.Code, GetStreamWriter(code.Code));
+                            }
+                            streamWriters[code.Code].WriteLine(JsonConvert.SerializeObject(node));
                         } 
                         catch(JsonSerializationException e)
                         {

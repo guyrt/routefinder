@@ -14,7 +14,7 @@
 
         public string TemporaryNodeOutLocation { get; set; } = @"C:\Users\riguy\code\routefinder\data\nodesWithContainment.json";
 
-        public string TemporaryNodeWithContainingWayOutLocation { get; set; } = @"C:\Users\riguy\code\routefinder\data\nodesWithWayContainment.json";
+        public string TemporaryNodeWithContainingWayOutLocation { get; set; } = @"C:\Users\riguy\code\routefinder\data\nodesWithWayContainment";
 
         public string TemporaryTargetableWaysLocation { get; set; } = @"C:\Users\riguy\code\routefinder\data\targetableWays.json";
 
