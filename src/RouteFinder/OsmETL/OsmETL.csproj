@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CosmosDBLayer\CosmosDBLayer.csproj" />
-    <ProjectReference Include="..\OsmDataLoader\OsmDataLoader.csproj" />
     <ProjectReference Include="..\RouteCleaner\RouteCleaner.csproj" />
   </ItemGroup>
 

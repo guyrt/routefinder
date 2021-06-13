@@ -2,10 +2,31 @@
 
 option csharp_namespace = "RouteFinderDataModel.Proto";
 
-message PNode {
+message LookupOriginalWay {
 	string id = 1;
+	repeated string nodeIds = 2;
+	repeated double nodeLatitudes = 3;
+	repeated double nodeLongitudes = 4;
 }
 
-message PWay {
+message LookupNode {
 	string id = 1;
+	double latitude = 2;
+	double longitude = 3;
+	repeated string relations = 4;
+	repeated string targetableWays = 5;
+}
+
+message LookupTargetableWay {
+	string id = 1;
+	string relation = 2;
+	string relationName = 3;
+	repeated LookupOriginalWay originalWays = 4;
+}
+
+// Full file types
+
+// specifies an entire file of nodes.
+message FullNodeSet {
+	repeated LookupNode Nodes = 1; // we assume that these are stored sorted by Latitude then longitude.
 }

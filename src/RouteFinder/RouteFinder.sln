@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteCleanerTests", "RouteC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinder", "RouteFinder\RouteFinder.csproj", "{6311C862-AB43-4504-BA92-8D432E2E1390}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OsmDataLoader", "OsmDataLoader\OsmDataLoader.csproj", "{1689FBE1-3CCC-4344-9044-4729F3F18A6D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OsmETL", "OsmETL\OsmETL.csproj", "{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosDBLayer", "CosmosDBLayer\CosmosDBLayer.csproj", "{C4CADAFF-2102-4860-8C2F-C80F789F94BB}"
@@ -23,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosDBLayerTests", "Cosmo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinderTests", "RouteFinderTests\RouteFinderTests.csproj", "{FCAF87F6-17FE-4885-AA69-585F9FB917EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalSettings", "GlobalSettings\GlobalSettings.csproj", "{13101A7D-CB9B-4516-B166-3B82349AF682}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalSettings", "GlobalSettings\GlobalSettings.csproj", "{13101A7D-CB9B-4516-B166-3B82349AF682}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +45,6 @@ Global
 		{6311C862-AB43-4504-BA92-8D432E2E1390}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6311C862-AB43-4504-BA92-8D432E2E1390}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6311C862-AB43-4504-BA92-8D432E2E1390}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1689FBE1-3CCC-4344-9044-4729F3F18A6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1689FBE1-3CCC-4344-9044-4729F3F18A6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1689FBE1-3CCC-4344-9044-4729F3F18A6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1689FBE1-3CCC-4344-9044-4729F3F18A6D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8C2A470-6315-4F9A-A64B-9A2FCB07A6ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
