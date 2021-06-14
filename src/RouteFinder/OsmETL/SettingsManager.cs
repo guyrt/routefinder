@@ -1,4 +1,4 @@
-﻿namespace CosmosDBLayer
+﻿namespace OsmETL
 {
     using Microsoft.Extensions.Configuration;
 
@@ -25,7 +25,9 @@
                 RemoteFile = configuration["RemoteFile"],
                 RemoteMd5File = configuration["RemoteMd5File"],
                 CosmosDatabase = configuration["CosmosDatabase"],
-                CosmosContainer = configuration["CosmosContainer"]
+                CosmosContainer = configuration["CosmosContainer"],
+                AzureBlobRawContainer = configuration["AzureBlobRawContainer"],
+                AzureBlobRawConnectionString = configuration["AzureBlobRawConnectionString"]
             };
         }
 
@@ -46,6 +48,10 @@
             public string CosmosDatabase { get; set; }
 
             public string CosmosContainer { get; set; }
+
+            public string AzureBlobRawContainer { get; set; }
+
+            public string AzureBlobRawConnectionString { get; set; }
         }
     }
 }

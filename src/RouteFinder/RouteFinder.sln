@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteFinderTests", "RouteFi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalSettings", "GlobalSettings\GlobalSettings.csproj", "{13101A7D-CB9B-4516-B166-3B82349AF682}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureBlobHandler", "AzureBlobHandler\AzureBlobHandler.csproj", "{8756C1D5-E95C-415B-80CC-E5B682DAB869}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{13101A7D-CB9B-4516-B166-3B82349AF682}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13101A7D-CB9B-4516-B166-3B82349AF682}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13101A7D-CB9B-4516-B166-3B82349AF682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8756C1D5-E95C-415B-80CC-E5B682DAB869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8756C1D5-E95C-415B-80CC-E5B682DAB869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8756C1D5-E95C-415B-80CC-E5B682DAB869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8756C1D5-E95C-415B-80CC-E5B682DAB869}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AzureBlobHandler\AzureBlobHandler.csproj" />
     <ProjectReference Include="..\CosmosDBLayer\CosmosDBLayer.csproj" />
     <ProjectReference Include="..\RouteCleaner\RouteCleaner.csproj" />
   </ItemGroup>

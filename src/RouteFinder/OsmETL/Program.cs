@@ -1,29 +1,32 @@
-﻿namespace OsmETL
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading.Tasks;
-    using CosmosDBLayer;
-    using Google.OpenLocationCode;
-    using Newtonsoft.Json;
-    using RouteFinderDataModel;
-    using RouteFinderDataModel.Proto;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AzureBlobHandler;
+using Google.OpenLocationCode;
+using Google.Protobuf;
+using Newtonsoft.Json;
+using RouteFinderDataModel;
+using RouteFinderDataModel.Proto;
 
+namespace OsmETL
+{
     public class Program
     {
-        public static void Main(string[] args)
+        public async static Task Main(string[] args)
         {
             var config = SettingsManager.GetCredentials();
+            var rawDataUploader = new RawDataUploader(config.AzureBlobRawConnectionString, config.AzureBlobRawContainer);
 
             foreach ((var key, var nodes) in CreateProtobufs())
             {
                 var nodeFileObj = new FullNodeSet();
                 nodeFileObj.Nodes.AddRange(nodes);
                 Console.WriteLine($"{key}: prepped {nodes.Count} nodes: {nodeFileObj.CalculateSize()}");
-
-                // todo: create byte stream
+                var byteArray = nodeFileObj.ToByteArray();
                 // todo: upload!
+                var fileName = $"nodes/{key.Substring(0, 2)}/{key}";
+                await rawDataUploader.WriteBlobAsync(fileName, byteArray);
             }
 
 
