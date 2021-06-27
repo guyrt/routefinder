@@ -18,6 +18,7 @@ namespace RouteCleaner
     {
         public void ProcessNodes()
         {
+            Console.WriteLine($"Starting NodeContainingWaysDriver");
             var watch = Stopwatch.StartNew();
             var nodeWayMap = BuildWayMap();
             var time = watch.Elapsed;
@@ -40,7 +41,7 @@ namespace RouteCleaner
             System.IO.Directory.CreateDirectory(RouteCleanerSettings.GetInstance().TemporaryNodeWithContainingWayOutLocation);
             var fullPath = Path.Combine(RouteCleanerSettings.GetInstance().TemporaryNodeWithContainingWayOutLocation, key + ".json");
             Console.WriteLine($"Opening path {fullPath}");
-            var fs = File.Open(fullPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
+            var fs = File.Open(fullPath, FileMode.Append, FileAccess.Write, FileShare.Read);
             return new StreamWriter(fs, Encoding.UTF8, 65536);
         }
 
@@ -69,9 +70,13 @@ namespace RouteCleaner
                             }
                             streamWriters[code.Code].WriteLine(JsonConvert.SerializeObject(node));
                         } 
-                        catch(JsonSerializationException e)
+                        catch(JsonReaderException e)
                         {
-                            Console.WriteLine($"Could not deserialize {content}: {e.Message}");
+                            Console.WriteLine($"Could not deserialize line {lineCntr} {content}: {e.Message}");
+                        }
+                        catch (JsonSerializationException e)
+                        {
+                            Console.WriteLine($"Could not deserialize line {lineCntr} {content}: {e.Message}");
                         }
                         lineCntr++;
                     }

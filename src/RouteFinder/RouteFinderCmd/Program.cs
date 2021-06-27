@@ -23,7 +23,7 @@
 
         public static void Main()
         {
-            //new RouteFinderDataPrepDriver().RunChain(localFileRegions, localFileWays);
+            new RouteFinderDataPrepDriver().RunChain(localFileRegions, localFileWays);
             new NodeContainingWaysDriver().ProcessNodes();
         }
 
