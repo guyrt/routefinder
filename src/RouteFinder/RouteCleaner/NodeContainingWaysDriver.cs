@@ -95,22 +95,29 @@ namespace RouteCleaner
                     while (sr.Peek() >= 0)
                     {
                         var content = sr.ReadLine();
-                        var targetableWay = JsonConvert.DeserializeObject<TargetableWay>(content);
-                        foreach (var originalWay in targetableWay.OriginalWays)
+                        try
                         {
-                            foreach (var node in originalWay.Points)
+                            var targetableWay = JsonConvert.DeserializeObject<TargetableWay>(content);
+                            foreach (var originalWay in targetableWay.OriginalWays)
                             {
-                                if (!nodeMap.ContainsKey(node.Id))
+                                foreach (var node in originalWay.Points)
                                 {
-                                    nodeMap.Add(node.Id, new HashSet<string>());
-                                }
-                                if (!nodeMap[node.Id].Contains(targetableWay.Id))
-                                {
-                                    nodeMap[node.Id].Add(targetableWay.Id);
+                                    if (!nodeMap.ContainsKey(node.Id))
+                                    {
+                                        nodeMap.Add(node.Id, new HashSet<string>());
+                                    }
+                                    if (!nodeMap[node.Id].Contains(targetableWay.Id))
+                                    {
+                                        nodeMap[node.Id].Add(targetableWay.Id);
+                                    }
                                 }
                             }
+                            lineCnt++;
+                        } 
+                        catch (JsonSerializationException e)
+                        {
+                            Console.WriteLine($"Could not deserialize way {lineCnt} {content}: {e.Message}");
                         }
-                        lineCnt++;
                     }
                 }
             }
