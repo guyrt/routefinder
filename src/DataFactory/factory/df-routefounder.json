@@ -1,0 +1,9 @@
+{
+	"name": "df-routefounder",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "30a38af8-f509-4c09-814d-4afc9d034285",
+		"tenantId": "5956a58f-582d-49e5-8167-33a06912f2b0"
+	}
+}
