@@ -1,0 +1,13 @@
+{
+	"name": "GeoFabrikNA",
+	"properties": {
+		"description": "North America Geofabrik",
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://download.geofabrik.de/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
