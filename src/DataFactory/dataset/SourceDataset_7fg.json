@@ -1,0 +1,17 @@
+{
+	"name": "SourceDataset_7fg",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "GeoFabrikNA",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "north-america-latest.osm.pbf"
+			}
+		}
+	}
+}
