@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_7fg",
+				"name": "CopyRawPBFData",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -29,6 +29,9 @@
 						"storeSettings": {
 							"type": "HttpReadSettings",
 							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
 						}
 					},
 					"sink": {
