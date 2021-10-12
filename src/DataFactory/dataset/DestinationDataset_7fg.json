@@ -10,8 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "na.osm.pdf",
-				"container": "rawpdfs"
+				"fileName": "na.osm.pdb",
+				"container": "rawpdbs"
 			}
 		}
 	}
