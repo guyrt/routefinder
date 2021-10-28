@@ -64,7 +64,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DestinationDataset_7fg",
+						"referenceName": "WaStateInBlobStore",
 						"type": "DatasetReference"
 					}
 				]
