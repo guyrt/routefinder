@@ -58,7 +58,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceDataset_7fg",
+						"referenceName": "SourceWAStateOnly",
 						"type": "DatasetReference"
 					}
 				],
