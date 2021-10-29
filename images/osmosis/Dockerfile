@@ -39,11 +39,15 @@ RUN mkdir -p /opt/azcopy \
 
 RUN rm -rf /tmp/azcopy*
 
+RUN apt-get -y install azure-cli
+
 # Cleanup from apt update
 RUN rm -rf /var/lib/apt/lists/*
 
 # Get your driver file
+COPY ".setenv.sh" "/user/local/bin/setenv.sh"
 COPY "osmosis_driver.sh" "/usr/local/bin/osmosis_driver.sh"
+
 
 USER osmosis
 CMD ["osmosis_driver.sh"]
