@@ -1,40 +1,16 @@
-Data notes
-----------
-
-TODO: automate download (easy to get single file)
-
-Key problem: how to find trails you care about?
-Thoughts:
-* Start with a region: I want Cougar Mountain State Park.
-* Find all trails/roads in the park.
-* Keep anything that interesects park. 
-
-
-TODOs:
-- cut graph - find optimal route for all p2p and mark edges used as "in"
-- compute the expansion (postman)
-- find eulerian circuits
-
-- Missing a few nodes. Redownload.
-
-- https://en.wikipedia.org/wiki/Route_inspection_problem
-- http://www.highcube.org/a-single-route-for-every-atlanta-road
-
-
-Graph notes
------------
-
-Data Cleanup Notes
+In progress notes
 ------------------
 
-Need to allow crossing parking lots.
-Edits:
-* Connected Big Tree Ridge Trail to the road
-* Get https://www.openstreetmap.org/api/0.6/map?bbox=-122.1817%2C47.4843%2C-121.9927%2C47.558 when you can.
 
-why is 53188016 missing?
-- zeroed everything out
-- add back in ones on the MST that connects it back in.
+System setup: the ADF flow for prepping data
+* Azure Data Factory to download raw pbf file
+* Azure batch to run osmosis in a single job/task that will pre-process data. Saves multiple data files in azure blob. 
+* Each file is compared against the region-wide "boundaries" file. Run Azure Batches to process. This is the expensive/long running task but memory requirements are fairly low so cheap machines can be used.
 
-is 42108700 in
-- special cased it :/
+
+
+try:
+[copy the data locally from Azure...]
+docker run -d -p 80:80 osmosis:latest osmosis --blah blah blah
+[move data back to azure]
+[write queue events for each file]
