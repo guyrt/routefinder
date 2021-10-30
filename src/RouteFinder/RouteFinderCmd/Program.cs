@@ -23,8 +23,10 @@
 
         public static void Main()
         {
+            // download boundaries and runnables.
             new RouteFinderDataPrepDriver().RunChain(localFileRegions, localFileWays);
             new NodeContainingWaysDriver().ProcessNodes();
+            // 
         }
 
         /// <summary>

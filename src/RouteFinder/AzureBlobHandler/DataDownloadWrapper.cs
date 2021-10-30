@@ -1,14 +1,16 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 
 namespace AzureBlobHandler
 {
     /// <summary>
-    /// Upload handler for raw OSM data
+    /// Download handler for raw data
     /// </summary>
-    public class RawDataUploader
+    public class DataDownloadWrapper
     {
         private string connectionString;
 
@@ -18,7 +20,7 @@ namespace AzureBlobHandler
 
         private bool initialized;
 
-        public RawDataUploader(string connectionString, string container)
+        public DataDownloadWrapper(string connectionString, string container)
         {
             this.connectionString = connectionString;
             this.containerName = container;
@@ -32,7 +34,7 @@ namespace AzureBlobHandler
             this.initialized = true;
         }
 
-        public async Task<bool> WriteBlobAsync(string remoteFileName, string localFileName)
+        public async Task<bool> RetrieveBlobAsync(string remoteFileName, string localFileName)
         {
             if (!this.initialized)
             {
@@ -40,8 +42,10 @@ namespace AzureBlobHandler
             }
 
             BlobClient blobClient = containerClient.GetBlobClient(remoteFileName);
-            await blobClient.UploadAsync(localFileName, true);
+            await blobClient.DownloadToAsync(localFileName);
+
             return true;
         }
+
     }
 }

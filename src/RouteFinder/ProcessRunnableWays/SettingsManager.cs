@@ -26,8 +26,9 @@
                 RemoteMd5File = configuration["RemoteMd5File"],
                 CosmosDatabase = configuration["CosmosDatabase"],
                 CosmosContainer = configuration["CosmosContainer"],
-                AzureBlobRawContainer = configuration["AzureBlobRawContainer"],
-                AzureBlobRawConnectionString = configuration["AzureBlobRawConnectionString"]
+                AzureBlobProcessedNodesContainer = configuration["AzureBlobRawContainer"],
+                AzureRawXmlDownloadConnectionString = configuration["AzureRawXmlDownloadConnectionString"],
+                AzureRawXmlDownloadContainer = configuration["AzureRawXmlDownloadContainer"],
             };
         }
 
@@ -48,10 +49,16 @@
             public string CosmosDatabase { get; set; }
 
             public string CosmosContainer { get; set; }
+            
+            public string AzureRawXmlDownloadConnectionString { get; set; }
 
-            public string AzureBlobRawContainer { get; set; }
+            public string AzureRawXmlDownloadContainer { get; set; }
 
-            public string AzureBlobRawConnectionString { get; set; }
+            /// <summary>
+            /// Location for processed nodes - these have run through ProcessRunnableWays.
+            /// </summary>
+            public string AzureBlobProcessedNodesContainer { get; set; }
+
         }
     }
 }

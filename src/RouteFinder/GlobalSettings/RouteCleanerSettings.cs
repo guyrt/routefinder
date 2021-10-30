@@ -12,11 +12,11 @@
 
         public int NumThreads { get; set; } = 8;
 
-        public string TemporaryNodeOutLocation { get; set; } = @"C:\Users\riguy\code\routefinder\data\nodesWithContainment.json";
+        public string TemporaryNodeOutLocation { get; set; } = @"/tmp/nodesWithContainment.json";
 
-        public string TemporaryNodeWithContainingWayOutLocation { get; set; } = @"C:\Users\riguy\code\routefinder\data\nodesWithWayContainment";
+        public string TemporaryNodeWithContainingWayOutLocation { get; set; } = @"/tmp/nodesWithWayContainment";
 
-        public string TemporaryTargetableWaysLocation { get; set; } = @"C:\Users\riguy\code\routefinder\data\targetableWays.json";
+        public string TemporaryTargetableWaysLocation { get; set; } = @"/tmp/targetableWays.json";
 
         /// <summary>
         /// Not thread safe on create. Suggest forcing create in main.
