@@ -7,7 +7,7 @@
 
         public static CosmosCredentials GetCredentials()
         {
-            IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            var configurationBuilder = new ConfigurationBuilder();
             var configuration = configurationBuilder
                                     .AddJsonFile("appsettings.json")
                                     .AddJsonFile("credentials.json")   // store credentials. See credentials.sample.json for structure
@@ -26,7 +26,7 @@
                 RemoteMd5File = configuration["RemoteMd5File"],
                 CosmosDatabase = configuration["CosmosDatabase"],
                 CosmosContainer = configuration["CosmosContainer"],
-                AzureBlobProcessedNodesContainer = configuration["AzureBlobRawContainer"],
+                AzureBlobProcessedNodesContainer = configuration["AzureBlobProcessedNodesContainer"],
                 AzureRawXmlDownloadConnectionString = configuration["AzureRawXmlDownloadConnectionString"],
                 AzureRawXmlDownloadContainer = configuration["AzureRawXmlDownloadContainer"],
             };

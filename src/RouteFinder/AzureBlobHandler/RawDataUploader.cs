@@ -32,7 +32,7 @@ namespace AzureBlobHandler
             this.initialized = true;
         }
 
-        public async Task<bool> WriteBlobAsync(string remoteFileName, string localFileName)
+        public async Task<bool> WriteBlobAsync(string remoteFileName, byte[] localContents)
         {
             if (!this.initialized)
             {
@@ -40,7 +40,10 @@ namespace AzureBlobHandler
             }
 
             BlobClient blobClient = containerClient.GetBlobClient(remoteFileName);
-            await blobClient.UploadAsync(localFileName, true);
+            using (var stream = new MemoryStream(localContents, writable: false))
+            {
+                await blobClient.UploadAsync(stream, true);
+            };
             return true;
         }
     }
