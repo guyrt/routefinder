@@ -19,7 +19,7 @@ namespace DataInspector
             var remoteFileName = $"nodes/{key.Substring(0, 2)}/{key}";
             await rawDataDownloader.RetrieveBlobAsync(remoteFileName, localFile);
 
-            var jsonFile = $"{key}.json";
+            var jsonFile = $"{localFile}.json";
             FullNodeSet area;
             using (var input = File.OpenRead(localFile))
             {
