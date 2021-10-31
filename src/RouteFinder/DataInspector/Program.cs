@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using AzureBlobHandler;
-using Newtonsoft.Json;
+using Google.Protobuf;
 using OsmETL;
 using RouteFinderDataModel.Proto;
 
@@ -21,13 +21,11 @@ namespace DataInspector
 
             var jsonFile = $"{localFile}.json";
             FullNodeSet area;
-            using (var input = File.OpenRead(localFile))
-            {
-                area = FullNodeSet.Parser.ParseFrom(input);
-                var areaStr = JsonConvert.SerializeObject(area);
-                File.WriteAllText(jsonFile, areaStr);
-            }
-
+            using var input = File.OpenRead(localFile);
+            area = FullNodeSet.Parser.ParseFrom(input);
+            var jsonFormatted = new JsonFormatter(new JsonFormatter.Settings(false));
+            var areaStr = jsonFormatted.Format(area);
+            File.WriteAllText(jsonFile, areaStr);
         }
     }
 }
