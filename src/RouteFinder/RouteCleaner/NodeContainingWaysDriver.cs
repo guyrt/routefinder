@@ -25,7 +25,6 @@ namespace RouteCleaner
             Console.WriteLine($"Finished building way map in {time}");
             watch.Restart();
             WriteStreamedNodes(nodeWayMap);
-
         }
 
         private void WriteStreamedNodes(Dictionary<string, HashSet<string>> wayMap)

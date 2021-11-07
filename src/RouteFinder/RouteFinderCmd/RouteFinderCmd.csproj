@@ -9,6 +9,7 @@
     <ProjectReference Include="..\RouteCleaner\RouteCleaner.csproj" />
     <ProjectReference Include="..\RouteFinderDataModel\RouteFinderDataModel.csproj" />
     <ProjectReference Include="..\RouteFinder\RouteFinder.csproj" />
+    <ProjectReference Include="..\TripProcessor\TripProcessor.csproj" />
   </ItemGroup>
 
 </Project>

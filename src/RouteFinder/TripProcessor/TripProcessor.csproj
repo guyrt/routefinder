@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenLocationCode" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AzureBlobHandler\AzureBlobHandler.csproj" />
+    <ProjectReference Include="..\GlobalSettings\GlobalSettings.csproj" />
+    <ProjectReference Include="..\RouteCleaner\RouteCleaner.csproj" />
+    <ProjectReference Include="..\RouteFinderDataModel\RouteFinderDataModel.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -6,6 +6,8 @@ namespace RouteFinderDataModel
 {
     /// <summary>
     /// A runnable way within a single Relation.
+    /// 
+    /// There should be only one possible TargetableWay per Region/Way
     /// </summary>
     public class TargetableWay
     {

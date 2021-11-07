@@ -11,22 +11,22 @@
     using RouteCleaner.PolygonUtils;
     using RouteFinder;
     using RouteFinder.GreedyRoute;
+    using TripProcessor;
+    using System.Threading.Tasks;
 
+    /// <summary>
+    ///  NOT USED.
+    /// </summary>
     public class Program
     {
         // used in legacy paths for Cougar Mtn project.
         private static readonly string outputLocation = @"C:\Users\riguy\code\routefinder\src\RouteViewerWeb\data\";
 
-        // used now for testing.
-        private static readonly string localFileRegions = @"C:\Users\riguy\code\routefinder\data\boundaries_seattle.xml";
-        private static readonly string localFileWays = @"C:\Users\riguy\code\routefinder\data\runnable_ways_seattle.xml";
-
-        public static void Main()
+        public static async Task Main()
         {
             // download boundaries and runnables.
-            new RouteFinderDataPrepDriver().RunChain(localFileRegions, localFileWays);
-            new NodeContainingWaysDriver().ProcessNodes();
-            // 
+            var tripProc = new TripProcessorHandler();
+            await tripProc.ProcessAsync("C:/users/riguy/Downloads/activity_7747876727.gpx");
         }
 
         /// <summary>

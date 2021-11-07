@@ -20,6 +20,14 @@ namespace RouteCleaner
             return Compute(lat1, lat2, lon1, lon2);
         }
 
+        /// <summary>
+        /// Return distance in kilometers
+        /// </summary>
+        /// <param name="lat1"></param>
+        /// <param name="lat2"></param>
+        /// <param name="lon1"></param>
+        /// <param name="lon2"></param>
+        /// <returns></returns>
         public static double Compute(double lat1, double lat2, double lon1, double lon2)
         {
             var R = 6371; // Radius of the earth in km
