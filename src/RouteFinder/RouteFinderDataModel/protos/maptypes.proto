@@ -30,3 +30,7 @@ message LookupTargetableWay {
 message FullNodeSet {
 	repeated LookupNode Nodes = 1; // we assume that these are stored sorted by Latitude then longitude.
 }
+
+message FullWaySet {
+	repeated LookupTargetableWay Ways = 1;
+}

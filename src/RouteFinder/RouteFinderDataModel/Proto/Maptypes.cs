@@ -32,15 +32,17 @@ namespace RouteFinderDataModel.Proto {
             "b2t1cFRhcmdldGFibGVXYXkSCgoCaWQYASABKAkSEAoIcmVsYXRpb24YAiAB",
             "KAkSFAoMcmVsYXRpb25OYW1lGAMgASgJEigKDG9yaWdpbmFsV2F5cxgEIAMo",
             "CzISLkxvb2t1cE9yaWdpbmFsV2F5IikKC0Z1bGxOb2RlU2V0EhoKBU5vZGVz",
-            "GAEgAygLMgsuTG9va3VwTm9kZUIdqgIaUm91dGVGaW5kZXJEYXRhTW9kZWwu",
-            "UHJvdG9iBnByb3RvMw=="));
+            "GAEgAygLMgsuTG9va3VwTm9kZSIwCgpGdWxsV2F5U2V0EiIKBFdheXMYASAD",
+            "KAsyFC5Mb29rdXBUYXJnZXRhYmxlV2F5Qh2qAhpSb3V0ZUZpbmRlckRhdGFN",
+            "b2RlbC5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.LookupOriginalWay), global::RouteFinderDataModel.Proto.LookupOriginalWay.Parser, new[]{ "Id", "NodeIds", "NodeLatitudes", "NodeLongitudes" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.LookupNode), global::RouteFinderDataModel.Proto.LookupNode.Parser, new[]{ "Id", "Latitude", "Longitude", "Relations", "TargetableWays" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.LookupTargetableWay), global::RouteFinderDataModel.Proto.LookupTargetableWay.Parser, new[]{ "Id", "Relation", "RelationName", "OriginalWays" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.FullNodeSet), global::RouteFinderDataModel.Proto.FullNodeSet.Parser, new[]{ "Nodes" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.FullNodeSet), global::RouteFinderDataModel.Proto.FullNodeSet.Parser, new[]{ "Nodes" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.FullWaySet), global::RouteFinderDataModel.Proto.FullWaySet.Parser, new[]{ "Ways" }, null, null, null, null)
           }));
     }
     #endregion
@@ -1097,6 +1099,184 @@ namespace RouteFinderDataModel.Proto {
             break;
           case 10: {
             nodes_.AddEntriesFrom(ref input, _repeated_nodes_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class FullWaySet : pb::IMessage<FullWaySet>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FullWaySet> _parser = new pb::MessageParser<FullWaySet>(() => new FullWaySet());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<FullWaySet> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::RouteFinderDataModel.Proto.MaptypesReflection.Descriptor.MessageTypes[4]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FullWaySet() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FullWaySet(FullWaySet other) : this() {
+      ways_ = other.ways_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FullWaySet Clone() {
+      return new FullWaySet(this);
+    }
+
+    /// <summary>Field number for the "Ways" field.</summary>
+    public const int WaysFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::RouteFinderDataModel.Proto.LookupTargetableWay> _repeated_ways_codec
+        = pb::FieldCodec.ForMessage(10, global::RouteFinderDataModel.Proto.LookupTargetableWay.Parser);
+    private readonly pbc::RepeatedField<global::RouteFinderDataModel.Proto.LookupTargetableWay> ways_ = new pbc::RepeatedField<global::RouteFinderDataModel.Proto.LookupTargetableWay>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<global::RouteFinderDataModel.Proto.LookupTargetableWay> Ways {
+      get { return ways_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as FullWaySet);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FullWaySet other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if(!ways_.Equals(other.ways_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      hash ^= ways_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      ways_.WriteTo(output, _repeated_ways_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      ways_.WriteTo(ref output, _repeated_ways_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      size += ways_.CalculateSize(_repeated_ways_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(FullWaySet other) {
+      if (other == null) {
+        return;
+      }
+      ways_.Add(other.ways_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            ways_.AddEntriesFrom(input, _repeated_ways_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            ways_.AddEntriesFrom(ref input, _repeated_ways_codec);
             break;
           }
         }
