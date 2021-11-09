@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 using AzureBlobHandler;
-using GlobalSettings;
 using OsmETL;
 using RouteFinderDataModel.Proto;
 
@@ -16,11 +15,12 @@ namespace TripProcessor
     /// </summary>
     public class RunnableWayCache
     {
-        public Dictionary<string, FullNodeSet> Cache { get; init; }
+        // if running in Azure Function, this cache will be used by multiple threads. 
+        public ConcurrentDictionary<string, FullNodeSet> Cache { get; init; }
 
         public RunnableWayCache()
         {
-            Cache = new Dictionary<string, FullNodeSet>();
+            Cache = new ConcurrentDictionary<string, FullNodeSet>();
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace TripProcessor
             using var input = File.OpenRead(localName);
             area = FullNodeSet.Parser.ParseFrom(input);
 
-            this.Cache.Add(plusCode, area);
+            this.Cache.TryAdd(plusCode, area);
         }
     }
 }

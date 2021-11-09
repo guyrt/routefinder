@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using RouteFinderDataModel;
-using RouteCleaner.PolygonUtils;
 using System.Diagnostics;
 using System.IO;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Text;
-using GlobalSettings;
-using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
+using GlobalSettings;
+using Newtonsoft.Json;
+using RouteCleaner.PolygonUtils;
+using RouteFinderDataModel;
 
 namespace RouteCleaner
 {
@@ -40,7 +40,7 @@ namespace RouteCleaner
             Console.WriteLine($"Done with NodeContainment in {time} seconds.");
 
             Console.WriteLine($"Found {createTargetableWays.OutputWays.Count} targetableWays");
-            
+
             watch.Restart();
             var ways = createTargetableWays.OutputWays;
             ways = ConsolidateWays(ways);
@@ -62,7 +62,8 @@ namespace RouteCleaner
                 {
                     foreach (var node in ThreadedNodeContainment(relationRegion, nodeStreamer))
                     {
-                        if (createTargetableWays.ProcessNode(node) || node.Relations.Count() > 0) {
+                        if (createTargetableWays.ProcessNode(node) || node.Relations.Count() > 0)
+                        {
                             var nodeStr = JsonConvert.SerializeObject(node);
                             sr.WriteLine(nodeStr);
                         }
@@ -106,7 +107,7 @@ namespace RouteCleaner
                     }
                 }
             }
-            return outPath; 
+            return outPath;
         }
 
         /// <summary>
@@ -139,7 +140,7 @@ namespace RouteCleaner
                         var averageDepth = depths.Average();
                         while (averageDepth > 20000)
                         {
-                         //   Console.WriteLine($"Reader thread sleeping to let other threads catch up");
+                            //   Console.WriteLine($"Reader thread sleeping to let other threads catch up");
                             Thread.Sleep(RouteCleanerSettings.GetInstance().ReaderThreadSleepInterval); // give it a little time to cool off.
 
                             depths = requestQueues.Select(q => q.Count);
@@ -149,7 +150,7 @@ namespace RouteCleaner
                 }
 
                 // when done, push a null to each queue
-                Console.WriteLine($"Reader thread done"); 
+                Console.WriteLine($"Reader thread done");
                 foreach (var q in requestQueues)
                 {
                     q.Enqueue(null);
@@ -159,9 +160,10 @@ namespace RouteCleaner
             });
 
             var processedCount = new int[numThreads];
-            var processThreads = Enumerable.Range(0, numThreads).Select(processThreadIdx => Task<int>.Factory.StartNew(() => {
+            var processThreads = Enumerable.Range(0, numThreads).Select(processThreadIdx => Task<int>.Factory.StartNew(() =>
+            {
                 Console.WriteLine($"Thread {processThreadIdx} reporting for duty");
-                while(true)
+                while (true)
                 {
                     Node nodeToProcess = null;
                     while (requestQueues[processThreadIdx].TryDequeue(out nodeToProcess))  // when queue is empty, we want to keep processing. When it has a null in it, we halt. Thus two whiles.
@@ -203,7 +205,8 @@ namespace RouteCleaner
             // print status thread
             var statusThread = Task.Factory.StartNew(() =>
             {
-                while (!allDone) {
+                while (!allDone)
+                {
                     Thread.Sleep(10 * 1000);
                     var queueDepths = requestQueues.Select(q => q.Count).Average();
                     var averageFinished = processedCount.Sum();
@@ -214,7 +217,7 @@ namespace RouteCleaner
 
             // main thread writes
             var deadThreads = Enumerable.Range(0, numThreads).Select(_ => false).ToArray();
-            while(true)
+            while (true)
             {
                 var didWork = false;
                 for (var i = 0; i < numThreads; i++)
@@ -227,7 +230,8 @@ namespace RouteCleaner
                             if (processedNode == null)
                             {
                                 deadThreads[i] = true;
-                            } else
+                            }
+                            else
                             {
                                 didWork = true;
                                 yield return processedNode;
@@ -254,7 +258,7 @@ namespace RouteCleaner
             // prebuild polygons to reduce contention
             foreach (var node in nodeStreamer)
             {
-                var containingRelations = relationsDict.AsParallel().Where(kvp => 
+                var containingRelations = relationsDict.AsParallel().Where(kvp =>
                 {
                     var target = kvp.Key;
                     var polygons = kvp.Value;

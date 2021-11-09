@@ -59,7 +59,7 @@ namespace OsmETL
 
         private static IEnumerable<(string, List<LookupNode>)> CreateProtobufs()
         {
-            var folder = GlobalSettings.RouteCleanerSettings.GetInstance().TemporaryNodeWithContainingWayOutLocation;
+            var folder = RouteCleanerSettings.GetInstance().TemporaryNodeWithContainingWayOutLocation;
             var allFiles = Directory.GetFiles(folder);
             foreach (var file in allFiles)
             {
