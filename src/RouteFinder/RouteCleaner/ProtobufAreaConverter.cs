@@ -55,10 +55,13 @@ namespace RouteCleaner
             var wayContents = File.ReadAllText(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation);
             var outputs = new Dictionary<string, List<LookupTargetableWay>>();
 
-            var targetableWays = JsonConvert.DeserializeObject<List<TargetableWay>>(wayContents);
+            using var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var sr = new StreamReader(fs);
 
-            foreach (var way in targetableWays)
+            while (sr.Peek() >= 0)
             {
+                var content = sr.ReadLine();
+                var way = JsonConvert.DeserializeObject<TargetableWay>(content);
                 var keys = way.OriginalWays.SelectMany(x => x.Points).Select(point => OpenLocationCode.Encode(point.Latitude, point.Longitude, codeLength: 6)).Distinct();
 
                 var lookupTargetableWay = new LookupTargetableWay
