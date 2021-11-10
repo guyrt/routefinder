@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using RouteFinderDataModel;
 using RouteFinderDataModel.Thin;
 
@@ -116,7 +117,7 @@ namespace RouteCleaner
                         }).ToArray()
                     }
                 },
-                RegionName = relation.Name,
+                RegionName = Regex.Replace(relation.Name, @"\t|\n|\r", ""),
                 RegionId = relation.Id,
             };
             return newWay;

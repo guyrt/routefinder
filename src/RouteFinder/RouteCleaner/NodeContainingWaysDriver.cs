@@ -47,38 +47,36 @@ namespace RouteCleaner
         private void StreamNodes(Dictionary<string, HashSet<string>> wayMap, DisposableDictionary<string, StreamWriter> streamWriters)
         {
             var lineCntr = 0;
-            using (var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryNodeOutLocation, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read))
+            using var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryNodeOutLocation, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
+            using (var sr = new StreamReader(fs))
             {
-                using (var sr = new StreamReader(fs))
+                while (sr.Peek() >= 0)
                 {
-                    while(sr.Peek() >= 0)
+                    var content = sr.ReadLine();
+                    try
                     {
-                        var content = sr.ReadLine();
-                        try
+                        var node = JsonConvert.DeserializeObject<Node>(content);
+                        if (wayMap.TryGetValue(node.Id, out var ways))
                         {
-                            var node = JsonConvert.DeserializeObject<Node>(content);
-                            if (wayMap.TryGetValue(node.Id, out var ways))
-                            {
-                                node.ContainingWays = ways.ToList();
-                            }
+                            node.ContainingWays = ways.ToList();
+                        }
 
-                            var code = new OpenLocationCode(node.Latitude, node.Longitude, codeLength: 2);
-                            if (!streamWriters.ContainsKey(code.Code))
-                            {
-                                streamWriters.Add(code.Code, GetStreamWriter(code.Code));
-                            }
-                            streamWriters[code.Code].WriteLine(JsonConvert.SerializeObject(node));
-                        } 
-                        catch(JsonReaderException e)
+                        var code = new OpenLocationCode(node.Latitude, node.Longitude, codeLength: 2);
+                        if (!streamWriters.ContainsKey(code.Code))
                         {
-                            Console.WriteLine($"Could not deserialize line {lineCntr} {content}: {e.Message}");
+                            streamWriters.Add(code.Code, GetStreamWriter(code.Code));
                         }
-                        catch (JsonSerializationException e)
-                        {
-                            Console.WriteLine($"Could not deserialize line {lineCntr} {content}: {e.Message}");
-                        }
-                        lineCntr++;
+                        streamWriters[code.Code].WriteLine(JsonConvert.SerializeObject(node));
                     }
+                    catch (JsonReaderException e)
+                    {
+                        Console.WriteLine($"Could not deserialize line {lineCntr} {content}: {e.Message}");
+                    }
+                    catch (JsonSerializationException e)
+                    {
+                        Console.WriteLine($"Could not deserialize line {lineCntr} {content}: {e.Message}");
+                    }
+                    lineCntr++;
                 }
             }
         }
@@ -87,41 +85,37 @@ namespace RouteCleaner
         {
             var lineCnt = 0;
             var nodeMap = new Dictionary<string, HashSet<string>>(); // node.id => {way.id}
-            using (var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var sr = new StreamReader(fs);
+            while (sr.Peek() >= 0)
             {
-                using (var sr = new StreamReader(fs))
+                var content = sr.ReadLine();
+                try
                 {
-                    while (sr.Peek() >= 0)
+                    var targetableWay = JsonConvert.DeserializeObject<TargetableWay>(content);
+                    foreach (var originalWay in targetableWay.OriginalWays)
                     {
-                        var content = sr.ReadLine();
-                        try
+                        foreach (var node in originalWay.Points)
                         {
-                            var targetableWay = JsonConvert.DeserializeObject<TargetableWay>(content);
-                            foreach (var originalWay in targetableWay.OriginalWays)
+                            if (!nodeMap.ContainsKey(node.Id))
                             {
-                                foreach (var node in originalWay.Points)
-                                {
-                                    if (!nodeMap.ContainsKey(node.Id))
-                                    {
-                                        nodeMap.Add(node.Id, new HashSet<string>());
-                                    }
-                                    if (!nodeMap[node.Id].Contains(targetableWay.Id))
-                                    {
-                                        nodeMap[node.Id].Add(targetableWay.Id);
-                                    }
-                                }
+                                nodeMap.Add(node.Id, new HashSet<string>());
                             }
-                            lineCnt++;
-                        } 
-                        catch (JsonSerializationException e)
-                        {
-                            Console.WriteLine($"Could not deserialize way {lineCnt} {content}: {e.Message}");
-                        }
-                        catch (JsonReaderException e)
-                        {
-                            Console.WriteLine($"Could not deserialize way {lineCnt} {content}: {e.Message}");
+                            if (!nodeMap[node.Id].Contains(targetableWay.Id))
+                            {
+                                nodeMap[node.Id].Add(targetableWay.Id);
+                            }
                         }
                     }
+                    lineCnt++;
+                }
+                catch (JsonSerializationException e)
+                {
+                    Console.WriteLine($"Could not deserialize way {lineCnt} {content}: {e.Message}");
+                }
+                catch (JsonReaderException e)
+                {
+                    Console.WriteLine($"Could not deserialize way {lineCnt} {content}: {e.Message}");
                 }
             }
             return nodeMap;

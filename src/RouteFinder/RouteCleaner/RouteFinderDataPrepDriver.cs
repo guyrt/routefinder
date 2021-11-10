@@ -44,6 +44,7 @@ namespace RouteCleaner
             watch.Restart();
             var ways = createTargetableWays.OutputWays;
             ways = ConsolidateWays(ways);
+            ways = UnconsolidateLargeWays(ways).ToList();
             time = watch.Elapsed;
             Console.WriteLine($"Done with ConsolidatedWays in {time} seconds. Have {ways.Count} ways.");
 
@@ -330,6 +331,39 @@ namespace RouteCleaner
             }
 
             return newWays;
+        }
+
+        /// <summary>
+        /// Any TargetableWay that has too many sub ways should be divided.
+        /// </summary>
+        /// <param name="originalTargetableWays"></param>
+        /// <returns></returns>
+        private IEnumerable<TargetableWay> UnconsolidateLargeWays(List<TargetableWay> originalTargetableWays)
+        {
+            var maxWaysInTargetableWay = RouteCleanerSettings.GetInstance().MaxNumberOfWaysToConsolidate;
+            foreach (var targetableWay in originalTargetableWays) {
+                if (targetableWay.OriginalWays.Count > maxWaysInTargetableWay)
+                {
+                    var i = 1;
+                    foreach (var way in targetableWay.OriginalWays)
+                    {
+                        // todo - be smarter about this. Build connected components then return those subject to max.
+                        yield return new TargetableWay
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = $"{targetableWay.Name}_{i++}",
+                            OriginalWays = new List<TargetableWay.OriginalWay> { way },
+                            RegionId = targetableWay.RegionId,
+                            RegionName = targetableWay.RegionName,
+                        };
+                    }
+                } 
+                else
+                {
+                    yield return targetableWay;
+                }
+            }
+
         }
 
         private Geometry GetRegionGeometry(string filePath, bool ignoreNodes, bool trimTags)
