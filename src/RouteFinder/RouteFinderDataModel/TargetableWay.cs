@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
 using RouteFinderDataModel.Thin;
 
 namespace RouteFinderDataModel
 {
     /// <summary>
-    /// A runnable way within a single Relation.
+    /// A runnable way within a single regional Relation.
     /// 
     /// There should be only one possible TargetableWay per Region/Way
     /// </summary>
@@ -15,12 +14,9 @@ namespace RouteFinderDataModel
 
         public string Name { get; set; }
 
-        [JsonIgnore]
-        public Relation FullRelation { get; set; }
+        public string RegionId { get; set; }
 
-        public string RelationId => FullRelation?.Id;
-
-        public string RelationName => FullRelation?.Name ?? string.Empty;
+        public string RegionName { get; set; }
 
         public List<OriginalWay> OriginalWays { get; set; }
 
@@ -38,14 +34,15 @@ namespace RouteFinderDataModel
                 throw new System.Exception($"Cannot merge TargetableWays - names {this.Name} and {otherWay.Name} differ.");
             }
 
-            if (this.FullRelation != null && otherWay.FullRelation != null && this.FullRelation != otherWay.FullRelation)
+            if (this.RegionId != null && otherWay.RegionId != null && this.RegionId != otherWay.RegionId)
             {
-                throw new System.Exception($"Cannot merge TargetableWays - relations are non null but different: {this.FullRelation} and {otherWay.FullRelation}");
+                throw new System.Exception($"Cannot merge TargetableWays - relations are non null but different: {this.RegionId} and {otherWay.RegionId}");
             }
 
             this.OriginalWays.AddRange(otherWay.OriginalWays);
 
-            this.FullRelation = this.FullRelation ?? otherWay.FullRelation;
+            this.RegionId = this.RegionId ?? otherWay.RegionId;
+            this.RegionName = this.RegionName ?? otherWay.RegionName;
         }
     }
 }

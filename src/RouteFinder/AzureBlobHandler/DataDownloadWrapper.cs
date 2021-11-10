@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 
@@ -34,8 +32,14 @@ namespace AzureBlobHandler
             this.initialized = true;
         }
 
-        public async Task<bool> RetrieveBlobAsync(string remoteFileName, string localFileName)
+        public async Task<bool> RetrieveBlobAsync(string remoteFileName, string localFileName, bool overwrite=false)
         {
+            if (!overwrite && File.Exists(localFileName))
+            {
+                Console.WriteLine($"Skipping downloading {remoteFileName} to {localFileName}.");
+                return false;
+            }
+
             if (!this.initialized)
             {
                 this.Initialize();

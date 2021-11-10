@@ -30,12 +30,15 @@ namespace OsmETL
 
             new RouteFinderDataPrepDriver().RunChain("/tmp/boundaries.xml", "/tmp/runnableWays.xml");
             new NodeContainingWaysDriver().ProcessNodes();
-            
-            // todo this saves targetable ways in bulk, but we need to save them on a smaller scale like we do nodes.
-            var wayContents = File.ReadAllBytes(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation);
-            await rawDataUploader.WriteBlobAsync("ways/targetableWays.json", wayContents);
 
-            await SaveProtobufsToAzure(rawDataUploader);
+            // todo this saves targetable ways in bulk, but we need to save them on a smaller scale like we do nodes.
+            if (GlobalSettings.RouteCleanerSettings.GetInstance().ShouldUploadRawTargetableWays)
+            {
+                var wayContents = File.ReadAllBytes(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation);
+                await rawDataUploader.WriteBlobAsync("ways/targetableWays.json", wayContents);
+            }
+
+            //await SaveProtobufsToAzure(rawDataUploader);
             await SaveWayProtobufsToAzure(rawDataUploader);
         }
 

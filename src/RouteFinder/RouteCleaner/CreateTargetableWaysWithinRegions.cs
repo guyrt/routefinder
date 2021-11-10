@@ -98,11 +98,11 @@ namespace RouteCleaner
         private TargetableWay MakeSingleWay(Way way, string region, IEnumerable<Node> regionNodes)
         {
             var newId = Guid.NewGuid().ToString();
+            var relation = this.relationMap[region];
             var newWay = new TargetableWay
             {
                 Id = newId,
                 Name = way.Name,
-                FullRelation = this.relationMap[region],
                 OriginalWays = new List<TargetableWay.OriginalWay>
                 {
                     new TargetableWay.OriginalWay
@@ -115,7 +115,9 @@ namespace RouteCleaner
                             Longitude = r.Longitude
                         }).ToArray()
                     }
-                }
+                },
+                RegionName = relation.Name,
+                RegionId = relation.Id,
             };
             return newWay;
         }

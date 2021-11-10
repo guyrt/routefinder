@@ -52,7 +52,6 @@ namespace RouteCleaner
 
         public static IEnumerable<(string, List<LookupTargetableWay>)> CreateWayProtobufs()
         {
-            var wayContents = File.ReadAllText(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation);
             var outputs = new Dictionary<string, List<LookupTargetableWay>>();
 
             using var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -67,8 +66,8 @@ namespace RouteCleaner
                 var lookupTargetableWay = new LookupTargetableWay
                 {
                     Id = way.Id,
-                    Relation = way.RelationId,
-                    RelationName = way.RelationName
+                    Relation = way.RegionId,
+                    RelationName = way.RegionName,
                 };
                 lookupTargetableWay.OriginalWays.AddRange(way.OriginalWays.Select(x => {
                     var l = new LookupOriginalWay

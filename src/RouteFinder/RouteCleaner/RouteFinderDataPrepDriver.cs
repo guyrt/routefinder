@@ -303,7 +303,7 @@ namespace RouteCleaner
             {
                 var wayName = way.Name;
 
-                var relation = way.FullRelation.Id;
+                var relation = way.RegionId;
                 if (!wayDictionary.ContainsKey(relation))
                 {
                     wayDictionary.Add(relation, new Dictionary<string, List<TargetableWay>>());

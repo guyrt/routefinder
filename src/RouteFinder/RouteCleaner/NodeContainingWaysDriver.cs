@@ -117,6 +117,10 @@ namespace RouteCleaner
                         {
                             Console.WriteLine($"Could not deserialize way {lineCnt} {content}: {e.Message}");
                         }
+                        catch (JsonReaderException e)
+                        {
+                            Console.WriteLine($"Could not deserialize way {lineCnt} {content}: {e.Message}");
+                        }
                     }
                 }
             }

@@ -18,6 +18,8 @@
 
         public string TemporaryTargetableWaysLocation { get; set; } = @"/tmp/targetableWays.json";
 
+        public bool ShouldUploadRawTargetableWays { get; set; } = false;
+
         /// <summary>
         /// Not thread safe on create. Suggest forcing create in main.
         /// </summary>
