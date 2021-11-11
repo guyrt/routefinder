@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using AzureBlobHandler;
 using Google.Protobuf;
+using Newtonsoft.Json;
 using OsmETL;
 using RouteFinderDataModel.Proto;
 
@@ -14,17 +16,26 @@ namespace DataInspector
             var config = SettingsManager.GetCredentials();
             var rawDataDownloader = new DataDownloadWrapper(config.AzureRawXmlDownloadConnectionString, config.AzureBlobProcessedNodesContainer);
 
-            var key = "84QVJF00+";
-            var localFile = $"/tmp/{key}";
-            var remoteFileName = $"nodes/{key.Substring(0, 2)}/{key}";
-            await rawDataDownloader.RetrieveBlobAsync(remoteFileName, localFile);
+            var key = "84VVRP00+";
+
+            var localNodeFile = $"/tmp/{key}";
+            var localWayFile = $"/tmp/ways_{key}";
+            var remoteNodeFileName = $"nodes/{key[..2]}/{key}";
+            var remoteWayFileName = $"ways/{key[..2]}/{key}";
+            await DownloadAndDecodeAsync(rawDataDownloader, remoteNodeFileName, localNodeFile, (FileStream s) => FullNodeSet.Parser.ParseFrom(s));
+            await DownloadAndDecodeAsync(rawDataDownloader, remoteWayFileName, localWayFile, (FileStream s) => FullWaySet.Parser.ParseFrom(s));
+        }
+
+        private static async Task DownloadAndDecodeAsync<T>(DataDownloadWrapper rawDataDownloader, string remoteFile, string localFile, Func<FileStream, T> parser)
+            where T : IMessage<T>
+        {
+            await rawDataDownloader.RetrieveBlobAsync(remoteFile, localFile);
 
             var jsonFile = $"{localFile}.json";
-            FullNodeSet area;
+            T area;
             using var input = File.OpenRead(localFile);
-            area = FullNodeSet.Parser.ParseFrom(input);
-            var jsonFormatted = new JsonFormatter(new JsonFormatter.Settings(false));
-            var areaStr = jsonFormatted.Format(area);
+            area = parser(input);
+            var areaStr = JsonConvert.SerializeObject(area, Formatting.Indented);
             File.WriteAllText(jsonFile, areaStr);
         }
     }

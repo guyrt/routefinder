@@ -32,7 +32,7 @@ namespace TripProcessor
                 var pointLat = Convert.ToDouble(point.lat);
                 var pointLng = Convert.ToDouble(point.lon);
                 var lookupKey = GpxParser.GetLocationCode(point);
-                var segment = this.RunnableWayCache.Cache[lookupKey];
+                var segment = this.RunnableWayCache.NodeCache[lookupKey];
 
                 foreach (var k in segment.Nodes)
                 {

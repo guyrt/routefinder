@@ -18,6 +18,7 @@ osmosis --read-pbf-fast file=/tmp/na.osm.pbf workers=8 \
     --tf reject-ways golf=cartpath \
     --tf reject-ways access=permit,private \
     --tf reject-ways service=driveway,parking_aisle \
+    --tf reject-ways footway=sidewalk \
     --tf reject-relations access=private \
     --tf reject-relations landuse=military \
     --tee 2 \

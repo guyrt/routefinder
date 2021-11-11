@@ -18,7 +18,7 @@
 
         public string TemporaryTargetableWaysLocation { get; set; } = @"/tmp/targetableWays.json";
 
-        public bool ShouldUploadRawTargetableWays { get; set; } = false;
+        public bool ShouldUploadRawTargetableWays { get; set; } = true;
 
         /// <summary>
         /// Max number of ways to consolidate.

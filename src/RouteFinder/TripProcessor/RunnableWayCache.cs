@@ -16,11 +16,14 @@ namespace TripProcessor
     public class RunnableWayCache
     {
         // if running in Azure Function, this cache will be used by multiple threads. 
-        public ConcurrentDictionary<string, FullNodeSet> Cache { get; init; }
+        public ConcurrentDictionary<string, FullNodeSet> NodeCache { get; init; }
+
+        public ConcurrentDictionary<string, FullWaySet> WayCache { get; init; }
 
         public RunnableWayCache()
         {
-            Cache = new ConcurrentDictionary<string, FullNodeSet>();
+            NodeCache = new ConcurrentDictionary<string, FullNodeSet>();
+            WayCache = new ConcurrentDictionary<string, FullWaySet>();
         }
 
         /// <summary>
@@ -28,33 +31,51 @@ namespace TripProcessor
         /// </summary>
         /// <param name="plusCode"></param>
         /// <returns>true if cache miss</returns>
-        public async Task<bool> LoadSegmentAsync(string plusCode)
+        public bool LoadSegment(string plusCode)
         {
-            if (Cache.ContainsKey(plusCode))
+            if (NodeCache.ContainsKey(plusCode) && WayCache.ContainsKey(plusCode))
             {
                 return false;
             }
 
-            await DownloadAndCacheAsync(plusCode);
+            DownloadAndCache(plusCode);
             return true;
         }
 
         // todo - purge if too big.
-        private async Task DownloadAndCacheAsync(string plusCode)
+        private void DownloadAndCache(string plusCode)
         {
             var config = SettingsManager.GetCredentials();
             var rawDataDownloader = new DataDownloadWrapper(config.AzureRawXmlDownloadConnectionString, config.AzureBlobProcessedNodesContainer);
 
-            var fileName = $"/nodes/{plusCode.Substring(0, 2)}/{plusCode}";
-            Console.WriteLine($"Downloading cached file {fileName}");
-            var localName = $"/tmp/{plusCode}";
-            await rawDataDownloader.RetrieveBlobAsync(fileName, localName);
+            var localNodeName = $"/tmp/{plusCode}";
+            var localWayName = $"/tmp/way{plusCode}";
 
-            FullNodeSet area;
-            using var input = File.OpenRead(localName);
-            area = FullNodeSet.Parser.ParseFrom(input);
+            var t1 = Task.Run(async () => {
+                var fileName = $"/nodes/{plusCode[..2]}/{plusCode}";
+                Console.WriteLine($"Downloading cached file {fileName}");
+                await rawDataDownloader.RetrieveBlobAsync(fileName, localNodeName);
 
-            this.Cache.TryAdd(plusCode, area);
+                FullNodeSet area;
+                using var input = File.OpenRead(localNodeName);
+                area = FullNodeSet.Parser.ParseFrom(input);
+
+                NodeCache.TryAdd(plusCode, area);
+            });
+
+            var t2 = Task.Run(async () => {
+                var fileName = $"/ways/{plusCode[..2]}/{plusCode}";
+                Console.WriteLine($"Downloading cached file {fileName}");
+                await rawDataDownloader.RetrieveBlobAsync(fileName, localWayName);
+
+                FullWaySet area;
+                using var input = File.OpenRead(localWayName);
+                area = FullWaySet.Parser.ParseFrom(input);
+
+                WayCache.TryAdd(plusCode, area);
+            });
+
+            Task.WaitAll(t1, t2);
         }
     }
 }

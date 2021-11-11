@@ -38,7 +38,7 @@ namespace OsmETL
                 await rawDataUploader.WriteBlobAsync("ways/targetableWays.json", wayContents);
             }
 
-            //await SaveProtobufsToAzure(rawDataUploader);
+            await SaveProtobufsToAzure(rawDataUploader);
             await SaveWayProtobufsToAzure(rawDataUploader);
         }
 
