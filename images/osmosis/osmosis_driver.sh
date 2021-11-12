@@ -15,21 +15,20 @@ ls -lh /tmp
 # one boundary set
 # many split out files for runnable ways.
 osmosis --read-pbf-fast file=/tmp/na.osm.pbf workers=8 \
-    --tf reject-ways golf=cartpath \
-    --tf reject-ways access=permit,private \
-    --tf reject-ways service=driveway,parking_aisle \
-    --tf reject-ways footway=sidewalk \
-    --tf reject-relations access=private \
-    --tf reject-relations landuse=military \
     --tee 2 \
     \
+        --tf reject-relations access=private \
+        --tf reject-relations landuse=military \
         --tf accept-relations boundary=administrative,national_park \
         --used-way \
         --used-node \
         --write-xml /tmp/boundaries.xml \
     \
         --tf accept-ways highway=track,residential,steps,footpath,footway,path,tertiary,cycleway,primary \
-        --tf reject-ways service=driveway \
+        --tf reject-ways golf=cartpath \
+        --tf reject-ways access=permit,private \
+        --tf reject-ways service=driveway,parking_aisle \
+        --tf reject-ways footway=sidewalk \
         --used-node \
         --tee 8 \
         --bounding-box right=-114 bottom=40.5 completeWays=yes --write-xml /tmp/bbox_1_1.xml \
