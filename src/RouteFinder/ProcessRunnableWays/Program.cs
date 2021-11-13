@@ -29,10 +29,10 @@ namespace OsmETL
             await rawDataDownloader.RetrieveBlobAsync(tmpRemoteRunnableWays, "/tmp/runnableWays.xml");
 
             // write temporary files with nodes and all targetable ways
-           // new RouteFinderDataPrepDriver().RunChain("/tmp/boundaries.xml", "/tmp/runnableWays.xml");
+            new RouteFinderDataPrepDriver().RunChain("/tmp/boundaries.xml", "/tmp/runnableWays.xml");
 
             // separate ways into sections
-           // new NodeContainingWaysDriver().ProcessNodes();
+            new NodeContainingWaysDriver().ProcessNodes();
 
             // todo this saves targetable ways in bulk, but we need to save them on a smaller scale like we do nodes.
             if (RouteCleanerSettings.GetInstance().ShouldUploadRawTargetableWays)
@@ -41,7 +41,7 @@ namespace OsmETL
                 await rawDataUploader.WriteBlobAsync("ways/targetableWays.json", wayContents);
             }
 
-           // SaveProtobufsToAzure(rawDataUploader);
+            SaveProtobufsToAzure(rawDataUploader);
             SaveWayProtobufsToAzure(rawDataUploader);
         }
 
