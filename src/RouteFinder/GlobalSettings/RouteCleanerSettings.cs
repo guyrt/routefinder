@@ -10,7 +10,7 @@
 
         public int ReaderThreadSleepInterval { get; set; } = 1 * 1000;
 
-        public int NumThreads { get; set; } = 4;
+        public int NumThreads { get; set; } = 8;
 
         public string TemporaryNodeOutLocation { get; set; } = @"/tmp/nodesWithContainment.json";
 

@@ -209,6 +209,8 @@ namespace RouteCleaner
             }
 
             var nodeRefs = way.Descendants("nd").Select(nd => nd.Attribute("ref")?.Value);
+            
+            // only perform node checks if we loaded nodes.
             if (nodes.Count > 0)
             {
                 try

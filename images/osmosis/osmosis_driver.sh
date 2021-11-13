@@ -24,7 +24,7 @@ osmosis --read-pbf-fast file=/tmp/na.osm.pbf workers=8 \
         --used-node \
         --write-xml /tmp/boundaries.xml \
     \
-        --tf accept-ways highway=track,residential,steps,footpath,footway,path,tertiary,cycleway,primary \
+        --tf accept-ways highway=track,residential,steps,footpath,footway,path,tertiary,cycleway,primary,secondary \
         --tf reject-ways golf=cartpath \
         --tf reject-ways access=permit,private \
         --tf reject-ways service=driveway,parking_aisle \

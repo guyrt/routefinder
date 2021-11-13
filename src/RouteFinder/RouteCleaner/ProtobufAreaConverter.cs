@@ -50,7 +50,7 @@ namespace RouteCleaner
             }
         }
 
-        public static IEnumerable<(string, List<LookupTargetableWay>)> CreateWayProtobufs()
+        public static Dictionary<string, List<LookupTargetableWay>> CreateWayProtobufs()
         {
             var outputs = new Dictionary<string, List<LookupTargetableWay>>();
 
@@ -91,10 +91,7 @@ namespace RouteCleaner
                 }
             }
 
-            foreach (var kvp in outputs)
-            {
-                yield return (kvp.Key, kvp.Value);
-            }
+            return outputs;
         }
 
         private static int SortNodesByLatLong(LookupNode l, LookupNode r)

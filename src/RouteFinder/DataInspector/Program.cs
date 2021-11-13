@@ -16,7 +16,7 @@ namespace DataInspector
             var config = SettingsManager.GetCredentials();
             var rawDataDownloader = new DataDownloadWrapper(config.AzureRawXmlDownloadConnectionString, config.AzureBlobProcessedNodesContainer);
 
-            var key = "84VVRP00+";
+            var key = "84VVHM00+";
 
             var localNodeFile = $"/tmp/{key}";
             var localWayFile = $"/tmp/ways_{key}";
@@ -29,7 +29,8 @@ namespace DataInspector
         private static async Task DownloadAndDecodeAsync<T>(DataDownloadWrapper rawDataDownloader, string remoteFile, string localFile, Func<FileStream, T> parser)
             where T : IMessage<T>
         {
-            await rawDataDownloader.RetrieveBlobAsync(remoteFile, localFile);
+            Console.WriteLine($"Downloading {remoteFile} to {localFile}");
+            await rawDataDownloader.RetrieveBlobAsync(remoteFile, localFile, overwrite: true);
 
             var jsonFile = $"{localFile}.json";
             T area;

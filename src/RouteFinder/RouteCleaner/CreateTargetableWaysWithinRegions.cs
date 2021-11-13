@@ -55,7 +55,7 @@ namespace RouteCleaner
             this.wayMap.Remove(node.Id);
             this.counter++;
 
-            if (this.counter % 10000 == 0)
+            if (this.counter % 100000 == 0)
             {
                 Console.WriteLine($"After Node {this.counter}, have {this.wayMap.Count} nodes remaining and {this.wayMap.Select(w => w.Value.Count).Sum()} total way nodes to map. {this.OutputWays.Count()} ways created.");
             }
@@ -120,6 +120,7 @@ namespace RouteCleaner
                 RegionName = Regex.Replace(relation.Name, @"\t|\n|\r", ""),
                 RegionId = relation.Id,
             };
+
             return newWay;
         }
 
