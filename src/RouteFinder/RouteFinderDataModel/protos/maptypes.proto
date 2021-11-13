@@ -22,6 +22,7 @@ message LookupTargetableWay {
 	string relation = 2;
 	string relationName = 3;
 	repeated LookupOriginalWay originalWays = 4;
+	string wayName = 5;
 }
 
 // Full file types

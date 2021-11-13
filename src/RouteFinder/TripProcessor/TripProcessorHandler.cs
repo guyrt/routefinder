@@ -33,7 +33,7 @@ namespace TripProcessor
                 
                 foreach (var code in ranges)
                 {
-                    await cache.LoadSegmentAsync(code);
+                    cache.LoadSegment(code);
                 }
 
                 foreach (var seg in track.trkseg) {

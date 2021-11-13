@@ -7,6 +7,7 @@ using Google.OpenLocationCode;
 using Newtonsoft.Json;
 using RouteFinderDataModel;
 using RouteFinderDataModel.Proto;
+using Google.Protobuf;
 
 namespace RouteCleaner
 {
@@ -22,9 +23,22 @@ namespace RouteCleaner
                 var outputs = new Dictionary<string, List<LookupNode>>();
                 string line;
                 var sr = new StreamReader(file);
+                long lineNum = 0;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    var node = JsonConvert.DeserializeObject<Node>(line);
+                    Node node;
+                    try
+                    {
+                        node = JsonConvert.DeserializeObject<Node>(line);
+                        lineNum++;
+                    } 
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Exception {ex} on line {lineNum++}");
+                        Console.WriteLine($"Line: {line}");
+                        continue;
+                    }
+
                     var location = new OpenLocationCode(node.Latitude, node.Longitude, codeLength: 6);
                     if (!outputs.ContainsKey(location.Code))
                     {
@@ -57,10 +71,22 @@ namespace RouteCleaner
             using var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var sr = new StreamReader(fs);
 
+            long lineNum = 0;
             while (sr.Peek() >= 0)
             {
                 var content = sr.ReadLine();
-                var way = JsonConvert.DeserializeObject<TargetableWay>(content);
+                TargetableWay way;
+                try
+                {
+                    way = JsonConvert.DeserializeObject<TargetableWay>(content);
+                    lineNum++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception {ex} on line {lineNum++}");
+                    Console.WriteLine($"Line: {content}");
+                    continue;
+                }
                 var keys = way.OriginalWays.SelectMany(x => x.Points).Select(point => OpenLocationCode.Encode(point.Latitude, point.Longitude, codeLength: 6)).Distinct();
 
                 var lookupTargetableWay = new LookupTargetableWay
@@ -68,6 +94,7 @@ namespace RouteCleaner
                     Id = way.Id,
                     Relation = way.RegionId,
                     RelationName = way.RegionName,
+                    WayName = way.Name,
                 };
                 lookupTargetableWay.OriginalWays.AddRange(way.OriginalWays.Select(x => {
                     var l = new LookupOriginalWay

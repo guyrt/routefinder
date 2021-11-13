@@ -28,19 +28,19 @@ namespace RouteFinderDataModel.Proto {
             "IAEoCRIPCgdub2RlSWRzGAIgAygJEhUKDW5vZGVMYXRpdHVkZXMYAyADKAES",
             "FgoObm9kZUxvbmdpdHVkZXMYBCADKAEiaAoKTG9va3VwTm9kZRIKCgJpZBgB",
             "IAEoCRIQCghsYXRpdHVkZRgCIAEoARIRCglsb25naXR1ZGUYAyABKAESEQoJ",
-            "cmVsYXRpb25zGAQgAygJEhYKDnRhcmdldGFibGVXYXlzGAUgAygJInMKE0xv",
-            "b2t1cFRhcmdldGFibGVXYXkSCgoCaWQYASABKAkSEAoIcmVsYXRpb24YAiAB",
-            "KAkSFAoMcmVsYXRpb25OYW1lGAMgASgJEigKDG9yaWdpbmFsV2F5cxgEIAMo",
-            "CzISLkxvb2t1cE9yaWdpbmFsV2F5IikKC0Z1bGxOb2RlU2V0EhoKBU5vZGVz",
-            "GAEgAygLMgsuTG9va3VwTm9kZSIwCgpGdWxsV2F5U2V0EiIKBFdheXMYASAD",
-            "KAsyFC5Mb29rdXBUYXJnZXRhYmxlV2F5Qh2qAhpSb3V0ZUZpbmRlckRhdGFN",
-            "b2RlbC5Qcm90b2IGcHJvdG8z"));
+            "cmVsYXRpb25zGAQgAygJEhYKDnRhcmdldGFibGVXYXlzGAUgAygJIoQBChNM",
+            "b29rdXBUYXJnZXRhYmxlV2F5EgoKAmlkGAEgASgJEhAKCHJlbGF0aW9uGAIg",
+            "ASgJEhQKDHJlbGF0aW9uTmFtZRgDIAEoCRIoCgxvcmlnaW5hbFdheXMYBCAD",
+            "KAsyEi5Mb29rdXBPcmlnaW5hbFdheRIPCgd3YXlOYW1lGAUgASgJIikKC0Z1",
+            "bGxOb2RlU2V0EhoKBU5vZGVzGAEgAygLMgsuTG9va3VwTm9kZSIwCgpGdWxs",
+            "V2F5U2V0EiIKBFdheXMYASADKAsyFC5Mb29rdXBUYXJnZXRhYmxlV2F5Qh2q",
+            "AhpSb3V0ZUZpbmRlckRhdGFNb2RlbC5Qcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.LookupOriginalWay), global::RouteFinderDataModel.Proto.LookupOriginalWay.Parser, new[]{ "Id", "NodeIds", "NodeLatitudes", "NodeLongitudes" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.LookupNode), global::RouteFinderDataModel.Proto.LookupNode.Parser, new[]{ "Id", "Latitude", "Longitude", "Relations", "TargetableWays" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.LookupTargetableWay), global::RouteFinderDataModel.Proto.LookupTargetableWay.Parser, new[]{ "Id", "Relation", "RelationName", "OriginalWays" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.LookupTargetableWay), global::RouteFinderDataModel.Proto.LookupTargetableWay.Parser, new[]{ "Id", "Relation", "RelationName", "OriginalWays", "WayName" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.FullNodeSet), global::RouteFinderDataModel.Proto.FullNodeSet.Parser, new[]{ "Nodes" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::RouteFinderDataModel.Proto.FullWaySet), global::RouteFinderDataModel.Proto.FullWaySet.Parser, new[]{ "Ways" }, null, null, null, null)
           }));
@@ -673,6 +673,7 @@ namespace RouteFinderDataModel.Proto {
       relation_ = other.relation_;
       relationName_ = other.relationName_;
       originalWays_ = other.originalWays_.Clone();
+      wayName_ = other.wayName_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -729,6 +730,18 @@ namespace RouteFinderDataModel.Proto {
       get { return originalWays_; }
     }
 
+    /// <summary>Field number for the "wayName" field.</summary>
+    public const int WayNameFieldNumber = 5;
+    private string wayName_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string WayName {
+      get { return wayName_; }
+      set {
+        wayName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -748,6 +761,7 @@ namespace RouteFinderDataModel.Proto {
       if (Relation != other.Relation) return false;
       if (RelationName != other.RelationName) return false;
       if(!originalWays_.Equals(other.originalWays_)) return false;
+      if (WayName != other.WayName) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -759,6 +773,7 @@ namespace RouteFinderDataModel.Proto {
       if (Relation.Length != 0) hash ^= Relation.GetHashCode();
       if (RelationName.Length != 0) hash ^= RelationName.GetHashCode();
       hash ^= originalWays_.GetHashCode();
+      if (WayName.Length != 0) hash ^= WayName.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -790,6 +805,10 @@ namespace RouteFinderDataModel.Proto {
         output.WriteString(RelationName);
       }
       originalWays_.WriteTo(output, _repeated_originalWays_codec);
+      if (WayName.Length != 0) {
+        output.WriteRawTag(42);
+        output.WriteString(WayName);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -813,6 +832,10 @@ namespace RouteFinderDataModel.Proto {
         output.WriteString(RelationName);
       }
       originalWays_.WriteTo(ref output, _repeated_originalWays_codec);
+      if (WayName.Length != 0) {
+        output.WriteRawTag(42);
+        output.WriteString(WayName);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -833,6 +856,9 @@ namespace RouteFinderDataModel.Proto {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(RelationName);
       }
       size += originalWays_.CalculateSize(_repeated_originalWays_codec);
+      if (WayName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(WayName);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -855,6 +881,9 @@ namespace RouteFinderDataModel.Proto {
         RelationName = other.RelationName;
       }
       originalWays_.Add(other.originalWays_);
+      if (other.WayName.Length != 0) {
+        WayName = other.WayName;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -886,6 +915,10 @@ namespace RouteFinderDataModel.Proto {
             originalWays_.AddEntriesFrom(input, _repeated_originalWays_codec);
             break;
           }
+          case 42: {
+            WayName = input.ReadString();
+            break;
+          }
         }
       }
     #endif
@@ -915,6 +948,10 @@ namespace RouteFinderDataModel.Proto {
           }
           case 34: {
             originalWays_.AddEntriesFrom(ref input, _repeated_originalWays_codec);
+            break;
+          }
+          case 42: {
+            WayName = input.ReadString();
             break;
           }
         }
