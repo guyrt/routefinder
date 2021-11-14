@@ -28,47 +28,60 @@ namespace OsmETL
             await rawDataDownloader.RetrieveBlobAsync(tmpRemoteBoundaries, "/tmp/boundaries.xml");
             await rawDataDownloader.RetrieveBlobAsync(tmpRemoteRunnableWays, "/tmp/runnableWays.xml");
 
+            // write temporary files with nodes and all targetable ways
             new RouteFinderDataPrepDriver().RunChain("/tmp/boundaries.xml", "/tmp/runnableWays.xml");
+
+            // separate ways into sections
             new NodeContainingWaysDriver().ProcessNodes();
 
             // todo this saves targetable ways in bulk, but we need to save them on a smaller scale like we do nodes.
-            if (GlobalSettings.RouteCleanerSettings.GetInstance().ShouldUploadRawTargetableWays)
+            if (RouteCleanerSettings.GetInstance().ShouldUploadRawTargetableWays)
             {
                 var wayContents = File.ReadAllBytes(RouteCleanerSettings.GetInstance().TemporaryTargetableWaysLocation);
                 await rawDataUploader.WriteBlobAsync("ways/targetableWays.json", wayContents);
             }
 
-            await SaveProtobufsToAzure(rawDataUploader);
-            await SaveWayProtobufsToAzure(rawDataUploader);
+            SaveProtobufsToAzure(rawDataUploader);
+            SaveWayProtobufsToAzure(rawDataUploader);
         }
 
-        private static async Task SaveProtobufsToAzure(RawDataUploader rawDataUploader)
+        private static void SaveProtobufsToAzure(RawDataUploader rawDataUploader)
         {
             // search in the right directory and discover all files. Create dir from remoteRunnableWays then upload all files there.
-            foreach ((var key, var nodes) in ProtobufAreaConverter.CreateLookupNodeProtobufs())
-            {
-                var nodeFileObj = new FullNodeSet();
-                nodeFileObj.Nodes.AddRange(nodes);
-                Console.WriteLine($"{key}: prepped {nodes.Count} nodes: {nodeFileObj.CalculateSize()} bytes");
-                var byteArray = nodeFileObj.ToByteArray();
+            Parallel.ForEach(ProtobufAreaConverter.CreateLookupNodeProtobufs(),
+                            new ParallelOptions { MaxDegreeOfParallelism = 4 },
+                            async (row) =>
+                            {
+                                var key = row.Item1;
+                                var nodes = row.Item2;
+                                var nodeFileObj = new FullNodeSet();
+                                nodeFileObj.Nodes.AddRange(nodes);
+                                Console.WriteLine($"{key}: prepped {nodes.Count} nodes: {nodeFileObj.CalculateSize()} bytes");
+                                var byteArray = nodeFileObj.ToByteArray();
 
-                var fileName = $"nodes/{key.Substring(0, 2)}/{key}";
-                await rawDataUploader.WriteBlobAsync(fileName, byteArray);
-            }
+                                var fileName = $"nodes/{key.Substring(0, 2)}/{key}";
+                                await rawDataUploader.WriteBlobAsync(fileName, byteArray);
+                            });
         }
 
-        private static async Task SaveWayProtobufsToAzure(RawDataUploader rawDataUploader)
+        private static void SaveWayProtobufsToAzure(RawDataUploader rawDataUploader)
         {
-            foreach ((var key, var ways) in ProtobufAreaConverter.CreateWayProtobufs())
-            {
-                var nodeFileObj = new FullWaySet();
-                nodeFileObj.Ways.AddRange(ways);
-                Console.WriteLine($"{key}: prepped {ways.Count} ways: {nodeFileObj.CalculateSize()} bytes");
-                var byteArray = nodeFileObj.ToByteArray();
+            Parallel.ForEach(ProtobufAreaConverter.CreateWayProtobufs(),
+                new ParallelOptions { MaxDegreeOfParallelism = 4 },
+                async (kvp) =>
+                {
+                    var ways = kvp.Value;
+                    var key = kvp.Key;
+                    var nodeFileObj = new FullWaySet();
+                    nodeFileObj.Ways.AddRange(ways);
+                    Console.WriteLine($"{key}: prepped {ways.Count} ways: {nodeFileObj.CalculateSize()} bytes");
+                    var byteArray = nodeFileObj.ToByteArray();
 
-                var fileName = $"ways/{key.Substring(0, 2)}/{key}";
-                await rawDataUploader.WriteBlobAsync(fileName, byteArray);
-            }
+                    var s = FullWaySet.Parser.ParseFrom(byteArray);
+
+                    var fileName = $"ways/{key[..2]}/{key}";
+                    await rawDataUploader.WriteBlobAsync(fileName, byteArray);
+                });
         }
     }
 }

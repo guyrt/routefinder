@@ -54,7 +54,6 @@ namespace TripProcessor
                 {
                     Console.WriteLine($"Found way {node}");
                 }
-
             }
         }
     }

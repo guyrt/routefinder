@@ -43,8 +43,12 @@ namespace RouteCleaner
 
             watch.Restart();
             var ways = createTargetableWays.OutputWays;
+
+            var w = ways.Where(w => w.Id == "");
+
+
             ways = ConsolidateWays(ways);
-            ways = UnconsolidateLargeWays(ways).ToList();
+            ways = UnconsolidateLargeWays(ways).ToList();  // todo is the problem?
             time = watch.Elapsed;
             Console.WriteLine($"Done with ConsolidatedWays in {time} seconds. Have {ways.Count} ways.");
 

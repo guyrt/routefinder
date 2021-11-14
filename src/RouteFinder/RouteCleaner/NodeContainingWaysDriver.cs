@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using GlobalSettings;
 using Google.OpenLocationCode;
 using Newtonsoft.Json;
@@ -21,6 +22,7 @@ namespace RouteCleaner
             Console.WriteLine($"Starting NodeContainingWaysDriver");
             var watch = Stopwatch.StartNew();
             var nodeWayMap = BuildWayMap();
+
             var time = watch.Elapsed;
             Console.WriteLine($"Finished building way map in {time}");
             watch.Restart();
@@ -40,7 +42,7 @@ namespace RouteCleaner
             System.IO.Directory.CreateDirectory(RouteCleanerSettings.GetInstance().TemporaryNodeWithContainingWayOutLocation);
             var fullPath = Path.Combine(RouteCleanerSettings.GetInstance().TemporaryNodeWithContainingWayOutLocation, key + ".json");
             Console.WriteLine($"Opening path {fullPath}");
-            var fs = File.Open(fullPath, FileMode.Append, FileAccess.Write, FileShare.Read);
+            var fs = File.Open(fullPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
             return new StreamWriter(fs, Encoding.UTF8, 65536);
         }
 
@@ -56,6 +58,10 @@ namespace RouteCleaner
                     try
                     {
                         var node = JsonConvert.DeserializeObject<Node>(content);
+                        if (node.Id == "30170573")
+                        {
+                            var a = 1;
+                        }
                         if (wayMap.TryGetValue(node.Id, out var ways))
                         {
                             node.ContainingWays = ways.ToList();
@@ -66,7 +72,9 @@ namespace RouteCleaner
                         {
                             streamWriters.Add(code.Code, GetStreamWriter(code.Code));
                         }
-                        streamWriters[code.Code].WriteLine(JsonConvert.SerializeObject(node));
+                        var line = JsonConvert.SerializeObject(node);
+                        line = Regex.Replace(line, @"\t|\n|\r", "");
+                        streamWriters[code.Code].WriteLine(line);
                     }
                     catch (JsonReaderException e)
                     {

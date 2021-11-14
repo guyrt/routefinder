@@ -48,6 +48,7 @@ RUN rm -rf /var/lib/apt/lists/*
 COPY ".setenv.sh" "/user/local/bin/setenv.sh"
 COPY "osmosis_driver.sh" "/usr/local/bin/osmosis_driver.sh"
 
+RUN sed -i 's/\r$//' /usr/local/bin/osmosis_driver.sh
 
 USER osmosis
 CMD ["osmosis_driver.sh"]
