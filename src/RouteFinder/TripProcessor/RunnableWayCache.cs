@@ -31,19 +31,18 @@ namespace TripProcessor
         /// </summary>
         /// <param name="plusCode"></param>
         /// <returns>true if cache miss</returns>
-        public bool LoadSegment(string plusCode)
+        public Task LoadSegment(string plusCode)
         {
             if (NodeCache.ContainsKey(plusCode) && WayCache.ContainsKey(plusCode))
             {
-                return false;
+                return Task.CompletedTask;
             }
 
-            DownloadAndCache(plusCode);
-            return true;
+            return DownloadAndCache(plusCode);
         }
 
         // todo - purge if too big.
-        private void DownloadAndCache(string plusCode)
+        private Task DownloadAndCache(string plusCode)
         {
             var config = SettingsManager.GetCredentials();
             var rawDataDownloader = new DataDownloadWrapper(config.AzureRawXmlDownloadConnectionString, config.AzureBlobProcessedNodesContainer);
@@ -75,7 +74,7 @@ namespace TripProcessor
                 WayCache.TryAdd(plusCode, area);
             });
 
-            Task.WaitAll(t1, t2);
+            return Task.WhenAll(t1, t2);
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using RouteFinderDataModel.Proto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TripProcessor.GpxData;
 
@@ -20,7 +23,7 @@ namespace TripProcessor
             pointComparer = new PointComparer(cache);
         }
 
-        public async Task ProcessAsync(string gpxFilename)
+        public void Process(string gpxFilename)
         {
             // get parsed gpx
             var parsedGpx = GpxParser.Parse(gpxFilename);
@@ -30,19 +33,28 @@ namespace TripProcessor
             {
                 // get range
                 var ranges = GpxParser.ComputeBounds(track);
-                
-                foreach (var code in ranges)
-                {
-                    await cache.LoadSegmentAsync(code);
-                }
+
+                var tasks = ranges.Select(code => cache.LoadSegment(code)).ToArray();
+                Task.WaitAll(tasks);
+
+                var overlappingNodes = new HashSet<LookupNode>();
 
                 foreach (var seg in track.trkseg) {
-                    var overlappingNodes = pointComparer.FindOverlapping(seg.trkpt);
-                    foreach (var node in overlappingNodes)
-                    {
-                        Console.WriteLine($"Found point {node.Id}: {node.TargetableWays}");
-                    }
+                    overlappingNodes.UnionWith(pointComparer.FindOverlapping(seg.trkpt));
                 }
+
+                // invert, then look up ways and mark:
+                // nodes as done somewhere
+                // ways as done
+
+
+                var uniqueWays = overlappingNodes.SelectMany(x => x.TargetableWays).Distinct();
+                
+                foreach (var node in uniqueWays)
+                {
+                    Console.WriteLine($"Found way {node}");
+                }
+
             }
         }
     }
