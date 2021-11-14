@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28729.10
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteCleaner", "RouteCleaner\RouteCleaner.csproj", "{7BA51210-CA54-415D-8C53-5AB1A849AF91}"
 EndProject
@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessRunnableWays", "Proc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataInspector", "DataInspector\DataInspector.csproj", "{E0ADADB0-66CD-4477-8C02-828B7C280329}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TripProcessor", "TripProcessor\TripProcessor.csproj", "{0899688A-1968-4382-9E0E-4B2770F265F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TripProcessor", "TripProcessor\TripProcessor.csproj", "{0899688A-1968-4382-9E0E-4B2770F265F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserDataModel", "UserDataModel\UserDataModel.csproj", "{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,10 @@ Global
 		{0899688A-1968-4382-9E0E-4B2770F265F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0899688A-1968-4382-9E0E-4B2770F265F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0899688A-1968-4382-9E0E-4B2770F265F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
