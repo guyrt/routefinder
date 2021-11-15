@@ -26,7 +26,7 @@
         {
             // download boundaries and runnables.
             var tripProc = new TripProcessorHandler();
-            tripProc.Process("C:/users/riguy/Downloads/activity_7747876727.gpx");
+            tripProc.Process("C:/users/riguy/Downloads/activity_7747876727.gpx", Guid.NewGuid());
         }
 
         /// <summary>

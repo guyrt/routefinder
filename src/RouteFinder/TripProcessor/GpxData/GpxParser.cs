@@ -39,7 +39,12 @@ namespace TripProcessor.GpxData
 
         public static string GetLocationCode(wptType point)
         {
-            return OpenLocationCode.Encode(Convert.ToDouble(point.lat), Convert.ToDouble(point.lon), codeLength: 6);
+            return GetLocationCode(Convert.ToDouble(point.lat), Convert.ToDouble(point.lon));
+        }
+
+        public static string GetLocationCode(double latitude, double longitude)
+        {
+            return OpenLocationCode.Encode(latitude, longitude, codeLength: 6);
         }
     }
 }

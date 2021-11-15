@@ -10,9 +10,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AzureBlobHandler\AzureBlobHandler.csproj" />
+    <ProjectReference Include="..\CosmosDBLayer\CosmosDBLayer.csproj" />
     <ProjectReference Include="..\GlobalSettings\GlobalSettings.csproj" />
     <ProjectReference Include="..\RouteCleaner\RouteCleaner.csproj" />
     <ProjectReference Include="..\RouteFinderDataModel\RouteFinderDataModel.csproj" />
+    <ProjectReference Include="..\UserDataModel\UserDataModel.csproj" />
   </ItemGroup>
 
 </Project>
