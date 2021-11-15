@@ -13,6 +13,8 @@
     using RouteFinder.GreedyRoute;
     using TripProcessor;
     using System.Threading.Tasks;
+    using CosmosDBLayer;
+    using OsmETL;
 
     /// <summary>
     ///  NOT USED.
@@ -25,8 +27,11 @@
         public static async Task Main()
         {
             // download boundaries and runnables.
-            var tripProc = new TripProcessorHandler();
-            tripProc.Process("C:/users/riguy/Downloads/activity_7747876727.gpx", Guid.NewGuid());
+            var config = SettingsManager.GetCredentials();
+            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
+            var tripProc = new TripProcessorHandler(cosmosWriter);
+            var tommy = Guid.Parse("08f9752f-982d-445b-b75e-63e24f2c325c");
+            tripProc.Process("C:/users/riguy/Downloads/activity_7747876727.gpx", tommy);
         }
 
         /// <summary>
