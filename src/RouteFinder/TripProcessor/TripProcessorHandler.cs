@@ -1,6 +1,7 @@
 ﻿using CosmosDBLayer;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using TripProcessor.GpxData;
@@ -28,7 +29,7 @@ namespace TripProcessor
          }
 
         // this should fire off a bunch of DTF actions.
-        public void Process(string gpxFilename, Guid userId)
+        public async Task Process(string gpxFilename, Guid userId)
         {
 
             var parsedGpx = GpxParser.Parse(gpxFilename);
@@ -37,7 +38,11 @@ namespace TripProcessor
             var overlappingNodes = GetOverlap(parsedGpx, userId);
 
             // update the raw cache
-
+            foreach (var node in overlappingNodes)
+            {
+                await this.uploadHandler.Upload(node);
+            }
+//            Parallel.ForEach(overlappingNodes, async node => await this.uploadHandler.Upload(node));
 
             // update stats
 
@@ -50,6 +55,7 @@ namespace TripProcessor
             var overlappingNodes = new HashSet<UserNodeCoverage>();
 
             // process each track
+            var watch = Stopwatch.StartNew();
             foreach (var track in parsedGpx.trk)
             {
                 // get range
@@ -66,20 +72,21 @@ namespace TripProcessor
                         {
                             var location = GpxParser.GetLocationCode(point.Latitude, point.Longitude);
                             var ways = cache.WayCache[location].Ways;
-                            var region = ways.SingleOrDefault(x => x.Id == targetableWay);
+                            var wayLookup = ways.SingleOrDefault(x => x.Id == targetableWay);
                             overlappingNodes.Add(new UserNodeCoverage
                             {
                                 UserId = userId,
                                 NodeId = point.Id,
-                                RegionId = region.Id,
+                                RegionId = wayLookup.Relation,
                                 WayId = targetableWay,
                                 FirstRan = runTime,
                             });
                         }
                     }
                 }
-
             }
+            var runtime = watch.ElapsedMilliseconds;
+            Console.WriteLine($"Completed {overlappingNodes.Count} in {runtime} milliseconds.");
 
             return overlappingNodes;
         }

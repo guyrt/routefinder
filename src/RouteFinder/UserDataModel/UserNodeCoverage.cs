@@ -1,4 +1,6 @@
-﻿namespace UserDataModel
+﻿using Newtonsoft.Json;
+
+namespace UserDataModel
 {
     /// <summary>
     /// Record of a single user at a single Node. This is the "primary data" for a user.
@@ -7,6 +9,9 @@
     /// </summary>
     public class UserNodeCoverage
     {
+        [JsonProperty("id")]
+        public string Id => $"{UserId}_{RegionId}_{WayId}_{NodeId}";
+
         // Partition on user
         public Guid UserId { get; set; }
 
@@ -17,5 +22,10 @@
         public string NodeId { get; set; }
 
         public DateTime FirstRan { get; set; }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

@@ -8,6 +8,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using UserDataModel;
 
     public class UploadHandler
     {
@@ -19,6 +20,10 @@
 
         private readonly string _containerName;
 
+        private readonly CosmosClient cosmosClient;
+
+        private readonly Uploader uploader;
+
         public UploadHandler(string endPoint, string authKey, string database, string container)
         {
             _endpoint = endPoint;
@@ -27,7 +32,15 @@
             _containerName = container;
 
             // test connect
-            using (var client = new CosmosClient(_endpoint, _authKey)) { }
+            cosmosClient = new CosmosClient(_endpoint, _authKey);
+            uploader = new Uploader(cosmosClient, _databaseName, _containerName);
+        }
+
+        public async Task Upload(UserNodeCoverage userNode)
+        {
+            await uploader.Initialize();
+            await uploader.UploadAsync(userNode);
+            Console.WriteLine($"Uploaded node {userNode}");
         }
 
         public async Task Upload(IEnumerable<Way> ways)
@@ -52,7 +65,7 @@
                 long i = 0;
                 foreach (var way in ways)
                 {
-                    await uploader.Upload(way);
+                    await uploader.UploadAsync(way);
                     i++;
                     if (i % 10000 == 0)
                     {

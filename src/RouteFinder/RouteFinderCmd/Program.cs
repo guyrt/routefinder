@@ -31,7 +31,7 @@
             var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
             var tripProc = new TripProcessorHandler(cosmosWriter);
             var tommy = Guid.Parse("08f9752f-982d-445b-b75e-63e24f2c325c");
-            tripProc.Process("C:/users/riguy/Downloads/activity_7747876727.gpx", tommy);
+            await tripProc.Process("C:/users/riguy/Downloads/activity_7747876727.gpx", tommy);
         }
 
         /// <summary>
