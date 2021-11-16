@@ -48,8 +48,10 @@ namespace TripProcessor
             await this.uploadHandler.Upload(runDetails);
 
             // update stats
-            // userWayCoverage
+            await this.UpdateUserWayCoverage(overlappingNodes, userId);
             // userSummary
+
+            // update coverage geoJson squares for display
 
         }
 
@@ -113,6 +115,18 @@ namespace TripProcessor
                 }).ToArray()).ToArray(),
             };
             return runDetails;
+        }
+
+        private async Task UpdateUserWayCoverage(HashSet<UserNodeCoverage> userNodeCoverages, Guid userId) 
+        {
+            // Step 0: Get regions/ways affected
+            var uniqueWays = userNodeCoverages.Select(x => x.WayId).Distinct().ToArray();
+
+            // Step 1: Get all UserNodeCoverages for the affected areas.
+            var allNodeCoverages = await this.uploadHandler.GetAllCoveragesAsync(userId, uniqueWays);
+
+            // Step 2: Get all ways and regions containing those ways from the cache.
+            var a = 1;
         }
     }
 }

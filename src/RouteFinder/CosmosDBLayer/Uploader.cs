@@ -1,8 +1,10 @@
 ﻿namespace CosmosDBLayer
 {
     using Microsoft.Azure.Cosmos;
-    using RouteFinderDataModel;
+    using Microsoft.Azure.Cosmos.Linq;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using UserDataModel;
 
@@ -24,6 +26,30 @@
             _containerName = container;
 
             initialized = false;
+        }
+
+        public async Task<List<UserNodeCoverage>> GetAllUserNodeTasks(Guid userId, string[] wayIds)
+        {
+            var lookup = _container.GetItemLinqQueryable<UserNodeCoverage>()
+                .Where(n => n.UserId == userId)
+                .Where(n => wayIds.Contains(n.WayId));  // todo - validate this is expressed in efficient IN query.
+
+            using var feedIterator = lookup.ToFeedIterator();
+            var nodes = new List<UserNodeCoverage>();
+            while (feedIterator.HasMoreResults)
+            {
+                foreach (var item in await feedIterator.ReadNextAsync())
+                {
+                    nodes.Add(item);
+                }
+            }
+
+            return nodes;
+        }
+
+        internal Task<List<UserNodeCoverage>> GetAllUserNodeTasks(Guid userId, (string RegionId, string WayId)[] uniqueRegionWays)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
