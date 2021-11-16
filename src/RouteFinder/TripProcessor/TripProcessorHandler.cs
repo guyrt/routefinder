@@ -45,9 +45,11 @@ namespace TripProcessor
 
             // upload raw run
             var runDetails = this.ConvertGpx(parsedGpx, userId);
-
+            await this.uploadHandler.Upload(runDetails);
 
             // update stats
+            // userWayCoverage
+            // userSummary
 
         }
 
