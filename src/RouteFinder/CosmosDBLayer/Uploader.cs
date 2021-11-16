@@ -4,6 +4,7 @@
     using RouteFinderDataModel;
     using System;
     using System.Threading.Tasks;
+    using UserDataModel;
 
     public class Uploader
     {
@@ -23,6 +24,21 @@
             _containerName = container;
 
             initialized = false;
+        }
+
+        /// <summary>
+        /// Upload but only if item doesn't already exist. This keeps first timestamp.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public async Task UploadIfNotExistsAsync(UserNodeCoverage node)
+        {
+            using var lookup = await _container.ReadItemStreamAsync(node.Id, new PartitionKey(node.UserId.ToString()));
+            if (lookup.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                var response = await _container.UpsertItemAsync(node);
+                Console.WriteLine(response.StatusCode);
+            }
         }
 
         public async Task UploadAsync<T>(T way)

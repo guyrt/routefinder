@@ -39,7 +39,8 @@
         public async Task Upload(UserNodeCoverage userNode)
         {
             await uploader.Initialize();
-            await uploader.UploadAsync(userNode);
+            await uploader.UploadIfNotExistsAsync(userNode);
+            
             Console.WriteLine($"Uploaded node {userNode}");
         }
 
