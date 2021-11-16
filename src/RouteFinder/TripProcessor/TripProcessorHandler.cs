@@ -42,7 +42,10 @@ namespace TripProcessor
             {
                 await this.uploadHandler.Upload(node);
             }
-//            Parallel.ForEach(overlappingNodes, async node => await this.uploadHandler.Upload(node));
+
+            // upload raw run
+            var runDetails = this.ConvertGpx(parsedGpx, userId);
+
 
             // update stats
 
@@ -89,6 +92,25 @@ namespace TripProcessor
             Console.WriteLine($"Completed {overlappingNodes.Count} in {runtime} milliseconds.");
 
             return overlappingNodes;
+        }
+
+        private RunDetails ConvertGpx(gpxType parsedGpx, Guid userId)
+        {
+            var runTime = parsedGpx.metadata.time;
+            var runDetails = new RunDetails
+            {
+                UserId = userId,
+                Name = parsedGpx.trk.First().name,
+                Timestamp = parsedGpx.metadata.time,
+                Id = $"{userId}_{runTime.Ticks}",
+                Route = parsedGpx.trk.SelectMany(t => t.trkseg).Select(s => s.trkpt.Select(p => new RunDetails.RunPoint
+                {
+                    Latitude = p.lat,
+                    Longitude = p.lon,
+                    Elevation = p.ele,
+                }).ToArray()).ToArray(),
+            };
+            return runDetails;
         }
     }
 }

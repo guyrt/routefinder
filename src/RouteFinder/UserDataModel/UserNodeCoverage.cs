@@ -23,6 +23,8 @@ namespace UserDataModel
 
         public DateTime FirstRan { get; set; }
 
+        public string Type => "UserNodeCoverage";
+
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);

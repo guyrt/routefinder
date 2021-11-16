@@ -44,6 +44,14 @@
             Console.WriteLine($"Uploaded node {userNode}");
         }
 
+        public async Task Upload<T>(T runDetails)
+        {
+            await uploader.Initialize();
+            await uploader.UploadAsync(runDetails);
+
+            Console.WriteLine($"Uploaded {runDetails.GetType()} {runDetails}");
+        }
+
         public async Task Upload(IEnumerable<Way> ways)
         {
             var serializerSettings = new JsonSerializerSettings
