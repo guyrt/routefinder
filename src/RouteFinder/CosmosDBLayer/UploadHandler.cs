@@ -36,10 +36,16 @@
             uploader = new Uploader(cosmosClient, _databaseName, _containerName);
         }
 
-        public async Task<List<UserNodeCoverage>> GetAllCoveragesAsync(Guid userId, string[] uniqueWays)
+        public async Task<List<UserNodeCoverage>> GetAllUserNodeCoverageByWay(Guid userId, IEnumerable<string> uniqueWays)
         {
             await uploader.Initialize();
-            return await uploader.GetAllUserNodeTasks(userId, uniqueWays);
+            return await uploader.GetAllDocumentsByWay<UserNodeCoverage>(userId, "UserNodeCoverage", uniqueWays);
+        }
+
+        public async Task<List<UserWayCoverage>> GetAllUserWayCoverage(Guid userId, IEnumerable<string> uniqueWays)
+        {
+            await uploader.Initialize();
+            return await uploader.GetAllDocumentsByWay<UserWayCoverage>(userId, "UserWayCoverage", uniqueWays);
         }
 
         public async Task Upload(UserNodeCoverage userNode)

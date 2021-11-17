@@ -1,4 +1,5 @@
 ﻿using CosmosDBLayer;
+using RouteFinderDataModel.Proto;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -35,7 +36,7 @@ namespace TripProcessor
             var parsedGpx = GpxParser.Parse(gpxFilename);
             
             // get parsed gpx
-            var overlappingNodes = GetOverlap(parsedGpx, userId);
+            var overlappingNodes = GetOverlap(parsedGpx, userId, out var plusCodeRanges);
 
             // update the raw cache
             foreach (var node in overlappingNodes)
@@ -48,14 +49,14 @@ namespace TripProcessor
             await this.uploadHandler.Upload(runDetails);
 
             // update stats
-            await this.UpdateUserWayCoverage(overlappingNodes, userId);
+            await this.UpdateUserWayCoverage(overlappingNodes, userId, plusCodeRanges);
             // userSummary
 
             // update coverage geoJson squares for display
 
         }
 
-        private HashSet<UserNodeCoverage> GetOverlap(gpxType parsedGpx, Guid userId)
+        private HashSet<UserNodeCoverage> GetOverlap(gpxType parsedGpx, Guid userId, out HashSet<string> plusCodeRanges)
         {
             var runTime = parsedGpx.metadata.time;
 
@@ -63,12 +64,14 @@ namespace TripProcessor
 
             // process each track
             var watch = Stopwatch.StartNew();
+            plusCodeRanges = new HashSet<string>();
             foreach (var track in parsedGpx.trk)
             {
                 // get range
                 var ranges = GpxParser.ComputeBounds(track);
+                plusCodeRanges.UnionWith(ranges);
 
-                var tasks = ranges.Select(code => cache.LoadSegment(code)).ToArray();
+                var tasks = plusCodeRanges.Select(code => cache.LoadSegment(code)).ToArray();
                 Task.WaitAll(tasks);
 
                 foreach (var seg in track.trkseg)
@@ -80,6 +83,12 @@ namespace TripProcessor
                             var location = GpxParser.GetLocationCode(point.Latitude, point.Longitude);
                             var ways = cache.WayCache[location].Ways;
                             var wayLookup = ways.SingleOrDefault(x => x.Id == targetableWay);
+                            if (wayLookup == null)
+                            {
+                                Console.WriteLine($"Failed to find way {targetableWay} for point {point.Id}");
+                                continue;
+                            }
+
                             overlappingNodes.Add(new UserNodeCoverage
                             {
                                 UserId = userId,
@@ -117,16 +126,35 @@ namespace TripProcessor
             return runDetails;
         }
 
-        private async Task UpdateUserWayCoverage(HashSet<UserNodeCoverage> userNodeCoverages, Guid userId) 
+        private async Task UpdateUserWayCoverage(HashSet<UserNodeCoverage> userNodeCoverages, Guid userId, HashSet<string> plusCodeRanges) 
         {
             // Step 0: Get regions/ways affected
-            var uniqueWays = userNodeCoverages.Select(x => x.WayId).Distinct().ToArray();
+            var uniqueWays = userNodeCoverages.Select(x => x.WayId).Distinct().ToHashSet();
 
             // Step 1: Get all UserNodeCoverages for the affected areas.
-            var allNodeCoverages = await this.uploadHandler.GetAllCoveragesAsync(userId, uniqueWays);
+            var allNodeCoverages = (await this.uploadHandler.GetAllUserNodeCoverageByWay(userId, uniqueWays.ToArray())).ToDictionary(k => k.WayId, v => v);
+            var allWaySummaries = await this.uploadHandler.GetAllUserWayCoverage(userId, uniqueWays.ToArray());
 
             // Step 2: Get all ways and regions containing those ways from the cache.
-            var a = 1;
+            var localWays = new HashSet<LookupTargetableWay>();
+            foreach (var range in plusCodeRanges)
+            {
+                localWays.UnionWith(cache.WayCache[range].Ways.Where(x => uniqueWays.Contains(x.Id)));
+            }
+
+            var wayLookup = localWays.ToDictionary(k => k.Id, v => v);
+            var localRegions = localWays.Select(x => x.Relation).Distinct().ToArray();
+
+            // Step 4: Update UserWayCoverages
+            var wayCoverageCounts = wayLookup.GroupBy(x => (x.Value.Id, x.Value.Relation)).Select(group => new { Key = group.Key, Count = group.Count()});
+            foreach (var kvp in wayCoverageCounts)
+            {
+                var (wayId, regionId) = kvp.Key;
+                var count = kvp.Count;
+
+                var totalNodes = wayLookup[wayId].OriginalWays.SelectMany(w => w.NodeIds).Distinct();
+
+            }
         }
     }
 }

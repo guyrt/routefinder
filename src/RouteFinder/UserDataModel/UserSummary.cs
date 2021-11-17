@@ -1,16 +1,23 @@
-﻿namespace UserDataModel
+﻿using Newtonsoft.Json;
+
+namespace UserDataModel
 {
     /// <summary>
     /// Summary of a user that can be used to retrieve basic run stats.
     /// </summary>
-    public class UserSummary
+    public class UserSummary : IPartitionedDataModel
     {
-        public Guid Id { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// Summary objects for every region this user has started.
         /// </summary>
         public List<RegionSummary>? RegionSummaries { get; set; }
+
+        public string Type => "UserSummary";
 
         public class RegionSummary
         {

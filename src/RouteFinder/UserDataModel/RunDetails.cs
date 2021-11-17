@@ -2,7 +2,10 @@
 
 namespace UserDataModel
 {
-    public class RunDetails
+    /// <summary>
+    /// Todo - track completed and advanced ways
+    /// </summary>
+    public class RunDetails : IPartitionedDataModel
     {
         [JsonProperty("id")]
         public string Id { get; set; }

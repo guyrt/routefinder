@@ -28,14 +28,16 @@
             initialized = false;
         }
 
-        public async Task<List<UserNodeCoverage>> GetAllUserNodeTasks(Guid userId, string[] wayIds)
+        public async Task<List<T>> GetAllDocumentsByWay<T>(Guid userId, string type, IEnumerable<string> wayIds)
+            where T : IPartitionedWithWay
         {
-            var lookup = _container.GetItemLinqQueryable<UserNodeCoverage>()
+            var lookup = _container.GetItemLinqQueryable<T>()
                 .Where(n => n.UserId == userId)
+                .Where(n => n.Type == type)
                 .Where(n => wayIds.Contains(n.WayId));  // todo - validate this is expressed in efficient IN query.
 
             using var feedIterator = lookup.ToFeedIterator();
-            var nodes = new List<UserNodeCoverage>();
+            var nodes = new List<T>();
             while (feedIterator.HasMoreResults)
             {
                 foreach (var item in await feedIterator.ReadNextAsync())

@@ -3,7 +3,7 @@
     /// <summary>
     /// Cache of node coverage rolled up to a region/way
     /// </summary>
-    public class UserWayCoverage
+    public class UserWayCoverage : IPartitionedWithWay
     {
         public Guid UserId { get; set; }
 
@@ -14,5 +14,7 @@
         public int NodeCompletedCount { get; set; }
 
         public int NumNodesInWay { get; set; }
+
+        public string Type => "UserWayCoverage";
     }
 }

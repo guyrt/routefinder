@@ -7,7 +7,7 @@ namespace UserDataModel
     /// 
     /// Most other records in our system are simply summaries/caches of the info contained here.
     /// </summary>
-    public class UserNodeCoverage
+    public class UserNodeCoverage : IPartitionedWithWay
     {
         [JsonProperty("id")]
         public string Id => $"{UserId}_{RegionId}_{WayId}_{NodeId}";
