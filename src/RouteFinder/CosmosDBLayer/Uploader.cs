@@ -31,11 +31,12 @@
         public async Task<List<T>> GetAllDocumentsByWay<T>(Guid userId, string type, IEnumerable<string> wayIds)
             where T : IPartitionedWithWay
         {
+            Console.WriteLine($"Getting {type} based on {wayIds.Count()} ways");
             var lookup = _container.GetItemLinqQueryable<T>()
-                .Where(n => n.UserId == userId)
-                .Where(n => n.Type == type)
-                .Where(n => wayIds.Contains(n.WayId));  // todo - validate this is expressed in efficient IN query.
-
+                            .Where(n => n.UserId == userId)
+                            .Where(n => n.Type == type)
+                            .Where(n => wayIds.Contains(n.WayId));  // todo - validate this is expressed in efficient IN query.
+            
             using var feedIterator = lookup.ToFeedIterator();
             var nodes = new List<T>();
             while (feedIterator.HasMoreResults)
@@ -69,9 +70,11 @@
             }
         }
 
-        public async Task UploadAsync<T>(T way)
+        public async Task UploadWithDeleteAsync<T>(T item)
+            where T : IPartitionedDataModel
         {
-            var response = await _container.UpsertItemAsync(way);
+        //    await _container.DeleteItemStreamAsync(item.Id, new PartitionKey(item.UserId.ToString()));
+            var response = await _container.UpsertItemAsync(item);
             Console.WriteLine(response.StatusCode);
         }
 

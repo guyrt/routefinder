@@ -152,7 +152,7 @@ namespace TripProcessor
             // Step 4: Create or Update UserWayCoverages
             foreach ((var wayId, var numNodesRun) in nodeCoverage)
             {
-                var totalNodes = wayLookup[wayId].OriginalWays.SelectMany(w => w.NodeIds).Distinct();
+                var totalNodes = wayLookup[wayId].OriginalWays.SelectMany(w => w.NodeIds).Distinct().ToHashSet();
 
                 if (!allWaySummaries.ContainsKey(wayId))
                 {
@@ -160,6 +160,7 @@ namespace TripProcessor
                     {
                         UserId = userId,
                         WayId = wayId,
+                        WayName = wayLookup[wayId].WayName,
                         RegionId = wayLookup[wayId].Relation,
                         NodeCompletedCount = nodeCoverage[wayId],
                         NumNodesInWay = numNodesRun,

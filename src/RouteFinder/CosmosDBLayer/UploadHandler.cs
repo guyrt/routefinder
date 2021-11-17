@@ -52,50 +52,17 @@
         {
             await uploader.Initialize();
             await uploader.UploadIfNotExistsAsync(userNode);
-            
+
             Console.WriteLine($"Uploaded node {userNode}");
         }
 
         public async Task Upload<T>(T runDetails)
+            where T : IPartitionedDataModel
         {
             await uploader.Initialize();
-            await uploader.UploadAsync(runDetails);
+            await uploader.UploadWithDeleteAsync(runDetails);
 
             Console.WriteLine($"Uploaded {runDetails.GetType()} {runDetails}");
         }
-
-        public async Task Upload(IEnumerable<Way> ways)
-        {
-            var serializerSettings = new JsonSerializerSettings
-            {
-                Converters =
-                {
-                    new StoredWaySerDe()
-                }
-            };
-            var clientOptions = new CosmosClientOptions
-            {
-                Serializer = new CustomOsmSerializer(serializerSettings)
-            };
-
-            using (var client = new CosmosClient(_endpoint, _authKey, clientOptions))
-            {
-                var uploader = new Uploader(client, _databaseName, _containerName);
-                await uploader.Initialize();
-
-                long i = 0;
-                foreach (var way in ways)
-                {
-                    await uploader.UploadAsync(way);
-                    i++;
-                    if (i % 10000 == 0)
-                    {
-                        Console.WriteLine($"Wrote {i}");
-                        Thread.Sleep(1000);
-                    }
-                }
-            }
-        }
-
     }
 }
