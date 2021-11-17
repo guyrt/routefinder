@@ -50,7 +50,9 @@ namespace TripProcessor
 
             // update stats
             await this.UpdateUserWayCoverage(overlappingNodes, userId, plusCodeRanges);
+
             // userSummary
+            await this.UpdateUserSummaryAsync(userId);
 
             // update coverage geoJson squares for display
 
@@ -132,29 +134,54 @@ namespace TripProcessor
             var uniqueWays = userNodeCoverages.Select(x => x.WayId).Distinct().ToHashSet();
 
             // Step 1: Get all UserNodeCoverages for the affected areas.
-            var allNodeCoverages = (await this.uploadHandler.GetAllUserNodeCoverageByWay(userId, uniqueWays.ToArray())).ToDictionary(k => k.WayId, v => v);
-            var allWaySummaries = await this.uploadHandler.GetAllUserWayCoverage(userId, uniqueWays.ToArray());
+            var allNodeCoverages = (await this.uploadHandler.GetAllUserNodeCoverageByWay(userId, uniqueWays.ToArray()));
+            var allWaySummaries = (await this.uploadHandler.GetAllUserWayCoverage(userId, uniqueWays.ToArray())).ToDictionary(k => k.WayId, v => v);
+            var nodeCoverage = allNodeCoverages.GroupBy(w => w.WayId).ToDictionary(k => k.Key, v => v.Count());
 
             // Step 2: Get all ways and regions containing those ways from the cache.
-            var localWays = new HashSet<LookupTargetableWay>();
+            var allWays = new HashSet<LookupTargetableWay>();
             foreach (var range in plusCodeRanges)
             {
-                localWays.UnionWith(cache.WayCache[range].Ways.Where(x => uniqueWays.Contains(x.Id)));
+                allWays.UnionWith(cache.WayCache[range].Ways.Where(x => uniqueWays.Contains(x.Id)));
             }
 
-            var wayLookup = localWays.ToDictionary(k => k.Id, v => v);
-            var localRegions = localWays.Select(x => x.Relation).Distinct().ToArray();
+            var wayLookup = allWays.ToDictionary(k => k.Id, v => v);
+            var localRegions = allWays.Select(x => x.Relation).Distinct().ToArray();
+            var wayCoverageCounts = wayLookup.GroupBy(x => x.Value.Id).ToDictionary(group1 => group1.Key, groupV => groupV.Count());
 
-            // Step 4: Update UserWayCoverages
-            var wayCoverageCounts = wayLookup.GroupBy(x => (x.Value.Id, x.Value.Relation)).Select(group => new { Key = group.Key, Count = group.Count()});
-            foreach (var kvp in wayCoverageCounts)
+            // Step 4: Create or Update UserWayCoverages
+            foreach ((var wayId, var numNodesRun) in nodeCoverage)
             {
-                var (wayId, regionId) = kvp.Key;
-                var count = kvp.Count;
-
                 var totalNodes = wayLookup[wayId].OriginalWays.SelectMany(w => w.NodeIds).Distinct();
 
+                if (!allWaySummaries.ContainsKey(wayId))
+                {
+                    allWaySummaries.Add(wayId, new UserWayCoverage
+                    {
+                        UserId = userId,
+                        WayId = wayId,
+                        RegionId = wayLookup[wayId].Relation,
+                        NodeCompletedCount = nodeCoverage[wayId],
+                        NumNodesInWay = numNodesRun,
+                    });
+                }
+                else
+                {
+                    allWaySummaries[wayId].NodeCompletedCount = nodeCoverage[wayId];
+                    allWaySummaries[wayId].NumNodesInWay = numNodesRun;
+                }
             }
+
+            // Step 5: updates
+            foreach (var wayId in nodeCoverage.Keys)
+            {
+                await this.uploadHandler.Upload(allWaySummaries[wayId]);
+            }
+        }
+
+        private async Task UpdateUserSummaryAsync(Guid userId)
+        {
+            return;
         }
     }
 }
