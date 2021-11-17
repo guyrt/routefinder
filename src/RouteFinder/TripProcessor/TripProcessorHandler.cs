@@ -39,6 +39,7 @@ namespace TripProcessor
             var overlappingNodes = GetOverlap(parsedGpx, userId, out var plusCodeRanges);
 
             // update the raw cache
+            // this could parallelize. https://devblogs.microsoft.com/cosmosdb/introducing-bulk-support-in-the-net-sdk/
             foreach (var node in overlappingNodes)
             {
                 await this.uploadHandler.Upload(node);
@@ -145,14 +146,16 @@ namespace TripProcessor
                 allWays.UnionWith(cache.WayCache[range].Ways.Where(x => uniqueWays.Contains(x.Id)));
             }
 
-            var wayLookup = allWays.ToDictionary(k => k.Id, v => v);
-            var localRegions = allWays.Select(x => x.Relation).Distinct().ToArray();
-            var wayCoverageCounts = wayLookup.GroupBy(x => x.Value.Id).ToDictionary(group1 => group1.Key, groupV => groupV.Count());
+            var wayLookup = allWays.ToDictionary(w => w.Id, v => v);
+            var wayCoverageCounts = allWays.GroupBy(x => x.Id).ToDictionary(
+                group1 => group1.Key, 
+                groupV => groupV.Select(xx => xx.OriginalWays.SelectMany(ow => ow.NodeIds).Distinct().Count()).Sum()
+            );
 
-            // Step 4: Create or Update UserWayCoverages
+            // Step 3: Create or Update UserWayCoverages
             foreach ((var wayId, var numNodesRun) in nodeCoverage)
             {
-                var totalNodes = wayLookup[wayId].OriginalWays.SelectMany(w => w.NodeIds).Distinct().ToHashSet();
+                var totalNodes = wayCoverageCounts[wayId];
 
                 if (!allWaySummaries.ContainsKey(wayId))
                 {
@@ -163,17 +166,18 @@ namespace TripProcessor
                         WayName = wayLookup[wayId].WayName,
                         RegionId = wayLookup[wayId].Relation,
                         NodeCompletedCount = nodeCoverage[wayId],
-                        NumNodesInWay = numNodesRun,
+                        NumNodesInWay = totalNodes,
                     });
                 }
                 else
                 {
+                    allWaySummaries[wayId].WayName = wayLookup[wayId].WayName;
                     allWaySummaries[wayId].NodeCompletedCount = nodeCoverage[wayId];
-                    allWaySummaries[wayId].NumNodesInWay = numNodesRun;
+                    allWaySummaries[wayId].NumNodesInWay = totalNodes;
                 }
             }
 
-            // Step 5: updates
+            // Step 4: updates
             foreach (var wayId in nodeCoverage.Keys)
             {
                 await this.uploadHandler.Upload(allWaySummaries[wayId]);

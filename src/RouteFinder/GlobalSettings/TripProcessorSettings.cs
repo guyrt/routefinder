@@ -7,7 +7,7 @@
         /// <summary>
         /// Two points that are this close are considered overlapping in our main processor.
         /// </summary>
-        public double OverlapThresholdMeters { get; set; } = 1;
+        public double OverlapThresholdMeters { get; set; } = 5;
 
         /// <summary>
         /// Not thread safe on create. Suggest forcing create in main.

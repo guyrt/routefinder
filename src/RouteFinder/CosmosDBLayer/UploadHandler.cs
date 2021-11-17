@@ -52,8 +52,6 @@
         {
             await uploader.Initialize();
             await uploader.UploadIfNotExistsAsync(userNode);
-
-            Console.WriteLine($"Uploaded node {userNode}");
         }
 
         public async Task Upload<T>(T runDetails)

@@ -65,8 +65,7 @@
             using var lookup = await _container.ReadItemStreamAsync(node.Id, new PartitionKey(node.UserId.ToString()));
             if (lookup.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                var response = await _container.UpsertItemAsync(node);
-                Console.WriteLine(response.StatusCode);
+                await _container.UpsertItemAsync(node);
             }
         }
 
