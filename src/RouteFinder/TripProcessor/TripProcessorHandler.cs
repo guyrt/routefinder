@@ -27,7 +27,7 @@ namespace TripProcessor
         {
             pointComparer = new PointComparer(cache);
             this.uploadHandler = uploadHandler;
-         }
+        }
 
         // this should fire off a bunch of DTF actions.
         public async Task Process(string gpxFilename, Guid userId)
@@ -40,15 +40,10 @@ namespace TripProcessor
             var overlappingNodes = GetOverlap(parsedGpx, userId, plusCodeRanges);
 
             // update the raw cache
-            // this could parallelize. https://devblogs.microsoft.com/cosmosdb/introducing-bulk-support-in-the-net-sdk/
-            foreach (var node in overlappingNodes)
-            {
-                await this.uploadHandler.Upload(node);
-            }
+            await UploadRawCache(overlappingNodes);
 
             // upload raw run
-            var runDetails = this.ConvertGpx(parsedGpx, userId);
-            await this.uploadHandler.Upload(runDetails);
+            await UploadRawRun(parsedGpx, userId);
 
             // update stats
             await this.UpdateUserWayCoverage(overlappingNodes, userId, plusCodeRanges);
@@ -60,10 +55,19 @@ namespace TripProcessor
             
         }
 
-        private bool HandleError(Exception e)
+        public async Task UploadRawRun(gpxType parsedGpx, Guid userId)
         {
-            Console.WriteLine($"Exception {e} in DTF.");
-            return true; // todo validate.
+            var runDetails = this.ConvertGpx(parsedGpx, userId);
+            await this.uploadHandler.Upload(runDetails);
+        }
+
+        public async Task UploadRawCache(HashSet<UserNodeCoverage> overlappingNodes)
+        {
+            // this could parallelize. https://devblogs.microsoft.com/cosmosdb/introducing-bulk-support-in-the-net-sdk/
+            foreach (var node in overlappingNodes)
+            {
+                await this.uploadHandler.Upload(node);
+            }
         }
 
         public static HashSet<string> GetPlusCodeRanges(gpxType parsedGpx)
@@ -145,7 +149,7 @@ namespace TripProcessor
             return runDetails;
         }
 
-        private async Task UpdateUserWayCoverage(HashSet<UserNodeCoverage> userNodeCoverages, Guid userId, HashSet<string> plusCodeRanges) 
+        public async Task UpdateUserWayCoverage(HashSet<UserNodeCoverage> userNodeCoverages, Guid userId, HashSet<string> plusCodeRanges) 
         {
             // Step 0: Get regions/ways affected
             var uniqueWays = userNodeCoverages.Select(x => x.WayId).Distinct().ToHashSet();

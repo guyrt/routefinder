@@ -17,23 +17,29 @@ namespace TripIngestion
     public static class GpxFileUpload
     {
         [FunctionName("GpxFileUpload")]
-        public static async Task<List<string>> RunOrchestrator(
+        public static async Task<Guid> RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
-            var outputs = new List<string>();
+            var userId = Guid.NewGuid();
 
             // Replace "hello" with the name of your Durable Activity Function.
             var parsedGpx = GpxParser.Parse("file");
             var plusCodeRanges = TripProcessorHandler.GetPlusCodeRanges(parsedGpx);
 
-            (gpxType ParsedGpx, Guid UserId, HashSet<string> PlusCodeRanges) foo = (ParsedGpx: parsedGpx, UserId: Guid.NewGuid(), PlusCodeRanges: plusCodeRanges);
-            var overlappingNodes = await context.CallActivityAsync<HashSet<UserNodeCoverage>>("GpxFileUpload_OverlappingNodes", foo);
+            // parallel tracks: upload raw while also computing overlaps.
+            (gpxType ParsedGpx, Guid UserId, HashSet<string> PlusCodeRanges) overlapComputeParams = (ParsedGpx: parsedGpx, UserId: userId, PlusCodeRanges: plusCodeRanges);
+            var overlappingNodesTask = context.CallActivityAsync<HashSet<UserNodeCoverage>>("GpxFileUpload_OverlappingNodes", overlapComputeParams);
+            
+            var uploadRawTask = context.CallActivityAsync("GpxFileUpload_UploadRawRun", (ParsedGpx: parsedGpx, UserId: userId));
+            Task.WaitAll(overlappingNodesTask, uploadRawTask);
+            var overlappingNodes = overlappingNodesTask.Result;
 
-            outputs.Add(await context.CallActivityAsync<string>("GpxFileUpload_Hello", "Seattle"));
-            outputs.Add(await context.CallActivityAsync<string>("GpxFileUpload_Hello", "London"));
+            // upload overlapping nodes
+            var uploadCacheTask = context.CallActivityAsync("GpxFileUpload_UploadCache", overlappingNodes);
+            var updateUserWayCoverage = context.CallActivityAsync("GpxFileUpload_UpdateUserWayCoverage", (UserNodeCoverages: overlappingNodesTask, UserId: userId, PlusCodeRanges: plusCodeRanges));
+            Task.WaitAll(uploadCacheTask, updateUserWayCoverage);
 
-            // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
-            return outputs;
+            return userId;
         }
 
         [FunctionName("GpxFileUpload_OverlappingNodes")]
@@ -44,6 +50,34 @@ namespace TripIngestion
             var tripHandler = new TripProcessorHandler(cosmosWriter);
             var overlappingNodes = tripHandler.GetOverlap(payload.ParsedGpx, payload.UserId, payload.PlusCodeRanges);
             return overlappingNodes;
+        }
+
+        [FunctionName("GpxFileUpload_UploadCache")]
+        public static HashSet<UserNodeCoverage> UploadCache([ActivityTrigger] (gpxType ParsedGpx, Guid UserId, HashSet<string> PlusCodeRanges) payload, ILogger log)
+        {
+            var config = SettingsManager.GetCredentials();
+            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
+            var tripHandler = new TripProcessorHandler(cosmosWriter);
+            var overlappingNodes = tripHandler.GetOverlap(payload.ParsedGpx, payload.UserId, payload.PlusCodeRanges);
+            return overlappingNodes;
+        }
+
+        [FunctionName("GpxFileUpload_UploadRawRun")]
+        public static async Task UploadRawRun([ActivityTrigger] (gpxType ParsedGpx, Guid UserId) payload, ILogger log)
+        {
+            var config = SettingsManager.GetCredentials();
+            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
+            var tripHandler = new TripProcessorHandler(cosmosWriter);
+            await tripHandler.UploadRawRun(payload.ParsedGpx, payload.UserId);
+        }
+
+        [FunctionName("GpxFileUpload_UpdateUserWayCoverage")]
+        public static async Task UpdateUserWayCoverage([ActivityTrigger] (HashSet<UserNodeCoverage> UserNodeCoverages, Guid UserId, HashSet<string> PlusCodeRanges) payload, ILogger log)
+        {
+            var config = SettingsManager.GetCredentials();
+            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
+            var tripHandler = new TripProcessorHandler(cosmosWriter);
+            await tripHandler.UpdateUserWayCoverage(payload.UserNodeCoverages, payload.UserId, payload.PlusCodeRanges);
         }
 
         [FunctionName("GpxFileUpload_HttpStart")]
