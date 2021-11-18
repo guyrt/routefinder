@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataInspector", "DataInspec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TripProcessor", "TripProcessor\TripProcessor.csproj", "{0899688A-1968-4382-9E0E-4B2770F265F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserDataModel", "UserDataModel\UserDataModel.csproj", "{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserDataModel", "UserDataModel\UserDataModel.csproj", "{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TripIngestion", "TripIngestion\TripIngestion.csproj", "{D347D010-F48C-4167-B7A6-532DED1948A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,10 @@ Global
 		{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B6D56E3-B792-4C6B-AD0F-A95834A3D47D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D347D010-F48C-4167-B7A6-532DED1948A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D347D010-F48C-4167-B7A6-532DED1948A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D347D010-F48C-4167-B7A6-532DED1948A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D347D010-F48C-4167-B7A6-532DED1948A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

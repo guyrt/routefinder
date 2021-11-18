@@ -37,6 +37,11 @@ namespace TripProcessor.GpxData
 
         }
 
+        /// <summary>
+        /// todo - both of these fxns should return lists and should jitter the point by a fixed amount determined by the accuracy to account for points that are right on an edge.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         public static string GetLocationCode(wptType point)
         {
             return GetLocationCode(Convert.ToDouble(point.lat), Convert.ToDouble(point.lon));

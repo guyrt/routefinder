@@ -34,9 +34,10 @@ namespace TripProcessor
         {
 
             var parsedGpx = GpxParser.Parse(gpxFilename);
-            
+
             // get parsed gpx
-            var overlappingNodes = GetOverlap(parsedGpx, userId, out var plusCodeRanges);
+            var plusCodeRanges = GetPlusCodeRanges(parsedGpx);
+            var overlappingNodes = GetOverlap(parsedGpx, userId, plusCodeRanges);
 
             // update the raw cache
             // this could parallelize. https://devblogs.microsoft.com/cosmosdb/introducing-bulk-support-in-the-net-sdk/
@@ -56,10 +57,28 @@ namespace TripProcessor
             await this.UpdateUserSummaryAsync(userId);
 
             // update coverage geoJson squares for display
-
+            
         }
 
-        private HashSet<UserNodeCoverage> GetOverlap(gpxType parsedGpx, Guid userId, out HashSet<string> plusCodeRanges)
+        private bool HandleError(Exception e)
+        {
+            Console.WriteLine($"Exception {e} in DTF.");
+            return true; // todo validate.
+        }
+
+        public static HashSet<string> GetPlusCodeRanges(gpxType parsedGpx)
+        {
+            var plusCodeRanges = new HashSet<string>();
+            foreach (var track in parsedGpx.trk)
+            {
+                // get range
+                var ranges = GpxParser.ComputeBounds(track);
+                plusCodeRanges.UnionWith(ranges);
+            }
+            return plusCodeRanges;
+        }
+
+        public HashSet<UserNodeCoverage> GetOverlap(gpxType parsedGpx, Guid userId, HashSet<string> plusCodeRanges)
         {
             var runTime = parsedGpx.metadata.time;
 
@@ -67,16 +86,13 @@ namespace TripProcessor
 
             // process each track
             var watch = Stopwatch.StartNew();
-            plusCodeRanges = new HashSet<string>();
+
+            var tasks = plusCodeRanges.Select(code => cache.LoadSegment(code)).ToArray();
+            Task.WaitAll(tasks);
+
             foreach (var track in parsedGpx.trk)
             {
-                // get range
-                var ranges = GpxParser.ComputeBounds(track);
-                plusCodeRanges.UnionWith(ranges);
-
-                var tasks = plusCodeRanges.Select(code => cache.LoadSegment(code)).ToArray();
-                Task.WaitAll(tasks);
-
+                
                 foreach (var seg in track.trkseg)
                 {
                     foreach (var point in pointComparer.FindOverlapping(seg.trkpt))
