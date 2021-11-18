@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.IO;
 using System.Threading.Tasks;
 using CosmosDBLayer;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -18,12 +20,13 @@ namespace TripIngestion
     {
         [FunctionName("GpxFileUpload")]
         public static async Task<Guid> RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context)
+            [OrchestrationTrigger] IDurableOrchestrationContext context, (Guid UserId, string Payload) payload)
         {
-            var userId = Guid.NewGuid();
+            
 
             // Replace "hello" with the name of your Durable Activity Function.
-            var parsedGpx = GpxParser.Parse("file");
+            var parsedGpx = GpxParser.Parse(new StringReader(payload.Payload));
+            var userId = payload.UserId;
             var plusCodeRanges = TripProcessorHandler.GetPlusCodeRanges(parsedGpx);
 
             // parallel tracks: upload raw while also computing overlaps.
@@ -81,17 +84,21 @@ namespace TripIngestion
         }
 
         [FunctionName("GpxFileUpload_HttpStart")]
-        public static async Task<HttpResponseMessage> HttpStart(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestMessage req,
+        public static async Task<IActionResult> HttpStart(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "/gpx/{userId}")] HttpRequest req,
+            string userIdStr,
             [DurableClient] IDurableOrchestrationClient starter,
             ILogger log)
         {
+            var data = await new StreamReader(req.Body).ReadToEndAsync();
+            var userId = Guid.Parse(userIdStr);
+
             // Function input comes from the request content.
-            string instanceId = await starter.StartNewAsync("GpxFileUpload", null);
+            string instanceId = await starter.StartNewAsync<(Guid UserId, string Payload)>("GpxFileUpload", null, (userId, data));
 
             log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
-            return starter.CreateCheckStatusResponse(req, instanceId);
+            return new CreatedResult(string.Empty, instanceId);
         }
     }
 }

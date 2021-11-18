@@ -3,6 +3,7 @@ using RouteFinderDataModel.Proto;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TripProcessor.GpxData;
@@ -13,7 +14,7 @@ namespace TripProcessor
     /// <summary>
     /// Main driver for a trip processing.
     /// 
-    /// This is temporary and should be replaced with DTF orchestrator to processed GPX then fan out.
+    /// This is temporary and should be replaced with DTF orchestrator to process GPX then fan out.
     /// </summary>
     public class TripProcessorHandler
     {
@@ -33,7 +34,7 @@ namespace TripProcessor
         public async Task Process(string gpxFilename, Guid userId)
         {
 
-            var parsedGpx = GpxParser.Parse(gpxFilename);
+            var parsedGpx = GpxParser.Parse(File.OpenText(gpxFilename));
 
             // get parsed gpx
             var plusCodeRanges = GetPlusCodeRanges(parsedGpx);

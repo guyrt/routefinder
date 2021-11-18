@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -10,9 +11,9 @@ namespace TripProcessor.GpxData
 {
     public class GpxParser
     {
-        public static gpxType Parse(string gpxFilename)
+        public static gpxType Parse(TextReader gpxFileContents)
         {
-            using var reader = XmlReader.Create(gpxFilename);
+            using var reader = XmlReader.Create(gpxFileContents);
             var serializer = new XmlSerializer(typeof(gpxType));
             var gpxTrace = (gpxType)serializer.Deserialize(reader);
             return gpxTrace;
