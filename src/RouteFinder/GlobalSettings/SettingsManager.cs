@@ -1,4 +1,4 @@
-﻿namespace OsmETL
+﻿namespace GlobalSettings
 {
     using Microsoft.Extensions.Configuration;
 

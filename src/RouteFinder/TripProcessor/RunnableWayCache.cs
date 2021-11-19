@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 using AzureBlobHandler;
-using OsmETL;
+using GlobalSettings;
 using RouteFinderDataModel.Proto;
 
 namespace TripProcessor

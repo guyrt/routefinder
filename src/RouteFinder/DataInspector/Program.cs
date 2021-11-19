@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AzureBlobHandler;
 using Google.Protobuf;
 using Newtonsoft.Json;
-using OsmETL;
+using GlobalSettings;
 using RouteFinderDataModel.Proto;
 
 namespace DataInspector

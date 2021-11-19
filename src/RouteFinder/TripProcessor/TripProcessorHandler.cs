@@ -56,6 +56,13 @@ namespace TripProcessor
             
         }
 
+        public void WarmCache(gpxType parsedGpx)
+        {
+            var plusCodeRanges = GetPlusCodeRanges(parsedGpx);
+            var tasks = plusCodeRanges.Select(code => cache.LoadSegment(code)).ToArray();
+            Task.WaitAll(tasks);
+        }
+
         public async Task UploadRawRun(gpxType parsedGpx, Guid userId)
         {
             var runDetails = this.ConvertGpx(parsedGpx, userId);

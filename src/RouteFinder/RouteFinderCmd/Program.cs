@@ -14,7 +14,7 @@
     using TripProcessor;
     using System.Threading.Tasks;
     using CosmosDBLayer;
-    using OsmETL;
+    using GlobalSettings;
 
     /// <summary>
     ///  NOT USED.

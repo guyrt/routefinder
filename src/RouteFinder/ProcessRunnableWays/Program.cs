@@ -7,7 +7,7 @@ using Google.Protobuf;
 using RouteCleaner;
 using RouteFinderDataModel.Proto;
 
-namespace OsmETL
+namespace GlobalSettings
 {
     public class Program
     {

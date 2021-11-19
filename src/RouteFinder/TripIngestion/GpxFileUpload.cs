@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CosmosDBLayer;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using OsmETL;
+using GlobalSettings;
 using TripProcessor;
 using TripProcessor.GpxData;
 using UserDataModel;
@@ -26,79 +26,80 @@ namespace TripIngestion
             [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
 
-            (var rawGpxData, var userId) = context.GetInput<(string, Guid)>();
+            (var userId, var rawGpxData) = context.GetInput<(Guid, string)>();
             var parsedGpx = GpxParser.Parse(new StringReader(rawGpxData));
 
             // todo - also upload the file to raw storage!
             // todo - and record the raw file location in the uploaded cache function below.
 
-            var config = SettingsManager.GetCredentials();
+            var config = SettingsManager.GetCredentials(); // todo this doesn't work. probably just move these configs for Azure Fxn
             var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
             var tripHandler = new TripProcessorHandler(cosmosWriter);
             var plusCodeRanges = TripProcessorHandler.GetPlusCodeRanges(parsedGpx);
 
-            // todo - prewarm cache in tripHandler.
+            tripHandler = await context.CallActivityAsync<TripProcessorHandler>("GpxFileUpload_WarmCache", (parsedGpx, tripHandler));
 
             // parallel tracks: upload raw while also computing overlaps.
             var overlapComputeParams = (parsedGpx, userId, plusCodeRanges, tripHandler);
             var overlappingNodesTask = context.CallActivityAsync<HashSet<UserNodeCoverage>>("GpxFileUpload_OverlappingNodes", overlapComputeParams);
             
-            var uploadRawTask = context.CallActivityAsync("GpxFileUpload_UploadRawRun", (ParsedGpx: parsedGpx, UserId: userId));
+            var uploadRawTask = context.CallActivityAsync("GpxFileUpload_UploadRawRun", (parsedGpx, userId, tripHandler));
             Task.WaitAll(overlappingNodesTask, uploadRawTask);
             var overlappingNodes = overlappingNodesTask.Result;
 
             // upload overlapping nodes
-            var uploadCacheTask = context.CallActivityAsync("GpxFileUpload_UploadCache", overlappingNodes);
-            var updateUserWayCoverage = context.CallActivityAsync("GpxFileUpload_UpdateUserWayCoverage", (UserNodeCoverages: overlappingNodesTask, UserId: userId, PlusCodeRanges: plusCodeRanges));
+            var uploadCacheTask = context.CallActivityAsync("GpxFileUpload_UploadCache", (overlappingNodes, tripHandler));
+            var updateUserWayCoverage = context.CallActivityAsync("GpxFileUpload_UpdateUserWayCoverage", (overlappingNodes, userId, plusCodeRanges, tripHandler));
             Task.WaitAll(uploadCacheTask, updateUserWayCoverage);
 
             return userId;
         }
 
+        [FunctionName("GpxFileUpload_WarmCache")]
+        public static TripProcessorHandler WarmTripCache([ActivityTrigger] IDurableActivityContext inputs, ILogger log)
+        {
+            (var parsedGpx, var tripHandler) = inputs.GetInput<(gpxType, TripProcessorHandler)>();
+            tripHandler.WarmCache(parsedGpx);
+            return tripHandler;
+        }
+
         [FunctionName("GpxFileUpload_OverlappingNodes")]
         public static HashSet<UserNodeCoverage> GetOverlap([ActivityTrigger] IDurableActivityContext inputs, ILogger log)
         {
-            (gpxType parsedGpx, Guid userId, HashSet<string> plusCodeRanges, TripProcessorHandler tripHandler) = inputs.GetInput<(gpxType, Guid, HashSet<string>, TripProcessorHandler)>();
-            var overlappingNodes = tripHandler.GetOverlap(parsedGpx, userId, plusCodeRanges);
-            return overlappingNodes;
+            (var parsedGpx, var userId, var plusCodeRanges, var tripHandler) = inputs.GetInput<(gpxType, Guid, HashSet<string>, TripProcessorHandler)>();
+            return tripHandler.GetOverlap(parsedGpx, userId, plusCodeRanges);
         }
 
         [FunctionName("GpxFileUpload_UploadCache")]
-        public static HashSet<UserNodeCoverage> UploadCache([ActivityTrigger] (gpxType ParsedGpx, Guid UserId, HashSet<string> PlusCodeRanges) payload, ILogger log)
+        public async static Task UploadCache([ActivityTrigger] IDurableActivityContext payload, ILogger log)
         {
-            var config = SettingsManager.GetCredentials();
-            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
-            var tripHandler = new TripProcessorHandler(cosmosWriter);
-            var overlappingNodes = tripHandler.GetOverlap(payload.ParsedGpx, payload.UserId, payload.PlusCodeRanges);
-            return overlappingNodes;
+            (var overlappingNodes, var tripHandler) = payload.GetInput<(HashSet<UserNodeCoverage>, TripProcessorHandler)>();
+            await tripHandler.UploadRawCache(overlappingNodes);
         }
 
         [FunctionName("GpxFileUpload_UploadRawRun")]
-        public static async Task UploadRawRun([ActivityTrigger] (gpxType ParsedGpx, Guid UserId) payload, ILogger log)
+        public static async Task UploadRawRun([ActivityTrigger] IDurableActivityContext payload, ILogger log)
         {
-            var config = SettingsManager.GetCredentials();
-            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
-            var tripHandler = new TripProcessorHandler(cosmosWriter);
-            await tripHandler.UploadRawRun(payload.ParsedGpx, payload.UserId);
+            (var parsedGpx, Guid userId, var tripHandler) = payload.GetInput<(gpxType, Guid, TripProcessorHandler tripHandler)>();
+            await tripHandler.UploadRawRun(parsedGpx, userId);
         }
 
         [FunctionName("GpxFileUpload_UpdateUserWayCoverage")]
-        public static async Task UpdateUserWayCoverage([ActivityTrigger] (HashSet<UserNodeCoverage> UserNodeCoverages, Guid UserId, HashSet<string> PlusCodeRanges) payload, ILogger log)
+        public static async Task UpdateUserWayCoverage([ActivityTrigger] IDurableActivityContext inputs, ILogger log)
         {
-            var config = SettingsManager.GetCredentials();
-            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
-            var tripHandler = new TripProcessorHandler(cosmosWriter);
-            await tripHandler.UpdateUserWayCoverage(payload.UserNodeCoverages, payload.UserId, payload.PlusCodeRanges);
+            (var userNodeCoverages, var userId, var plusCodeRanges, var tripHandler) = inputs.GetInput<(HashSet<UserNodeCoverage>, Guid, HashSet<string>, TripProcessorHandler)>();
+            await tripHandler.UpdateUserWayCoverage(userNodeCoverages, userId, plusCodeRanges);
         }
 
         [FunctionName("GpxFileUpload_HttpStart")]
-        public static async Task<IActionResult> HttpStart(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "/gpx/{userId}")] HttpRequest req,
-            string userIdStr,
+        public static async Task<HttpResponseMessage> HttpStart(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "gpx/{userId}")] HttpRequestMessage req,
             [DurableClient] IDurableOrchestrationClient starter,
             ILogger log)
         {
-            var data = await new StreamReader(req.Body).ReadToEndAsync();
+            var data = await new StreamReader(req.Content.ReadAsStream()).ReadToEndAsync();
+            var uri = req.RequestUri.ToString();
+            var userIdStr = uri.Split("/").Last();
             var userId = Guid.Parse(userIdStr);
 
             // Function input comes from the request content.
@@ -106,7 +107,7 @@ namespace TripIngestion
 
             log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
-            return new CreatedResult(string.Empty, instanceId);
+            return starter.CreateCheckStatusResponse(req, instanceId);
         }
     }
 }
