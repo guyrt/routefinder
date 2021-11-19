@@ -14,6 +14,9 @@ using UserDataModel;
 
 namespace TripIngestion
 {
+    /// <summary>
+    /// todo - rename this to process and make it blob triggered
+    /// </summary>
     public static class GpxFileUpload
     {
         [FunctionName("GpxFileUpload")]
@@ -21,13 +24,23 @@ namespace TripIngestion
             [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             var userId = Guid.NewGuid();
+            // context.getInput
+
+            // todo - also upload the file to raw storage!
+            // todo - and record the raw file location in the uploaded cache function below.
+
+            var config = SettingsManager.GetCredentials();
+            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
+            var tripHandler = new TripProcessorHandler(cosmosWriter);
 
             // Replace "hello" with the name of your Durable Activity Function.
             var parsedGpx = GpxParser.Parse("file");
             var plusCodeRanges = TripProcessorHandler.GetPlusCodeRanges(parsedGpx);
 
+            // todo - prewarm cache in tripHandler.
+
             // parallel tracks: upload raw while also computing overlaps.
-            (gpxType ParsedGpx, Guid UserId, HashSet<string> PlusCodeRanges) overlapComputeParams = (ParsedGpx: parsedGpx, UserId: userId, PlusCodeRanges: plusCodeRanges);
+            var overlapComputeParams = (parsedGpx, userId, plusCodeRanges, tripHandler);
             var overlappingNodesTask = context.CallActivityAsync<HashSet<UserNodeCoverage>>("GpxFileUpload_OverlappingNodes", overlapComputeParams);
             
             var uploadRawTask = context.CallActivityAsync("GpxFileUpload_UploadRawRun", (ParsedGpx: parsedGpx, UserId: userId));
@@ -43,12 +56,10 @@ namespace TripIngestion
         }
 
         [FunctionName("GpxFileUpload_OverlappingNodes")]
-        public static HashSet<UserNodeCoverage> GetOverlap([ActivityTrigger] (gpxType ParsedGpx, Guid UserId, HashSet<string> PlusCodeRanges) payload, ILogger log)
+        public static HashSet<UserNodeCoverage> GetOverlap([ActivityTrigger] IDurableActivityContext inputs, ILogger log)
         {
-            var config = SettingsManager.GetCredentials();
-            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
-            var tripHandler = new TripProcessorHandler(cosmosWriter);
-            var overlappingNodes = tripHandler.GetOverlap(payload.ParsedGpx, payload.UserId, payload.PlusCodeRanges);
+            (gpxType parsedGpx, Guid userId, HashSet<string> plusCodeRanges, TripProcessorHandler tripHandler) = inputs.GetInput<(gpxType, Guid, HashSet<string>, TripProcessorHandler)>();
+            var overlappingNodes = tripHandler.GetOverlap(parsedGpx, userId, plusCodeRanges);
             return overlappingNodes;
         }
 
