@@ -6,6 +6,7 @@
     using RouteFinderDataModel;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using UserDataModel;
@@ -32,7 +33,8 @@
             _containerName = container;
 
             // test connect
-            cosmosClient = new CosmosClient(_endpoint, _authKey);
+            CosmosClientOptions options = new CosmosClientOptions() { AllowBulkExecution = true };
+            cosmosClient = new CosmosClient(_endpoint, _authKey, options);
             uploader = new Uploader(cosmosClient, _databaseName, _containerName);
         }
 
@@ -48,17 +50,32 @@
             return await uploader.GetAllDocumentsByWay<UserWayCoverage>(userId, "UserWayCoverage", uniqueWays);
         }
 
-        public async Task Upload(UserNodeCoverage userNode)
+        public async Task<UserSummary> GetUserSummary(Guid userId)
         {
             await uploader.Initialize();
-            await uploader.UploadIfNotExistsAsync(userNode);
+            return await uploader.GetUserSummary(userId);
+        }
+
+        public async Task<List<UserWayCoverage>> GetAllUserWaySummaries(Guid userId)
+        {
+            await uploader.Initialize();
+            return await uploader.GetAllUserWaySummaries(userId);
+        }
+
+        public async Task Upload<T>(IEnumerable<T> runDetails)
+            where T : IPartitionedDataModel
+        {
+            await uploader.Initialize();
+            await uploader.UploadGroupAsync(runDetails);
+
+            Console.WriteLine($"Uploaded {runDetails.Count()} of {runDetails.GetType().GetGenericArguments()[0].GetType()}");
         }
 
         public async Task Upload<T>(T runDetails)
             where T : IPartitionedDataModel
         {
             await uploader.Initialize();
-            await uploader.UploadWithDeleteAsync(runDetails);
+            await uploader.Upload(runDetails);
 
             Console.WriteLine($"Uploaded {runDetails.GetType()} {runDetails}");
         }

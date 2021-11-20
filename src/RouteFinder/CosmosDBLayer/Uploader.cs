@@ -2,8 +2,10 @@
 {
     using Microsoft.Azure.Cosmos;
     using Microsoft.Azure.Cosmos.Linq;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using UserDataModel;
@@ -50,29 +52,50 @@
             return nodes;
         }
 
+        public async Task<UserSummary> GetUserSummary(Guid userId)
+        {
+            using var lookup = await _container.ReadItemStreamAsync(userId.ToString(), new PartitionKey(userId.ToString()));
+            if (lookup.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return JsonConvert.DeserializeObject<UserSummary>(await new StreamReader(lookup.Content).ReadToEndAsync());
+            }
+            return null;
+        }
+
+        public async Task<List<UserWayCoverage>> GetAllUserWaySummaries(Guid userId)
+        {
+            var lookup = _container.GetItemLinqQueryable<UserWayCoverage>()
+                            .Where(n => n.UserId == userId)
+                            .Where(n => n.Type == "UserWayCoverage");
+
+            using var feedIterator = lookup.ToFeedIterator();
+            var nodes = new List<UserWayCoverage>();
+            while (feedIterator.HasMoreResults)
+            {
+                foreach (var item in await feedIterator.ReadNextAsync())
+                {
+                    nodes.Add(item);
+                }
+            }
+
+            return nodes;
+        }
+
         internal Task<List<UserNodeCoverage>> GetAllUserNodeTasks(Guid userId, (string RegionId, string WayId)[] uniqueRegionWays)
         {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Upload but only if item doesn't already exist. This keeps first timestamp.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public async Task UploadIfNotExistsAsync(UserNodeCoverage node)
-        {
-            using var lookup = await _container.ReadItemStreamAsync(node.Id, new PartitionKey(node.UserId.ToString()));
-            if (lookup.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                await _container.UpsertItemAsync(node);
-            }
-        }
-
-        public async Task UploadWithDeleteAsync<T>(T item)
+        public async Task UploadGroupAsync<T>(IEnumerable<T> entities)
             where T : IPartitionedDataModel
         {
-        //    await _container.DeleteItemStreamAsync(item.Id, new PartitionKey(item.UserId.ToString()));
+            var tasks = entities.Select(x => _container.UpsertItemAsync(x, new PartitionKey(x.UserId.ToString())));
+            await Task.WhenAll(tasks);
+        }
+
+        public async Task Upload<T>(T item)
+            where T : IPartitionedDataModel
+        {
             var response = await _container.UpsertItemAsync(item);
             Console.WriteLine(response.StatusCode);
         }

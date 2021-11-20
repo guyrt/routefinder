@@ -52,6 +52,9 @@ namespace TripIngestion
             var updateUserWayCoverage = context.CallActivityAsync("GpxFileUpload_UpdateUserWayCoverage", (overlappingNodes, userId, plusCodeRanges, tripHandler));
             Task.WaitAll(uploadCacheTask, updateUserWayCoverage);
 
+            // upload summary
+            await context.CallActivityAsync("GpxFileUpload_UpdateUserSummaryAsync", (userId, tripHandler));
+
             return userId;
         }
 
@@ -90,6 +93,14 @@ namespace TripIngestion
             (var userNodeCoverages, var userId, var plusCodeRanges, var tripHandler) = inputs.GetInput<(HashSet<UserNodeCoverage>, Guid, HashSet<string>, TripProcessorHandler)>();
             await tripHandler.UpdateUserWayCoverage(userNodeCoverages, userId, plusCodeRanges);
         }
+
+        [FunctionName("GpxFileUpload_UpdateUserSummaryAsync")]
+        public static async Task UpdateUserSummaryAsync([ActivityTrigger] IDurableActivityContext inputs, ILogger log)
+        {
+            (var userId, var tripHandler) = inputs.GetInput<(Guid, TripProcessorHandler)>();
+            await tripHandler.UpdateUserSummaryAsync(userId);
+    }
+
 
         [FunctionName("GpxFileUpload_HttpStart")]
         public static async Task<HttpResponseMessage> HttpStart(

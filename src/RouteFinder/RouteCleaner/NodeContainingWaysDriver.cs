@@ -58,10 +58,6 @@ namespace RouteCleaner
                     try
                     {
                         var node = JsonConvert.DeserializeObject<Node>(content);
-                        if (node.Id == "30170573")
-                        {
-                            var a = 1;
-                        }
                         if (wayMap.TryGetValue(node.Id, out var ways))
                         {
                             node.ContainingWays = ways.ToList();

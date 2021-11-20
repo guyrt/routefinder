@@ -15,13 +15,11 @@ namespace UserDataModel
         // Partition on user
         public Guid UserId { get; set; }
 
-        public string RegionId { get; set; }
+        public string RegionId { get; set; } = string.Empty;
 
-        public string WayId { get; set; }
+        public string WayId { get; set; } = string.Empty;
 
-        public string NodeId { get; set; }
-
-        public DateTime FirstRan { get; set; }
+        public string NodeId { get; set; } = string.Empty;
 
         public string Type => "UserNodeCoverage";
 

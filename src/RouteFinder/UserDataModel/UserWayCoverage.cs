@@ -24,6 +24,9 @@ namespace UserDataModel
 
         public string Type => "UserWayCoverage";
 
+        [JsonIgnore]
+        public bool Completed => NodeCompletedCount == NumNodesInWay;
+
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);

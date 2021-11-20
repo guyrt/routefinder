@@ -8,11 +8,11 @@ namespace UserDataModel
     public class RunDetails : IPartitionedDataModel
     {
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         public Guid UserId { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public DateTime Timestamp { get; set; }
 

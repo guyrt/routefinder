@@ -71,11 +71,7 @@ namespace TripProcessor
 
         public async Task UploadRawCache(HashSet<UserNodeCoverage> overlappingNodes)
         {
-            // this could parallelize. https://devblogs.microsoft.com/cosmosdb/introducing-bulk-support-in-the-net-sdk/
-            foreach (var node in overlappingNodes)
-            {
-                await this.uploadHandler.Upload(node);
-            }
+            await this.uploadHandler.Upload(overlappingNodes);
         }
 
         public static HashSet<string> GetPlusCodeRanges(gpxType parsedGpx)
@@ -126,7 +122,6 @@ namespace TripProcessor
                                 NodeId = point.Id,
                                 RegionId = wayLookup.Relation,
                                 WayId = targetableWay,
-                                FirstRan = runTime,
                             });
                         }
                     }
@@ -206,15 +201,36 @@ namespace TripProcessor
             }
 
             // Step 4: updates
-            foreach (var wayId in nodeCoverage.Keys)
-            {
-                await this.uploadHandler.Upload(allWaySummaries[wayId]);
-            }
+            var finalSummaries = nodeCoverage.Keys.Select(x => allWaySummaries[x]);
+            await this.uploadHandler.Upload(finalSummaries);
         }
 
-        private async Task UpdateUserSummaryAsync(Guid userId)
+        public async Task UpdateUserSummaryAsync(Guid userId)
         {
-            return;
+            // Step 1: Get or create the current summary.
+            var userSummary = (await this.uploadHandler.GetUserSummary(userId)) ?? new UserSummary { UserId = userId };
+
+            // Step 2: Get user way nodes
+            var allWaySummaries = await this.uploadHandler.GetAllUserWaySummaries(userId);
+
+            // Step 3: Update num ways and completed ways
+            userSummary.NumWaysComplete = allWaySummaries.Count(x => x.Completed);
+            userSummary.NumWaysStarted = allWaySummaries.Count;
+
+            // Step 4: Build region summary
+            var regionSummaries = new List<UserSummary.RegionSummary>();
+            foreach (var summaryGroup in allWaySummaries.GroupBy(x => x.RegionId))
+            {
+                var regionSummary = new UserSummary.RegionSummary();
+                regionSummary.RegionId = summaryGroup.Key;
+                regionSummary.CompletedStreets = summaryGroup.Count(x => x.Completed);
+                regionSummary.TotalStreets = summaryGroup.Count();
+                regionSummaries.Add(regionSummary);
+            }
+
+            userSummary.RegionSummaries = regionSummaries;
+
+            await this.uploadHandler.Upload(userSummary);
         }
     }
 }

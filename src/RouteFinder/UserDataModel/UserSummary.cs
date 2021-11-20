@@ -8,7 +8,7 @@ namespace UserDataModel
     public class UserSummary : IPartitionedDataModel
     {
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string Id => UserId.ToString();
 
         public Guid UserId { get; set; }
 
@@ -17,18 +17,17 @@ namespace UserDataModel
         /// </summary>
         public List<RegionSummary>? RegionSummaries { get; set; }
 
+        public int NumWaysComplete { get; set; }
+
+        public int NumWaysStarted { get; set; }
+
         public string Type => "UserSummary";
 
         public class RegionSummary
         {
-            public string RegionId { get; set; }
+            public string RegionId { get; set; } = string.Empty;
 
             public string Name { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Pointer to the most recent page of region summary.
-            /// </summary>
-            public int LatestRegionDetailsPage { get; set; } = 0;
 
             // Track coverage stats
             public int CompletedStreets { get; set; }
@@ -43,11 +42,17 @@ namespace UserDataModel
             /// <summary>
             /// If true, this is a priority region for the user.
             /// </summary>
-            public bool IsStarred { get; set; }
+            public bool IsStarred { get; set; } = false;
 
-            public DateTime FirstCoverage { get; set; }
+            public override string ToString()
+            {
+                return JsonConvert.SerializeObject(this);
+            }
+        }
 
-            public DateTime LastCoverage { get; set; }
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }
