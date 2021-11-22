@@ -224,7 +224,7 @@ namespace TripProcessor
                 var regionSummary = new UserSummary.RegionSummary();
                 regionSummary.RegionId = summaryGroup.Key;
                 regionSummary.CompletedStreets = summaryGroup.Count(x => x.Completed);
-                regionSummary.TotalStreets = summaryGroup.Count();
+                regionSummary.StartedStreets = summaryGroup.Count();
                 regionSummaries.Add(regionSummary);
             }
 
