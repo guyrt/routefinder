@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AzureBlobHandler;
-using GlobalSettings;
+using CosmosDBLayer;
 using Google.Protobuf;
+using Newtonsoft.Json;
 using RouteCleaner;
 using RouteFinderDataModel.Proto;
+using UserDataModel;
 
 namespace GlobalSettings
 {
@@ -32,7 +36,7 @@ namespace GlobalSettings
             new RouteFinderDataPrepDriver().RunChain("/tmp/boundaries.xml", "/tmp/runnableWays.xml");
 
             // separate ways into sections
-            new NodeContainingWaysDriver().ProcessNodes();
+            await new NodeContainingWaysDriver().ProcessNodesAsync();
 
             // todo this saves targetable ways in bulk, but we need to save them on a smaller scale like we do nodes.
             if (RouteCleanerSettings.GetInstance().ShouldUploadRawTargetableWays)
@@ -43,25 +47,26 @@ namespace GlobalSettings
 
             SaveProtobufsToAzure(rawDataUploader);
             SaveWayProtobufsToAzure(rawDataUploader);
+            await SaveRegionSummariesToAzureAsync(rawDataUploader);
         }
 
         private static void SaveProtobufsToAzure(RawDataUploader rawDataUploader)
         {
             // search in the right directory and discover all files. Create dir from remoteRunnableWays then upload all files there.
             Parallel.ForEach(ProtobufAreaConverter.CreateLookupNodeProtobufs(),
-                            new ParallelOptions { MaxDegreeOfParallelism = 4 },
-                            async (row) =>
-                            {
-                                var key = row.Item1;
-                                var nodes = row.Item2;
-                                var nodeFileObj = new FullNodeSet();
-                                nodeFileObj.Nodes.AddRange(nodes);
-                                Console.WriteLine($"{key}: prepped {nodes.Count} nodes: {nodeFileObj.CalculateSize()} bytes");
-                                var byteArray = nodeFileObj.ToByteArray();
+                new ParallelOptions { MaxDegreeOfParallelism = 4 },
+                async (row) =>
+                {
+                    var key = row.Item1;
+                    var nodes = row.Item2;
+                    var nodeFileObj = new FullNodeSet();
+                    nodeFileObj.Nodes.AddRange(nodes);
+                    Console.WriteLine($"{key}: prepped {nodes.Count} nodes: {nodeFileObj.CalculateSize()} bytes");
+                    var byteArray = nodeFileObj.ToByteArray();
 
-                                var fileName = $"nodes/{key.Substring(0, 2)}/{key}";
-                                await rawDataUploader.WriteBlobAsync(fileName, byteArray);
-                            });
+                    var fileName = $"nodes/{key.Substring(0, 2)}/{key}";
+                    await rawDataUploader.WriteBlobAsync(fileName, byteArray);
+                });
         }
 
         private static void SaveWayProtobufsToAzure(RawDataUploader rawDataUploader)
@@ -82,6 +87,23 @@ namespace GlobalSettings
                     var fileName = $"ways/{key[..2]}/{key}";
                     await rawDataUploader.WriteBlobAsync(fileName, byteArray);
                 });
+        }
+
+        private static async Task SaveRegionSummariesToAzureAsync(RawDataUploader rawDataUploader)
+        {
+            var watch = Stopwatch.StartNew();
+            watch.Start();
+            var settings = RouteCleanerSettings.GetInstance();
+            await rawDataUploader.UploadFileAsync(settings.RemoteRelationSummaryLocation, settings.TemporaryRelationSummaryLocation);
+
+            var regionSummaries = File.ReadLines(settings.TemporaryRelationSummaryLocation).Select(x => JsonConvert.DeserializeObject<RegionSummary>(x));
+
+            var config = SettingsManager.GetCredentials();
+            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
+            await cosmosWriter.UploadToDefaultPartition(regionSummaries, Guid.Empty.ToString());
+
+            var time = watch.Elapsed;
+            Console.WriteLine($"Uploaded region summaries in {time}");
         }
     }
 }

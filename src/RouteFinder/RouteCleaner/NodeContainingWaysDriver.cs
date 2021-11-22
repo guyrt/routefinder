@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using GlobalSettings;
 using Google.OpenLocationCode;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace RouteCleaner
     /// </summary>
     public class NodeContainingWaysDriver
     {
-        public void ProcessNodes()
+        public async Task ProcessNodesAsync()
         {
             Console.WriteLine($"Starting NodeContainingWaysDriver");
             var watch = Stopwatch.StartNew();
@@ -26,14 +27,14 @@ namespace RouteCleaner
             var time = watch.Elapsed;
             Console.WriteLine($"Finished building way map in {time}");
             watch.Restart();
-            WriteStreamedNodes(nodeWayMap);
+            await WriteStreamedNodesAsync(nodeWayMap);
         }
 
-        private void WriteStreamedNodes(Dictionary<string, HashSet<string>> wayMap)
+        private async Task WriteStreamedNodesAsync(Dictionary<string, HashSet<string>> wayMap)
         {
             using (var disposableDict = new DisposableDictionary<string, StreamWriter>())
             {
-                StreamNodes(wayMap, disposableDict);
+                await StreamNodesAsync(wayMap, disposableDict);
             }
         }
 
@@ -46,9 +47,13 @@ namespace RouteCleaner
             return new StreamWriter(fs, Encoding.UTF8, 65536);
         }
 
-        private void StreamNodes(Dictionary<string, HashSet<string>> wayMap, DisposableDictionary<string, StreamWriter> streamWriters)
+        private async Task StreamNodesAsync(Dictionary<string, HashSet<string>> wayMap, DisposableDictionary<string, StreamWriter> streamWriters)
         {
             var lineCntr = 0;
+            var relationTracker = new TrackRelationNodes();
+
+            // todo - see relationTracker with boundaries so we have names?
+
             using var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryNodeOutLocation, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
             using (var sr = new StreamReader(fs))
             {
@@ -68,6 +73,10 @@ namespace RouteCleaner
                         {
                             streamWriters.Add(code.Code, GetStreamWriter(code.Code));
                         }
+
+                        // update tracker with ways and relations from this node.
+                        relationTracker.AddNode(node);
+
                         var line = JsonConvert.SerializeObject(node);
                         line = Regex.Replace(line, @"\t|\n|\r", "");
                         streamWriters[code.Code].WriteLine(line);
@@ -83,6 +92,9 @@ namespace RouteCleaner
                     lineCntr++;
                 }
             }
+
+            var relationLines = relationTracker.GetRelationCounts().Select(x => JsonConvert.SerializeObject(x));
+            await File.WriteAllLinesAsync(RouteCleanerSettings.GetInstance().TemporaryRelationSummaryLocation, relationLines);
         }
 
         private Dictionary<string, HashSet<string>> BuildWayMap()

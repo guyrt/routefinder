@@ -71,6 +71,12 @@
             Console.WriteLine($"Uploaded {runDetails.Count()} of {runDetails.GetType().GetGenericArguments()[0].GetType()}");
         }
 
+        public async Task UploadToDefaultPartition<T>(IEnumerable<T> entities, string partition)
+        {
+            await uploader.Initialize();
+            await uploader.UploadToDefaultPartition(entities, partition);
+        }
+
         public async Task Upload<T>(T runDetails)
             where T : IPartitionedDataModel
         {

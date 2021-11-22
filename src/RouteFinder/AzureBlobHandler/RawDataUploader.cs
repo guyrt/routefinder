@@ -32,6 +32,18 @@ namespace AzureBlobHandler
             this.initialized = true;
         }
 
+        public async Task<bool> UploadFileAsync(string remoteFileName, string localFileName)
+        {
+            if (!this.initialized)
+            {
+                this.Initialize();
+            }
+
+            BlobClient blobClient = containerClient.GetBlobClient(remoteFileName);
+            await blobClient.UploadAsync(localFileName);
+            return true;
+        }
+
         public async Task<bool> WriteBlobAsync(string remoteFileName, byte[] localContents)
         {
             if (!this.initialized)

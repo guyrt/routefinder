@@ -18,6 +18,10 @@
 
         public string TemporaryTargetableWaysLocation { get; set; } = @"/tmp/targetableWays.json";
 
+        public string TemporaryRelationSummaryLocation { get; set; } = @"/tmp/relationSummary.json";
+
+        public string RemoteRelationSummaryLocation { get; set; } = "relationSummary.json";
+
         public bool ShouldUploadRawTargetableWays { get; set; } = false;
 
         /// <summary>

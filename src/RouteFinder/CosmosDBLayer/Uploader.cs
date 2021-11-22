@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using UserDataModel;
 
@@ -90,6 +91,12 @@
             where T : IPartitionedDataModel
         {
             var tasks = entities.Select(x => _container.UpsertItemAsync(x, new PartitionKey(x.UserId.ToString())));
+            await Task.WhenAll(tasks);
+        }
+
+        public async Task UploadToDefaultPartition<T>(IEnumerable<T> entities, string partition)
+        {
+            var tasks = entities.Select(x => _container.UpsertItemAsync(x, new PartitionKey(partition)));
             await Task.WhenAll(tasks);
         }
 

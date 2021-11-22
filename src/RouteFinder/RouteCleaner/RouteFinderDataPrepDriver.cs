@@ -93,28 +93,6 @@ namespace RouteCleaner
             return outPath;
         }
 
-        public string WriteRelations(Dictionary<Relation, Polygon[]> relations, string outPath)
-        {
-            using (var fs = File.OpenWrite(outPath))
-            {
-                using (var sr = new StreamWriter(fs))
-                {
-                    foreach (var kvp in relations)
-                    {
-                        var outputRelation = new TargetableRelation
-                        {
-                            Id = kvp.Key.Id,
-                            Borders = kvp.Value.Select(v => v.Nodes.Select(n => n.ToThin()).ToArray()).ToArray(),
-                            Name = kvp.Key.Name,
-                            RelationType = "todo"
-                        };
-                        sr.WriteLine(JsonConvert.SerializeObject(outputRelation));
-                    }
-                }
-            }
-            return outPath;
-        }
-
         /// <summary>
         /// use n + 2 threads. 
         /// Thread 0 will iterate through nodeStreamer and add to n queues in round robin.
