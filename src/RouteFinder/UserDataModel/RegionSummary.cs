@@ -20,5 +20,7 @@ namespace UserDataModel
         public int NumWaysInRegion { get; set; }
 
         public int NumNodesInRegion { get; set; }
+
+        public string Type => "RegionSummary";
     }
 }

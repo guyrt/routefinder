@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using TripProcessor.GpxData;
 using UserDataModel;
@@ -213,6 +214,13 @@ namespace TripProcessor
             // Step 2: Get user way nodes
             var allWaySummaries = await this.uploadHandler.GetAllUserWaySummaries(userId);
 
+            // Step 2.5: Get regions
+            var regions = allWaySummaries.Select(x => x.RegionId).Distinct().ToList();
+            var regionLookup = (await this.uploadHandler.GetRegionSummaries(regions)).ToDictionary(x => x.RegionId, v => v);
+
+            // Step 2.75: Get nodes
+            var nodes = (await this.uploadHandler.GetAllUserNodeCoverages(userId)).GroupBy(n => n.RegionId).ToDictionary(group => group.Key, group => group.Count());
+
             // Step 3: Update num ways and completed ways
             userSummary.NumWaysComplete = allWaySummaries.Count(x => x.Completed);
             userSummary.NumWaysStarted = allWaySummaries.Count;
@@ -221,10 +229,16 @@ namespace TripProcessor
             var regionSummaries = new List<UserSummary.RegionSummary>();
             foreach (var summaryGroup in allWaySummaries.GroupBy(x => x.RegionId))
             {
-                var regionSummary = new UserSummary.RegionSummary();
-                regionSummary.RegionId = summaryGroup.Key;
-                regionSummary.CompletedStreets = summaryGroup.Count(x => x.Completed);
-                regionSummary.StartedStreets = summaryGroup.Count();
+                var regionSummary = new UserSummary.RegionSummary
+                {
+                    RegionId = summaryGroup.Key,
+                    CompletedStreets = summaryGroup.Count(x => x.Completed),
+                    StartedStreets = summaryGroup.Count(),
+                    Name = regionLookup[summaryGroup.Key].RegionName,
+                    TotalNodes = regionLookup[summaryGroup.Key].NumNodesInRegion,
+                    TotalStreets = regionLookup[summaryGroup.Key].NumWaysInRegion,
+                    CompletedNodes = nodes[summaryGroup.Key],
+                };
                 regionSummaries.Add(regionSummary);
             }
 

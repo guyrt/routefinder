@@ -18,11 +18,15 @@
         public async Task<List<T>> GetAllDocumentsByWay<T>(Guid userId, string type, IEnumerable<string> wayIds)
             where T : IPartitionedWithWay
         {
-            Console.WriteLine($"Getting {type} based on {wayIds.Count()} ways");
+            
             var lookup = container.GetItemLinqQueryable<T>()
                             .Where(n => n.UserId == userId)
-                            .Where(n => n.Type == type)
-                            .Where(n => wayIds.Contains(n.WayId));  // todo - validate this is expressed in efficient IN query.
+                            .Where(n => n.Type == type);
+            if (wayIds != null)
+            {
+                Console.WriteLine($"Getting {type} based on {wayIds.Count()} ways");
+                lookup = lookup.Where(n => wayIds.Contains(n.WayId));
+            }
             
             using var feedIterator = lookup.ToFeedIterator();
             var nodes = new List<T>();
@@ -64,11 +68,6 @@
             }
 
             return nodes;
-        }
-
-        internal Task<List<UserNodeCoverage>> GetAllUserNodeTasks(Guid userId, (string RegionId, string WayId)[] uniqueRegionWays)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task UploadGroupAsync<T>(IEnumerable<T> entities)

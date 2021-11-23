@@ -40,6 +40,12 @@
             return await userHistory.GetAllDocumentsByWay<UserNodeCoverage>(userId, "UserNodeCoverage", uniqueWays);
         }
 
+        public async Task<List<UserNodeCoverage>> GetAllUserNodeCoverages(Guid userId)
+        {
+            await userHistory.Initialize();
+            return await userHistory.GetAllDocumentsByWay<UserNodeCoverage>(userId, "UserNodeCoverage", null);
+        }
+
         public async Task<List<UserWayCoverage>> GetAllUserWayCoverage(Guid userId, IEnumerable<string> uniqueWays)
         {
             await userHistory.Initialize();
@@ -67,12 +73,6 @@
             Console.WriteLine($"Uploaded {runDetails.Count()} of {runDetails.GetType().GetGenericArguments()[0].GetType()}");
         }
 
-        public async Task UploadToDefaultPartition<T>(IEnumerable<T> entities, string partition)
-        {
-            await staticData.Initialize();
-            await staticData.UploadToDefaultPartition(entities, partition);
-        }
-
         public async Task Upload<T>(T runDetails)
             where T : IUserIdPartitionedDataModel
         {
@@ -80,6 +80,18 @@
             await userHistory.Upload(runDetails);
 
             Console.WriteLine($"Uploaded {runDetails.GetType()} {runDetails}");
+        }
+
+        public async Task UploadToDefaultPartition<T>(IEnumerable<T> entities, string partition)
+        {
+            await staticData.Initialize();
+            await staticData.UploadToDefaultPartition(entities, partition);
+        }
+
+        public async Task<IEnumerable<RegionSummary>> GetRegionSummaries(IEnumerable<string> regions)
+        {
+            await staticData.Initialize();
+            return await staticData.GetRegionSummaries(regions);
         }
     }
 }
