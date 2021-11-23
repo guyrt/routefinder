@@ -1,7 +1,6 @@
 ﻿namespace RouteFinderDataModel
 {
     using System.Linq;
-    using Microsoft.Azure.Cosmos.Spatial;
     using Newtonsoft.Json;
     using RouteFinderDataModel.Tools;
     using System.Collections.Generic;

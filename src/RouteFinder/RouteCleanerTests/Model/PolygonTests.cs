@@ -1,5 +1,4 @@
-﻿using System;
-using RouteFinderDataModel;
+﻿using RouteFinderDataModel;
 using RouteCleaner.PolygonUtils;
 using Xunit;
 

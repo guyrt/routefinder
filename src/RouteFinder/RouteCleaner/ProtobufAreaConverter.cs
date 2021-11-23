@@ -7,7 +7,6 @@ using Google.OpenLocationCode;
 using Newtonsoft.Json;
 using RouteFinderDataModel;
 using RouteFinderDataModel.Proto;
-using Google.Protobuf;
 
 namespace RouteCleaner
 {

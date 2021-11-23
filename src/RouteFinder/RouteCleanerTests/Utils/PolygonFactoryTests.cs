@@ -1,6 +1,5 @@
 ﻿namespace RouteCleanerTests.Utils
 {
-    using System;
     using System.Linq;
     using RouteCleaner.PolygonUtils;
     using RouteFinderDataModel;
