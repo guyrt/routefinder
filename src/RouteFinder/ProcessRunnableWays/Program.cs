@@ -33,7 +33,7 @@ namespace GlobalSettings
             await rawDataDownloader.RetrieveBlobAsync(tmpRemoteRunnableWays, "/tmp/runnableWays.xml");
 
             // write temporary files with nodes and all targetable ways
-            new RouteFinderDataPrepDriver().RunChain("/tmp/boundaries.xml", "/tmp/runnableWays.xml");
+            new RouteFinderDataPrepDriver().RunChain(RouteCleanerSettings.GetInstance().TemporaryBoundariesLocation, "/tmp/runnableWays.xml");
 
             // separate ways into sections
             await new NodeContainingWaysDriver().ProcessNodesAsync();
@@ -99,7 +99,9 @@ namespace GlobalSettings
             var regionSummaries = File.ReadLines(settings.TemporaryRelationSummaryLocation).Select(x => JsonConvert.DeserializeObject<RegionSummary>(x));
 
             var config = SettingsManager.GetCredentials();
-            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
+            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer, config.StaticDataCosmosContainer);
+
+            // needs new container
             await cosmosWriter.UploadToDefaultPartition(regionSummaries, Guid.Empty.ToString());
 
             var time = watch.Elapsed;

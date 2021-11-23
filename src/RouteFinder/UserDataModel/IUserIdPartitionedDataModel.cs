@@ -1,6 +1,6 @@
 ﻿namespace UserDataModel
 {
-    public interface IPartitionedDataModel
+    public interface IUserIdPartitionedDataModel
     {
         public string Id { get; }
 

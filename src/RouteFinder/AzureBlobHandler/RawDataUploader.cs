@@ -40,7 +40,7 @@ namespace AzureBlobHandler
             }
 
             BlobClient blobClient = containerClient.GetBlobClient(remoteFileName);
-            await blobClient.UploadAsync(localFileName);
+            await blobClient.UploadAsync(localFileName, true);
             return true;
         }
 

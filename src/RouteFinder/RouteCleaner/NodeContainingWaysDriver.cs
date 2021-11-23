@@ -50,9 +50,9 @@ namespace RouteCleaner
         private async Task StreamNodesAsync(Dictionary<string, HashSet<string>> wayMap, DisposableDictionary<string, StreamWriter> streamWriters)
         {
             var lineCntr = 0;
-            var relationTracker = new TrackRelationNodes();
 
-            // todo - see relationTracker with boundaries so we have names?
+            var relationRegion = GeometryFactory.GetRegionGeometry(RouteCleanerSettings.GetInstance().TemporaryBoundariesLocation, false, false);
+            var relationTracker = new TrackRelationNodes(relationRegion.Relations);
 
             using var fs = File.Open(RouteCleanerSettings.GetInstance().TemporaryNodeOutLocation, FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read);
             using (var sr = new StreamReader(fs))

@@ -18,10 +18,10 @@ namespace RouteCleaner
     {
         public void RunChain(string boundariesFilePath, string runnableWaysPath)
         {
-            var relationRegion = this.GetRegionGeometry(boundariesFilePath, false, false);
+            var relationRegion = GeometryFactory.GetRegionGeometry(boundariesFilePath, false, false);
 
             var thread1 = Task<Dictionary<Relation, Polygon[]>>.Factory.StartNew(() => this.CreateRelationPolygons(relationRegion.Relations));
-            var thread2 = Task<Geometry>.Factory.StartNew(() => this.GetRegionGeometry(runnableWaysPath, true, false));
+            var thread2 = Task<Geometry>.Factory.StartNew(() => GeometryFactory.GetRegionGeometry(runnableWaysPath, true, false));
 
             Task.WaitAll(thread1, thread2);
             var waysRegion = thread2.Result;
@@ -346,24 +346,6 @@ namespace RouteCleaner
                 }
             }
 
-        }
-
-        private Geometry GetRegionGeometry(string filePath, bool ignoreNodes, bool trimTags)
-        {
-            var watch = Stopwatch.StartNew();
-            var osmDeserializer = new OsmDeserializer(true);
-            Geometry relationRegion;
-            using (var fs = File.OpenRead(filePath))
-            {
-                using (var sr = new StreamReader(fs))
-                {
-                    Console.WriteLine($"Loading regions from {filePath}.");
-                    relationRegion = osmDeserializer.ReadFile(sr, ignoreNodes, trimTags);
-                }
-            }
-            var time = watch.Elapsed;
-            Console.WriteLine($"Done loading {filePath} in {time}");
-            return relationRegion;
         }
 
         private IEnumerable<Node> GetNodeStreamer(string filePath)

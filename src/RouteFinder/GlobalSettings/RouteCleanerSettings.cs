@@ -22,6 +22,8 @@
 
         public string RemoteRelationSummaryLocation { get; set; } = "relationSummary.json";
 
+        public string TemporaryBoundariesLocation { get; set; } = "/tmp/boundaries.xml";
+
         public bool ShouldUploadRawTargetableWays { get; set; } = false;
 
         /// <summary>

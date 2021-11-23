@@ -10,6 +10,9 @@ namespace UserDataModel
         [JsonProperty("id")]
         public string Id => RegionId;
 
+        [JsonProperty("pk")]
+        public static string Partition => Guid.Empty.ToString();
+
         public string RegionId { get; set; } = string.Empty;
 
         public string RegionName { get; set; } = string.Empty;

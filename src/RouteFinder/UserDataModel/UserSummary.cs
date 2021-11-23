@@ -5,7 +5,7 @@ namespace UserDataModel
     /// <summary>
     /// Summary of a user that can be used to retrieve basic run stats.
     /// </summary>
-    public class UserSummary : IPartitionedDataModel
+    public class UserSummary : IUserIdPartitionedDataModel
     {
         [JsonProperty("id")]
         public string Id => UserId.ToString();

@@ -7,35 +7,19 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using UserDataModel;
 
-    public class Uploader
+    internal class UserHistoryConnection : CosmosConnectionBase
     {
-
-        private Container _container;
-        private readonly CosmosClient _cosmosClient;
-
-        private readonly string _databaseName;
-        private readonly string _containerName;
-
-        private bool initialized;
-
-        public Uploader(CosmosClient cosmosClient, string database, string container)
-        {
-            _cosmosClient = cosmosClient;
-            _databaseName = database;
-            _containerName = container;
-
-            initialized = false;
-        }
+        public UserHistoryConnection(CosmosClient cosmosClient, string database, string container) : base(cosmosClient, database, container)
+        { }
 
         public async Task<List<T>> GetAllDocumentsByWay<T>(Guid userId, string type, IEnumerable<string> wayIds)
             where T : IPartitionedWithWay
         {
             Console.WriteLine($"Getting {type} based on {wayIds.Count()} ways");
-            var lookup = _container.GetItemLinqQueryable<T>()
+            var lookup = container.GetItemLinqQueryable<T>()
                             .Where(n => n.UserId == userId)
                             .Where(n => n.Type == type)
                             .Where(n => wayIds.Contains(n.WayId));  // todo - validate this is expressed in efficient IN query.
@@ -55,7 +39,7 @@
 
         public async Task<UserSummary> GetUserSummary(Guid userId)
         {
-            using var lookup = await _container.ReadItemStreamAsync(userId.ToString(), new PartitionKey(userId.ToString()));
+            using var lookup = await container.ReadItemStreamAsync(userId.ToString(), new PartitionKey(userId.ToString()));
             if (lookup.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 return JsonConvert.DeserializeObject<UserSummary>(await new StreamReader(lookup.Content).ReadToEndAsync());
@@ -65,7 +49,7 @@
 
         public async Task<List<UserWayCoverage>> GetAllUserWaySummaries(Guid userId)
         {
-            var lookup = _container.GetItemLinqQueryable<UserWayCoverage>()
+            var lookup = container.GetItemLinqQueryable<UserWayCoverage>()
                             .Where(n => n.UserId == userId)
                             .Where(n => n.Type == "UserWayCoverage");
 
@@ -88,36 +72,17 @@
         }
 
         public async Task UploadGroupAsync<T>(IEnumerable<T> entities)
-            where T : IPartitionedDataModel
+            where T : IUserIdPartitionedDataModel
         {
-            var tasks = entities.Select(x => _container.UpsertItemAsync(x, new PartitionKey(x.UserId.ToString())));
-            await Task.WhenAll(tasks);
-        }
-
-        public async Task UploadToDefaultPartition<T>(IEnumerable<T> entities, string partition)
-        {
-            var tasks = entities.Select(x => _container.UpsertItemAsync(x, new PartitionKey(partition)));
+            var tasks = entities.Select(x => container.UpsertItemAsync(x, new PartitionKey(x.UserId.ToString())));
             await Task.WhenAll(tasks);
         }
 
         public async Task Upload<T>(T item)
-            where T : IPartitionedDataModel
+            where T : IUserIdPartitionedDataModel
         {
-            var response = await _container.UpsertItemAsync(item);
+            var response = await container.UpsertItemAsync(item);
             Console.WriteLine(response.StatusCode);
-        }
-
-        public async Task Initialize()
-        {
-            if (initialized)
-            {
-                return;
-            }
-            var database = (await _cosmosClient.CreateDatabaseIfNotExistsAsync(_databaseName)).Database;
-
-            _container = database.GetContainer(_containerName);
-
-            initialized = true;
         }
 
     }

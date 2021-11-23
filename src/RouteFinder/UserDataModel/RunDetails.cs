@@ -5,7 +5,7 @@ namespace UserDataModel
     /// <summary>
     /// Todo - track completed and advanced ways
     /// </summary>
-    public class RunDetails : IPartitionedDataModel
+    public class RunDetails : IUserIdPartitionedDataModel
     {
         [JsonProperty("id")]
         public string Id { get; set; } = string.Empty;

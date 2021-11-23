@@ -26,6 +26,7 @@
                 RemoteMd5File = configuration["RemoteMd5File"],
                 CosmosDatabase = configuration["CosmosDatabase"],
                 CosmosContainer = configuration["CosmosContainer"],
+                StaticDataCosmosContainer = configuration["StaticDataCosmosContainer"],
                 AzureBlobProcessedNodesContainer = configuration["AzureBlobProcessedNodesContainer"],
                 AzureRawXmlDownloadConnectionString = configuration["AzureRawXmlDownloadConnectionString"],
                 AzureRawXmlDownloadContainer = configuration["AzureRawXmlDownloadContainer"],
@@ -49,7 +50,9 @@
             public string CosmosDatabase { get; set; }
 
             public string CosmosContainer { get; set; }
-            
+
+            public string StaticDataCosmosContainer { get; set; }
+
             public string AzureRawXmlDownloadConnectionString { get; set; }
 
             public string AzureRawXmlDownloadContainer { get; set; }

@@ -33,7 +33,7 @@ namespace TripIngestion
             // todo - and record the raw file location in the uploaded cache function below.
 
             var config = SettingsManager.GetCredentials(); // todo this doesn't work. probably just move these configs for Azure Fxn
-            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer);
+            var cosmosWriter = new UploadHandler(config.EndPoint, config.AuthKey, config.CosmosDatabase, config.CosmosContainer, config.StaticDataCosmosContainer);
             var tripHandler = new TripProcessorHandler(cosmosWriter);
             var plusCodeRanges = TripProcessorHandler.GetPlusCodeRanges(parsedGpx);
 

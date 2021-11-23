@@ -1,6 +1,6 @@
 ﻿namespace UserDataModel
 {
-    public interface IPartitionedWithWay : IPartitionedDataModel
+    public interface IPartitionedWithWay : IUserIdPartitionedDataModel
     {
         public string WayId { get; set; }
     }

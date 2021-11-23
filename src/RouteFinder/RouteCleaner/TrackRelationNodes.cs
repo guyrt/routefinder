@@ -14,8 +14,11 @@ namespace RouteCleaner
 
         private Dictionary<string, HashSet<string>> WaysInRelations;  // relation.id -> way ids
 
-        public TrackRelationNodes()
+        private readonly Dictionary<string, string> RelationNames; // relation.id -> relation.name
+
+        public TrackRelationNodes(Relation[] relations)
         {
+            RelationNames = relations.ToDictionary(x => x.Id, x => x.Name);
             NodesInRelations = new Dictionary<string,HashSet<string>>();
             WaysInRelations = new Dictionary<string, HashSet<string>>();
         }
@@ -40,12 +43,12 @@ namespace RouteCleaner
 
         public IEnumerable<RegionSummary> GetRelationCounts()
         {
-            // n.b. Where clause exists so we can dump all names and not worry about extra relations losing one.
-            return NodesInRelations.Where(x => x.Value.Count > 0).Select(x => new RegionSummary
+            return NodesInRelations.Select(x => new RegionSummary
             {
                 RegionId = x.Key,
                 NumNodesInRegion = x.Value.Count,
                 NumWaysInRegion = WaysInRelations[x.Key].Count,
+                RegionName = RelationNames[x.Key],
             });
         }
     }
