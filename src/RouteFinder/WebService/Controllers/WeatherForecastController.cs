@@ -10,16 +10,16 @@ namespace WebService.Controllers
     [ApiController]
     [Route("api/controller")]
     [Authorize]
-    public class WeatherForecastController : ControllerBase
+    public class WeatherForecastController2 : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<WeatherForecastController2> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController2(ILogger<WeatherForecastController2> logger)
         {
             _logger = logger;
         }
